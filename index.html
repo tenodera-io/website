@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tenodera is a self-hosted Linux server administration panel. Manage terminal, services, packages, containers, and more from a single web interface.">
+  <title>Tenodera — Self-hosted Linux Admin Panel</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦎</text></svg>">
+  <style>
+    :root {
+      --base:     #1e1e2e;
+      --mantle:   #181825;
+      --crust:    #11111b;
+      --surface0: #313244;
+      --surface1: #45475a;
+      --surface2: #585b70;
+      --overlay0: #6c7086;
+      --overlay1: #7f849c;
+      --subtext0: #a6adc8;
+      --subtext1: #bac2de;
+      --text:     #cdd6f4;
+      --green:    #a6e3a1;
+      --blue:     #89b4fa;
+      --mauve:    #cba6f7;
+      --peach:    #fab387;
+      --red:      #f38ba8;
+      --yellow:   #f9e2af;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--base);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+      font-size: 16px;
+    }
+
+    /* ── Nav ─────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--mantle) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--surface0);
+      padding: 0 2rem;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .nav-logo {
+      font-weight: 800;
+      font-size: 1.2rem;
+      color: var(--green);
+      text-decoration: none;
+      letter-spacing: -0.5px;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .nav-links a {
+      color: var(--subtext1);
+      text-decoration: none;
+      font-size: 0.9rem;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--text); }
+
+    .nav-gh {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .nav-gh svg { flex-shrink: 0; }
+
+    .lang-toggle {
+      display: flex;
+      background: var(--surface0);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .lang-toggle button {
+      border: none;
+      background: none;
+      color: var(--subtext0);
+      padding: 5px 11px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+      transition: all 0.15s;
+    }
+    .lang-toggle button.active {
+      background: var(--green);
+      color: var(--crust);
+    }
+
+    /* ── Hero ────────────────────────────── */
+    .hero {
+      padding: 7rem 2rem 5rem;
+      text-align: center;
+      max-width: 820px;
+      margin: 0 auto;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: color-mix(in srgb, var(--green) 12%, transparent);
+      color: var(--green);
+      border: 1px solid color-mix(in srgb, var(--green) 28%, transparent);
+      border-radius: 999px;
+      padding: 5px 14px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      margin-bottom: 2rem;
+      letter-spacing: 0.5px;
+    }
+
+    .hero h1 {
+      font-size: clamp(2.4rem, 6vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -1.5px;
+      margin-bottom: 1.4rem;
+    }
+
+    .hero h1 .accent { color: var(--green); }
+
+    .hero p {
+      font-size: 1.1rem;
+      color: var(--subtext1);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn-primary {
+      background: var(--green);
+      color: var(--crust);
+      border: none;
+      padding: 0.7rem 1.6rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      transition: opacity 0.15s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-primary:hover { opacity: 0.85; transform: translateY(-1px); }
+
+    .btn-secondary {
+      background: var(--surface0);
+      color: var(--text);
+      border: 1px solid var(--surface1);
+      padding: 0.7rem 1.6rem;
+      border-radius: 8px;
+      font-size: 0.95rem;
+      font-weight: 500;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background 0.15s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn-secondary:hover { background: var(--surface1); transform: translateY(-1px); }
+
+    .install-box {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 10px;
+      padding: 0.9rem 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      max-width: 620px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .install-box pre {
+      font-family: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
+      font-size: 0.78rem;
+      color: var(--green);
+      flex: 1;
+      white-space: pre-wrap;
+      word-break: break-all;
+    }
+
+    .copy-btn {
+      background: var(--surface0);
+      border: none;
+      color: var(--subtext0);
+      padding: 6px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.78rem;
+      font-weight: 600;
+      transition: all 0.15s;
+      flex-shrink: 0;
+      letter-spacing: 0.3px;
+    }
+    .copy-btn:hover { background: var(--surface1); color: var(--text); }
+
+    /* ── Sections ────────────────────────── */
+    .divider { border: none; border-top: 1px solid var(--surface0); }
+
+    .section {
+      padding: 5rem 2rem;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .section-label {
+      text-transform: uppercase;
+      letter-spacing: 2.5px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--green);
+      margin-bottom: 0.6rem;
+    }
+
+    .section-title {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.7rem;
+    }
+
+    .section-desc {
+      color: var(--subtext1);
+      font-size: 1rem;
+      max-width: 560px;
+      margin-bottom: 3rem;
+      line-height: 1.7;
+    }
+
+    /* ── Features ────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .feature-card {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 12px;
+      padding: 1.75rem;
+      transition: border-color 0.2s, transform 0.2s;
+    }
+    .feature-card:hover {
+      border-color: color-mix(in srgb, var(--green) 35%, transparent);
+      transform: translateY(-2px);
+    }
+
+    .feature-icon {
+      width: 44px;
+      height: 44px;
+      background: color-mix(in srgb, var(--green) 12%, transparent);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .feature-title {
+      font-weight: 700;
+      font-size: 1rem;
+      margin-bottom: 0.45rem;
+    }
+
+    .feature-desc {
+      font-size: 0.875rem;
+      color: var(--subtext0);
+      line-height: 1.65;
+    }
+
+    /* ── Screenshots ─────────────────────── */
+    .screenshots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+    }
+
+    .screenshot-wrap {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--surface0);
+      background: var(--mantle);
+    }
+
+    .screenshot-wrap img {
+      width: 100%;
+      display: block;
+      transition: transform 0.3s;
+    }
+    .screenshot-wrap:hover img { transform: scale(1.02); }
+
+    .screenshot-placeholder {
+      aspect-ratio: 16/10;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 0.6rem;
+      color: var(--subtext0);
+      font-size: 0.85rem;
+      border: 2px dashed var(--surface1);
+      border-radius: 12px;
+    }
+    .screenshot-placeholder .ss-icon { font-size: 2.2rem; opacity: 0.35; }
+    .screenshot-caption {
+      padding: 0.75rem 1rem;
+      font-size: 0.8rem;
+      color: var(--subtext0);
+      border-top: 1px solid var(--surface0);
+    }
+
+    /* ── Install ─────────────────────────── */
+    .install-tabs {
+      display: flex;
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .tab-btn {
+      padding: 6px 16px;
+      border-radius: 6px;
+      border: 1px solid var(--surface1);
+      background: none;
+      color: var(--subtext0);
+      font-size: 0.85rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .tab-btn.active {
+      background: var(--green);
+      border-color: var(--green);
+      color: var(--crust);
+      font-weight: 700;
+    }
+
+    .code-block {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 10px;
+      padding: 1.5rem;
+      position: relative;
+      overflow-x: auto;
+    }
+
+    .code-block pre {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.83rem;
+      line-height: 1.7;
+      color: var(--text);
+    }
+
+    .c-comment { color: var(--overlay1); }
+    .c-cmd     { color: var(--green); }
+    .c-flag    { color: var(--blue); }
+    .c-val     { color: var(--peach); }
+
+    .code-copy {
+      position: absolute;
+      top: 0.75rem;
+      right: 0.75rem;
+      background: var(--surface0);
+      border: none;
+      color: var(--subtext0);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .code-copy:hover { background: var(--surface1); color: var(--text); }
+
+    /* ── Architecture ────────────────────── */
+    .arch-box {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 12px;
+      padding: 2.5rem;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.875rem;
+      color: var(--subtext1);
+      line-height: 2;
+      overflow-x: auto;
+    }
+    .arch-hl  { color: var(--green); font-weight: 700; }
+    .arch-dim { color: var(--overlay0); }
+
+    .arch-props {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .arch-prop {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+
+    .arch-prop-label {
+      font-size: 0.75rem;
+      color: var(--overlay1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.3rem;
+      font-weight: 600;
+    }
+
+    .arch-prop-value {
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 500;
+    }
+
+    /* ── Footer ──────────────────────────── */
+    footer {
+      border-top: 1px solid var(--surface0);
+      padding: 2.5rem 2rem;
+      text-align: center;
+      color: var(--subtext0);
+      font-size: 0.875rem;
+    }
+
+    footer a { color: var(--green); text-decoration: none; }
+    footer a:hover { text-decoration: underline; }
+
+    /* ── Responsive ──────────────────────── */
+    @media (max-width: 640px) {
+      nav { padding: 0 1rem; }
+      .nav-links .hide-mobile { display: none; }
+      .hero { padding: 4rem 1.25rem 3rem; }
+      .section { padding: 3.5rem 1.25rem; }
+      .install-box { flex-direction: column; align-items: stretch; }
+      .arch-box { font-size: 0.72rem; padding: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Nav -->
+<nav>
+  <a href="." class="nav-logo">Tenodera</a>
+  <div class="nav-links">
+    <a href="docs/" class="hide-mobile" data-en="Docs" data-pl="Dokumentacja">Docs</a>
+    <a href="https://github.com/ultherego/Tenodera" target="_blank" rel="noopener" class="nav-gh">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+        <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
+      </svg>
+      GitHub
+    </a>
+    <div class="lang-toggle">
+      <button onclick="setLang('en')" id="btn-en" class="active">EN</button>
+      <button onclick="setLang('pl')" id="btn-pl">PL</button>
+    </div>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="hero-badge">
+    <span>🦎</span>
+    <span data-en="Open Source · Self-hosted · MIT" data-pl="Open Source · Samodzielny hosting · MIT">Open Source · Self-hosted · MIT</span>
+  </div>
+  <h1>
+    <span data-en="Manage your Linux servers" data-pl="Zarządzaj serwerami Linux">Manage your Linux servers</span><br>
+    <span class="accent" data-en="from the browser" data-pl="z przeglądarki">from the browser</span>
+  </h1>
+  <p data-en="A self-hosted admin panel for Linux servers. Terminal, services, packages, containers, files, firewall, and more — no VPN, no SSH tunnels required." data-pl="Samodzielny panel administracyjny dla serwerów Linux. Terminal, usługi, pakiety, kontenery, pliki, zapora sieciowa i więcej — bez VPN, bez tuneli SSH.">
+    A self-hosted admin panel for Linux servers. Terminal, services, packages, containers, files, firewall, and more — no VPN, no SSH tunnels required.
+  </p>
+  <div class="hero-actions">
+    <a href="https://github.com/ultherego/Tenodera" class="btn-primary" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      <span data-en="View on GitHub" data-pl="Zobacz na GitHub">View on GitHub</span>
+    </a>
+    <a href="docs/" class="btn-secondary">
+      <span data-en="Read the Docs" data-pl="Dokumentacja">Read the Docs</span>
+    </a>
+  </div>
+  <div class="install-box">
+    <pre id="install-cmd">curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh | sudo bash</pre>
+    <button class="copy-btn" onclick="copyInstall()" data-en="Copy" data-pl="Kopiuj">Copy</button>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Features -->
+<section class="section">
+  <div class="section-label" data-en="FEATURES" data-pl="FUNKCJE">FEATURES</div>
+  <h2 class="section-title" data-en="Everything you need to manage Linux servers" data-pl="Wszystko czego potrzebujesz do zarządzania serwerami Linux">Everything you need to manage Linux servers</h2>
+  <p class="section-desc" data-en="Real-time visibility and full control over your infrastructure — from a single, self-hosted web interface." data-pl="Widoczność w czasie rzeczywistym i pełna kontrola nad infrastrukturą — z jednego, samodzielnego interfejsu webowego.">
+    Real-time visibility and full control over your infrastructure — from a single, self-hosted web interface.
+  </p>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-title" data-en="No Inbound Ports" data-pl="Bez otwartych portów">No Inbound Ports</div>
+      <p class="feature-desc" data-en="Agents connect outbound to the gateway over WebSocket. No open ports, firewall exceptions, or VPN tunnels required on managed hosts." data-pl="Agenci łączą się wychodzącym połączeniem WebSocket do bramki. Żadnych otwartych portów, wyjątków w zaporze ani tuneli VPN na zarządzanych hostach.">Agents connect outbound to the gateway over WebSocket. No open ports, firewall exceptions, or VPN tunnels required on managed hosts.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔑</div>
+      <div class="feature-title" data-en="PAM Authentication" data-pl="Uwierzytelnianie PAM">PAM Authentication</div>
+      <p class="feature-desc" data-en="Uses existing system accounts — local users, FreeIPA, SSSD, LDAP. No separate user database to manage." data-pl="Używa istniejących kont systemowych — lokalni użytkownicy, FreeIPA, SSSD, LDAP. Żadnej osobnej bazy użytkowników.">Uses existing system accounts — local users, FreeIPA, SSSD, LDAP. No separate user database to manage.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <div class="feature-title" data-en="Real-time Dashboard" data-pl="Dashboard w czasie rzeczywistym">Real-time Dashboard</div>
+      <p class="feature-desc" data-en="Live charts for CPU, memory, disk I/O, and network — streamed over WebSocket with 90-point rolling history. No page refresh needed." data-pl="Wykresy na żywo: CPU, pamięć, dysk, sieć — przez WebSocket z historią 90 punktów. Bez odświeżania strony.">Live charts for CPU, memory, disk I/O, and network — streamed over WebSocket with 90-point rolling history. No page refresh needed.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🖥️</div>
+      <div class="feature-title" data-en="Browser Terminal" data-pl="Terminal w przeglądarce">Browser Terminal</div>
+      <p class="feature-desc" data-en="Full PTY running in the browser via xterm.js. Opens a shell as the authenticated user — no root shell exposed. Auto-copy on text selection." data-pl="Pełne PTY w przeglądarce przez xterm.js. Shell jako uwierzytelniony użytkownik — bez roota. Automatyczne kopiowanie po zaznaczeniu.">Full PTY running in the browser via xterm.js. Opens a shell as the authenticated user — no root shell exposed. Auto-copy on text selection.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🌐</div>
+      <div class="feature-title" data-en="Multi-host Management" data-pl="Zarządzanie wieloma hostami">Multi-host Management</div>
+      <p class="feature-desc" data-en="Manage unlimited servers from a single panel. Switch between hosts with one click — all pages instantly show data from the selected host." data-pl="Zarządzaj nieograniczoną liczbą serwerów z jednego panelu. Przełączaj hosty jednym kliknięciem — wszystkie strony natychmiast pokazują dane wybranego hosta.">Manage unlimited servers from a single panel. Switch between hosts with one click — all pages instantly show data from the selected host.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚙️</div>
+      <div class="feature-title" data-en="Comprehensive Feature Set" data-pl="Pełny zestaw funkcji">Comprehensive Feature Set</div>
+      <p class="feature-desc" data-en="Services, packages, containers (Docker/Podman), file manager, firewall, DNS, TLS certificates, cron jobs, kernel dumps, and audit logs." data-pl="Usługi, pakiety, kontenery (Docker/Podman), menedżer plików, zapora sieciowa, DNS, certyfikaty TLS, zadania cron, zrzuty jądra i logi audytu.">Services, packages, containers (Docker/Podman), file manager, firewall, DNS, TLS certificates, cron jobs, kernel dumps, and audit logs.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Screenshots -->
+<section class="section">
+  <div class="section-label" data-en="SCREENSHOTS" data-pl="ZRZUTY EKRANU">SCREENSHOTS</div>
+  <h2 class="section-title" data-en="See it in action" data-pl="Zobacz w akcji">See it in action</h2>
+  <p class="section-desc" data-en="A clean, dark interface built with React — designed for long admin sessions." data-pl="Czysty, ciemny interfejs w React — zaprojektowany dla długich sesji administracyjnych.">
+    A clean, dark interface built with React — designed for long admin sessions.
+  </p>
+  <div class="screenshots-grid">
+    <div class="screenshot-wrap" id="ss-dashboard">
+      <img src="assets/screenshots/dashboard.png" alt="Dashboard" onerror="this.closest('.screenshot-wrap').innerHTML=ph('📊','Dashboard')">
+      <div class="screenshot-caption" data-en="Dashboard — real-time system overview" data-pl="Dashboard — przegląd systemu w czasie rzeczywistym">Dashboard — real-time system overview</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-terminal">
+      <img src="assets/screenshots/terminal.png" alt="Terminal" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🖥️','Terminal')">
+      <div class="screenshot-caption" data-en="Terminal — browser-based PTY via xterm.js" data-pl="Terminal — PTY w przeglądarce przez xterm.js">Terminal — browser-based PTY via xterm.js</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-management">
+      <img src="assets/screenshots/management.png" alt="Management" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🌐','Multi-host Management')">
+      <div class="screenshot-caption" data-en="Management — multi-host overview" data-pl="Management — przegląd wielu hostów">Management — multi-host overview</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Quick Start -->
+<section class="section">
+  <div class="section-label" data-en="QUICK START" data-pl="SZYBKI START">QUICK START</div>
+  <h2 class="section-title" data-en="Up and running in minutes" data-pl="Działa w kilka minut">Up and running in minutes</h2>
+  <p class="section-desc" data-en="The installer handles everything: Rust, Node.js, build, binary install, systemd service. One command on the panel host, one on each managed host." data-pl="Instalator zajmuje się wszystkim: Rust, Node.js, kompilacja, instalacja, serwis systemd. Jedna komenda na hoście panelu, jedna na każdym zarządzanym hoście.">
+    The installer handles everything: Rust, Node.js, build, binary install, systemd service. One command on the panel host, one on each managed host.
+  </p>
+  <div class="install-tabs">
+    <button class="tab-btn active" onclick="showTab('panel')" id="tab-panel" data-en="Panel (gateway + UI)" data-pl="Panel (bramka + UI)">Panel (gateway + UI)</button>
+    <button class="tab-btn" onclick="showTab('agent')" id="tab-agent" data-en="Agent (managed host)" data-pl="Agent (zarządzany host)">Agent (managed host)</button>
+  </div>
+  <div id="content-panel" class="code-block">
+    <button class="code-copy" onclick="copyCode('panel')" data-en="Copy" data-pl="Kopiuj">Copy</button>
+    <pre><span class="c-comment"># Install panel on your gateway host</span>
+<span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span>
+
+<span class="c-comment"># Access at http://&lt;host&gt;:9090 — log in with any system user</span></pre>
+  </div>
+  <div id="content-agent" class="code-block" style="display:none">
+    <button class="code-copy" onclick="copyCode('agent')" data-en="Copy" data-pl="Kopiuj">Copy</button>
+    <pre><span class="c-comment"># Install agent on each managed host</span>
+<span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-agent.sh \
+  <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span> <span class="c-flag">-s</span> <span class="c-flag">--</span> <span class="c-flag">--gateway</span> <span class="c-val">http://&lt;panel-host&gt;:9090</span>
+
+<span class="c-comment"># Approve the host in the panel under: Hosts → Pending</span></pre>
+  </div>
+  <p style="margin-top:1.5rem; font-size:0.875rem; color:var(--subtext0)" data-en="Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd and x86_64." data-pl="Obsługiwane: Debian, Ubuntu, RHEL, Fedora, Arch — dowolny Linux z systemd i x86_64.">
+    Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd and x86_64.
+  </p>
+</section>
+
+<hr class="divider">
+
+<!-- Architecture -->
+<section class="section">
+  <div class="section-label" data-en="ARCHITECTURE" data-pl="ARCHITEKTURA">ARCHITECTURE</div>
+  <h2 class="section-title" data-en="How it works" data-pl="Jak to działa">How it works</h2>
+  <p class="section-desc" data-en="Agents connect outbound — the gateway never initiates connections to managed hosts. All communication is multiplexed over a single authenticated WebSocket per host." data-pl="Agenci łączą się wychodzącym połączeniem — bramka nigdy nie inicjuje połączeń z zarządzanymi hostami. Cała komunikacja jest multipleksowana przez jeden uwierzytelniony WebSocket na hosta.">
+    Agents connect outbound — the gateway never initiates connections to managed hosts. All communication is multiplexed over a single authenticated WebSocket per host.
+  </p>
+  <div class="arch-box">
+<span class="arch-dim">               </span>[ <span class="arch-hl">Browser</span> ]
+<span class="arch-dim">                    |</span>
+<span class="arch-dim">                    |</span> HTTPS / WSS
+<span class="arch-dim">                    |</span>
+<span class="arch-dim">               </span>[ <span class="arch-hl">Gateway</span> ]<span class="arch-dim">   Axum · PAM auth · session management</span>
+<span class="arch-dim">              /      |      \</span>
+<span class="arch-dim">outbound WS  /       |       \  outbound WS</span>
+<span class="arch-dim">            /        |        \</span>
+<span class="arch-dim">     </span>[ <span class="arch-hl">Agent</span> ]  [ <span class="arch-hl">Agent</span> ]  [ <span class="arch-hl">Agent</span> ]<span class="arch-dim">  ...</span>
+<span class="arch-dim">       host-1      host-2     localhost</span>
+  </div>
+  <div class="arch-props">
+    <div class="arch-prop">
+      <div class="arch-prop-label" data-en="Gateway" data-pl="Bramka">Gateway</div>
+      <div class="arch-prop-value">Rust · Axum 0.8</div>
+    </div>
+    <div class="arch-prop">
+      <div class="arch-prop-label">UI</div>
+      <div class="arch-prop-value">React 19 · TypeScript · Vite 6</div>
+    </div>
+    <div class="arch-prop">
+      <div class="arch-prop-label">Agent</div>
+      <div class="arch-prop-value">Rust · Tokio · ~20 MB</div>
+    </div>
+    <div class="arch-prop">
+      <div class="arch-prop-label" data-en="Protocol" data-pl="Protokół">Protocol</div>
+      <div class="arch-prop-value" data-en="JSON over WebSocket · v2" data-pl="JSON przez WebSocket · v2">JSON over WebSocket · v2</div>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<hr class="divider">
+<footer>
+  <p>
+    Tenodera &mdash;
+    <a href="https://github.com/ultherego/Tenodera" target="_blank" rel="noopener">GitHub</a> &middot;
+    <a href="docs/" data-en="Documentation" data-pl="Dokumentacja">Documentation</a> &middot;
+    <span data-en="MIT License" data-pl="Licencja MIT">MIT License</span>
+  </p>
+</footer>
+
+<script>
+  function ph(icon, label) {
+    return `<div class="screenshot-placeholder"><div class="ss-icon">${icon}</div><div>${label}</div></div>`;
+  }
+
+  // Language
+  let currentLang = localStorage.getItem('lang') || 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-en]').forEach(el => {
+      const val = lang === 'pl' ? el.dataset.pl : el.dataset.en;
+      if (val !== undefined) el.innerHTML = val;
+    });
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-pl').classList.toggle('active', lang === 'pl');
+  }
+
+  // Tabs
+  function showTab(tab) {
+    document.getElementById('content-panel').style.display = tab === 'panel' ? 'block' : 'none';
+    document.getElementById('content-agent').style.display = tab === 'agent' ? 'block' : 'none';
+    document.getElementById('tab-panel').classList.toggle('active', tab === 'panel');
+    document.getElementById('tab-agent').classList.toggle('active', tab === 'agent');
+  }
+
+  // Copy
+  function copyInstall() {
+    navigator.clipboard.writeText(document.getElementById('install-cmd').textContent.trim()).then(() => {
+      const btn = document.querySelector('.install-box .copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = '✓';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
+  }
+
+  function copyCode(tab) {
+    const pre = document.getElementById('content-' + tab).querySelector('pre');
+    navigator.clipboard.writeText(pre.innerText.trim()).then(() => {
+      const btn = document.getElementById('content-' + tab).querySelector('.code-copy');
+      const orig = btn.textContent;
+      btn.textContent = '✓';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
+  }
+
+  setLang(currentLang);
+</script>
+</body>
+</html>

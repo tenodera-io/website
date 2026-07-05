@@ -1,0 +1,844 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Tenodera documentation — installation, configuration, features, architecture, and troubleshooting.">
+  <title>Tenodera Documentation</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🦎</text></svg>">
+  <style>
+    :root {
+      --base:     #1e1e2e;
+      --mantle:   #181825;
+      --crust:    #11111b;
+      --surface0: #313244;
+      --surface1: #45475a;
+      --surface2: #585b70;
+      --overlay0: #6c7086;
+      --overlay1: #7f849c;
+      --subtext0: #a6adc8;
+      --subtext1: #bac2de;
+      --text:     #cdd6f4;
+      --green:    #a6e3a1;
+      --blue:     #89b4fa;
+      --mauve:    #cba6f7;
+      --peach:    #fab387;
+      --red:      #f38ba8;
+      --yellow:   #f9e2af;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--base);
+      color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    /* ── Header ──────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: color-mix(in srgb, var(--mantle) 92%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--surface0);
+      padding: 0 1.5rem;
+      height: 56px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-left { display: flex; align-items: center; gap: 0.75rem; }
+
+    .home-link {
+      color: var(--green);
+      text-decoration: none;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.3px;
+    }
+
+    .breadcrumb-sep { color: var(--surface2); font-size: 1.1rem; }
+
+    .page-label {
+      color: var(--subtext0);
+      font-size: 0.875rem;
+    }
+
+    .header-right { display: flex; align-items: center; gap: 1rem; }
+
+    .header-right a {
+      color: var(--subtext1);
+      text-decoration: none;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      transition: color 0.15s;
+    }
+    .header-right a:hover { color: var(--text); }
+
+    .lang-toggle {
+      display: flex;
+      background: var(--surface0);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .lang-toggle button {
+      border: none;
+      background: none;
+      color: var(--subtext0);
+      padding: 5px 11px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.5px;
+    }
+    .lang-toggle button.active { background: var(--green); color: var(--crust); }
+
+    .menu-toggle {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--text);
+      font-size: 1.25rem;
+      cursor: pointer;
+      padding: 4px;
+      line-height: 1;
+    }
+
+    /* ── Layout ──────────────────────────── */
+    .layout {
+      display: flex;
+      min-height: calc(100vh - 56px);
+    }
+
+    /* ── Sidebar ─────────────────────────── */
+    .sidebar {
+      width: 256px;
+      flex-shrink: 0;
+      background: var(--mantle);
+      border-right: 1px solid var(--surface0);
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto;
+      padding: 1.25rem 0 2rem;
+    }
+
+    .sb-group {
+      padding: 0.2rem 1.25rem;
+      font-size: 0.68rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1.8px;
+      color: var(--overlay1);
+      margin-top: 1.25rem;
+    }
+    .sb-group:first-child { margin-top: 0; }
+
+    .sidebar a {
+      display: block;
+      padding: 0.35rem 1.25rem 0.35rem 1.5rem;
+      font-size: 0.84rem;
+      color: var(--subtext0);
+      text-decoration: none;
+      border-left: 2px solid transparent;
+      transition: all 0.1s;
+    }
+    .sidebar a:hover {
+      color: var(--text);
+      background: color-mix(in srgb, var(--surface0) 45%, transparent);
+    }
+    .sidebar a.active {
+      color: var(--green);
+      border-left-color: var(--green);
+      background: color-mix(in srgb, var(--green) 8%, transparent);
+    }
+
+    /* ── Content ─────────────────────────── */
+    .content {
+      flex: 1;
+      min-width: 0;
+      padding: 3rem 3.5rem 6rem;
+      max-width: 860px;
+    }
+
+    .doc-header { margin-bottom: 2.5rem; }
+    .doc-header h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 0.4rem; }
+    .doc-header p { color: var(--subtext1); font-size: 1rem; }
+
+    /* ── Typography ──────────────────────── */
+    .section-anchor { padding-top: 4.5rem; margin-top: -2.5rem; }
+
+    h2 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      letter-spacing: -0.3px;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid var(--surface0);
+      margin-bottom: 1.25rem;
+    }
+    h2 .n { color: var(--green); margin-right: 0.35rem; }
+
+    h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: var(--subtext1);
+      margin: 1.75rem 0 0.6rem;
+    }
+
+    h4 {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--subtext0);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin: 1.25rem 0 0.4rem;
+    }
+
+    p { color: var(--subtext1); margin-bottom: 0.9rem; }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    strong { color: var(--text); font-weight: 600; }
+
+    ul, ol { margin: 0.7rem 0 0.9rem 1.4rem; color: var(--subtext1); }
+    li { margin-bottom: 0.3rem; }
+    li::marker { color: var(--green); }
+
+    /* ── Code ────────────────────────────── */
+    code {
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+      font-size: 0.82em;
+      background: var(--surface0);
+      color: var(--peach);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    pre {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 10px;
+      padding: 1.25rem 1.4rem;
+      overflow-x: auto;
+      margin: 0.9rem 0;
+      position: relative;
+    }
+    pre code {
+      background: none;
+      color: var(--text);
+      padding: 0;
+      font-size: 0.82rem;
+      line-height: 1.7;
+    }
+
+    .c-c { color: var(--overlay1); }
+    .c-g { color: var(--green); }
+    .c-b { color: var(--blue); }
+    .c-p { color: var(--peach); }
+    .c-m { color: var(--mauve); }
+
+    .pre-copy {
+      position: absolute;
+      top: 0.6rem;
+      right: 0.6rem;
+      background: var(--surface0);
+      border: none;
+      color: var(--subtext0);
+      padding: 3px 9px;
+      border-radius: 5px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .pre-copy:hover { background: var(--surface1); color: var(--text); }
+
+    /* ── Tables ──────────────────────────── */
+    .tw { overflow-x: auto; margin: 0.9rem 0; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    th {
+      background: var(--mantle);
+      color: var(--subtext1);
+      font-weight: 600;
+      padding: 0.55rem 0.9rem;
+      text-align: left;
+      border-bottom: 1px solid var(--surface0);
+      white-space: nowrap;
+    }
+    td {
+      padding: 0.55rem 0.9rem;
+      border-bottom: 1px solid var(--surface0);
+      color: var(--subtext1);
+      vertical-align: top;
+    }
+    tr:last-child td { border-bottom: none; }
+    tr:hover td { background: color-mix(in srgb, var(--surface0) 25%, transparent); }
+    td code { font-size: 0.78rem; }
+
+    /* ── Callouts ────────────────────────── */
+    .note {
+      background: color-mix(in srgb, var(--blue) 10%, transparent);
+      border-left: 3px solid var(--blue);
+      border-radius: 0 8px 8px 0;
+      padding: 0.7rem 1rem;
+      margin: 0.9rem 0;
+      font-size: 0.875rem;
+      color: var(--subtext1);
+    }
+    .warn {
+      background: color-mix(in srgb, var(--yellow) 10%, transparent);
+      border-left: 3px solid var(--yellow);
+      border-radius: 0 8px 8px 0;
+      padding: 0.7rem 1rem;
+      margin: 0.9rem 0;
+      font-size: 0.875rem;
+      color: var(--subtext1);
+    }
+
+    /* ── Badges ──────────────────────────── */
+    .badge {
+      display: inline-block;
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      vertical-align: middle;
+      letter-spacing: 0.3px;
+    }
+    .badge-admin { background: color-mix(in srgb, var(--red) 14%, transparent); color: var(--red); }
+    .badge-ro    { background: color-mix(in srgb, var(--blue) 14%, transparent); color: var(--blue); }
+
+    /* ── Back to top ─────────────────────── */
+    .back-top {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      background: var(--surface0);
+      color: var(--text);
+      border: 1px solid var(--surface1);
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      font-size: 1rem;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s;
+      z-index: 50;
+    }
+    .back-top:hover { background: var(--surface1); }
+    .back-top.visible { display: flex; }
+
+    /* ── Responsive ──────────────────────── */
+    @media (max-width: 800px) {
+      .sidebar {
+        position: fixed;
+        left: -260px;
+        top: 56px;
+        z-index: 99;
+        height: calc(100vh - 56px);
+        transition: left 0.25s;
+        box-shadow: 4px 0 20px rgba(0,0,0,0.5);
+      }
+      .sidebar.open { left: 0; }
+      .menu-toggle { display: block; }
+      .content { padding: 2rem 1.25rem 4rem; }
+      .page-label { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+    <a href="../" class="home-link">Tenodera</a>
+    <span class="breadcrumb-sep">/</span>
+    <span class="page-label" data-en="Documentation" data-pl="Dokumentacja">Documentation</span>
+  </div>
+  <div class="header-right">
+    <a href="https://github.com/ultherego/Tenodera" target="_blank" rel="noopener">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
+      GitHub
+    </a>
+    <div class="lang-toggle">
+      <button onclick="setLang('en')" id="btn-en" class="active">EN</button>
+      <button onclick="setLang('pl')" id="btn-pl">PL</button>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <nav class="sidebar" id="sidebar">
+    <div class="sb-group" data-en="OVERVIEW" data-pl="PRZEGLĄD">OVERVIEW</div>
+    <a href="#overview" data-en="1. Overview" data-pl="1. Przegląd">1. Overview</a>
+    <a href="#requirements" data-en="2. Requirements" data-pl="2. Wymagania">2. Requirements</a>
+    <div class="sb-group" data-en="SETUP" data-pl="KONFIGURACJA">SETUP</div>
+    <a href="#installation" data-en="3. Installation" data-pl="3. Instalacja">3. Installation</a>
+    <a href="#panel-config" data-en="4. Panel Configuration" data-pl="4. Konfiguracja panelu">4. Panel Configuration</a>
+    <a href="#agent-config" data-en="5. Agent Configuration" data-pl="5. Konfiguracja agenta">5. Agent Configuration</a>
+    <div class="sb-group" data-en="USAGE" data-pl="UŻYCIE">USAGE</div>
+    <a href="#auth" data-en="6. Authentication" data-pl="6. Uwierzytelnianie">6. Authentication</a>
+    <a href="#multihost" data-en="7. Multi-host" data-pl="7. Wiele hostów">7. Multi-host</a>
+    <a href="#features" data-en="8. Features" data-pl="8. Funkcje">8. Features</a>
+    <div class="sb-group" data-en="REFERENCE" data-pl="REFERENCJA">REFERENCE</div>
+    <a href="#service-mgmt" data-en="9. Service Management" data-pl="9. Zarządzanie usługami">9. Service Management</a>
+    <a href="#health" data-en="10. Health &amp; Monitoring" data-pl="10. Monitoring">10. Health &amp; Monitoring</a>
+    <a href="#architecture" data-en="11. Architecture" data-pl="11. Architektura">11. Architecture</a>
+    <a href="#security" data-en="12. Security" data-pl="12. Bezpieczeństwo">12. Security</a>
+    <a href="#uninstall" data-en="13. Uninstall" data-pl="13. Deinstalacja">13. Uninstall</a>
+    <a href="#troubleshooting" data-en="14. Troubleshooting" data-pl="14. Rozwiązywanie problemów">14. Troubleshooting</a>
+  </nav>
+
+  <main class="content">
+    <div class="doc-header">
+      <h1 data-en="Tenodera Documentation" data-pl="Dokumentacja Tenodera">Tenodera Documentation</h1>
+      <p data-en="Complete reference for installation, configuration, and all features." data-pl="Pełna dokumentacja instalacji, konfiguracji i wszystkich funkcji.">Complete reference for installation, configuration, and all features.</p>
+    </div>
+
+    <!-- 1. Overview -->
+    <div id="overview" class="section-anchor"></div>
+    <h2><span class="n">1</span><span data-en="Overview" data-pl="Przegląd">Overview</span></h2>
+    <p data-en="Tenodera is a self-hosted Linux server administration panel. It provides a real-time web interface for managing local and remote Linux servers — terminal access, service control, user management, package management, networking, storage, containers, logs, and more." data-pl="Tenodera to samodzielny panel administracyjny dla serwerów Linux. Zapewnia interfejs webowy w czasie rzeczywistym do zarządzania lokalnymi i zdalnymi serwerami — terminal, usługi, użytkownicy, pakiety, sieć, storage, kontenery, logi i więcej.">Tenodera is a self-hosted Linux server administration panel. It provides a real-time web interface for managing local and remote Linux servers — terminal access, service control, user management, package management, networking, storage, containers, logs, and more.</p>
+    <pre><code>Browser ──WSS──&gt; Gateway (:9090) &lt;──WS── tenodera-agent (remote host)
+                                 &lt;──WS── tenodera-agent (localhost)</code></pre>
+    <h3 data-en="Key design principles" data-pl="Główne zasady projektu">Key design principles</h3>
+    <ul>
+      <li><strong data-en="No inbound ports on managed hosts" data-pl="Bez otwartych portów na zarządzanych hostach">No inbound ports on managed hosts</strong> <span data-en="— agents connect outbound to the gateway via WebSocket" data-pl="— agenci łączą się wychodzącym połączeniem do bramki">— agents connect outbound to the gateway via WebSocket</span></li>
+      <li><strong data-en="No extra daemon required" data-pl="Bez dodatkowych demonów">No extra daemon required</strong> <span data-en="— the agent is a single binary managed by systemd" data-pl="— agent to pojedynczy plik binarny zarządzany przez systemd">— the agent is a single binary managed by systemd</span></li>
+      <li><strong data-en="PAM authentication" data-pl="Uwierzytelnianie PAM">PAM authentication</strong> <span data-en="— uses existing system accounts (local, LDAP, SSSD, FreeIPA)" data-pl="— używa istniejących kont systemowych (lokalne, LDAP, SSSD, FreeIPA)">— uses existing system accounts (local, LDAP, SSSD, FreeIPA)</span></li>
+      <li><strong data-en="Role-based access" data-pl="Dostęp oparty na rolach">Role-based access</strong> <span data-en="— admin vs. read-only, based on sudo group membership" data-pl="— admin vs. tylko odczyt, na podstawie przynależności do grupy sudo">— admin vs. read-only, based on sudo group membership</span></li>
+    </ul>
+
+    <!-- 2. Requirements -->
+    <div id="requirements" class="section-anchor"></div>
+    <h2><span class="n">2</span><span data-en="Requirements" data-pl="Wymagania">Requirements</span></h2>
+    <h3 data-en="Panel host" data-pl="Host panelu">Panel host</h3>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Requirement" data-pl="Wymaganie">Requirement</th><th data-en="Details" data-pl="Szczegóły">Details</th></tr></thead>
+      <tbody>
+        <tr><td>OS</td><td data-en="Linux (Debian, Ubuntu, RHEL, Fedora, Arch — tested on Debian 12, Fedora 43)" data-pl="Linux (Debian, Ubuntu, RHEL, Fedora, Arch — testowane na Debian 12, Fedora 43)">Linux (Debian, Ubuntu, RHEL, Fedora, Arch — tested on Debian 12, Fedora 43)</td></tr>
+        <tr><td>CPU</td><td>x86_64</td></tr>
+        <tr><td>RAM</td><td data-en="512 MB minimum (1 GB recommended during build)" data-pl="512 MB minimum (1 GB zalecane podczas kompilacji)">512 MB minimum (1 GB recommended during build)</td></tr>
+        <tr><td data-en="Network" data-pl="Sieć">Network</td><td data-en="Port 9090 accessible from browsers and managed hosts" data-pl="Port 9090 dostępny z przeglądarek i zarządzanych hostów">Port 9090 accessible from browsers and managed hosts</td></tr>
+      </tbody>
+    </table></div>
+    <h3 data-en="Managed hosts (agent only)" data-pl="Zarządzane hosty (tylko agent)">Managed hosts (agent only)</h3>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Requirement" data-pl="Wymaganie">Requirement</th><th data-en="Details" data-pl="Szczegóły">Details</th></tr></thead>
+      <tbody>
+        <tr><td>OS</td><td data-en="Linux (any distribution with systemd)" data-pl="Linux (dowolna dystrybucja z systemd)">Linux (any distribution with systemd)</td></tr>
+        <tr><td>CPU</td><td>x86_64</td></tr>
+        <tr><td>RAM</td><td data-en="~20 MB for the agent process" data-pl="~20 MB dla procesu agenta">~20 MB for the agent process</td></tr>
+        <tr><td data-en="Network" data-pl="Sieć">Network</td><td data-en="Outbound TCP to panel host on port 9090" data-pl="Wychodzące TCP do hosta panelu na porcie 9090">Outbound TCP to panel host on port 9090</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- 3. Installation -->
+    <div id="installation" class="section-anchor"></div>
+    <h2><span class="n">3</span><span data-en="Installation" data-pl="Instalacja">Installation</span></h2>
+    <h3 data-en="3.1 Panel (gateway + UI)" data-pl="3.1 Panel (bramka + UI)">3.1 Panel (gateway + UI)</h3>
+    <p data-en="Run on the host that will serve the web interface:" data-pl="Uruchom na hoście, który będzie serwował interfejs webowy:">Run on the host that will serve the web interface:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh | sudo bash</code></pre>
+    <p data-en="After install, log in at http://&lt;host&gt;:9090 with any PAM system user." data-pl="Po instalacji zaloguj się pod http://&lt;host&gt;:9090 dowolnym użytkownikiem systemowym PAM.">After install, log in at <code>http://&lt;host&gt;:9090</code> with any PAM system user.</p>
+    <div class="note" data-en="The panel starts in HTTP mode by default. Configure TLS before exposing to untrusted networks — see §4.2." data-pl="Panel domyślnie startuje w trybie HTTP. Skonfiguruj TLS przed udostępnieniem w niezaufanych sieciach — patrz §4.2.">⚡ The panel starts in HTTP mode by default. Configure TLS before exposing to untrusted networks — see §4.2.</div>
+
+    <h3 data-en="3.2 Agent (managed hosts)" data-pl="3.2 Agent (zarządzane hosty)">3.2 Agent (managed hosts)</h3>
+    <p data-en="Run on each host you want to manage:" data-pl="Uruchom na każdym hoście, którym chcesz zarządzać:">Run on each host you want to manage:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-agent.sh \
+  | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090</code></pre>
+    <p data-en="The host enters pending state — approve it in Hosts → Pending." data-pl="Host wchodzi w stan oczekiwania — zatwierdź go w Hosts → Pending.">The host enters <strong data-en="pending" data-pl="oczekiwania">pending</strong> state — approve it in <strong>Hosts → Pending</strong>.</p>
+    <p data-en="For unattended installs, generate a bootstrap token in Hosts → Tokens:" data-pl="Dla instalacji bez nadzoru wygeneruj token bootstrap w Hosts → Tokens:">For unattended installs, generate a bootstrap token in <strong>Hosts → Tokens</strong>:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-agent.sh \
+  | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090 --token &lt;bootstrap-token&gt;</code></pre>
+
+    <h3 data-en="3.3 Build from source" data-pl="3.3 Kompilacja ze źródeł">3.3 Build from source</h3>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>git clone https://github.com/ultherego/Tenodera
+cd Tenodera
+cd panel && sudo make all   <span class="c-c"># panel host</span>
+cd agent && sudo make all   <span class="c-c"># managed hosts</span></code></pre>
+
+    <!-- 4. Panel Config -->
+    <div id="panel-config" class="section-anchor"></div>
+    <h2><span class="n">4</span><span data-en="Panel Configuration" data-pl="Konfiguracja panelu">Panel Configuration</span></h2>
+    <h3 data-en="4.1 Gateway config reference (/etc/tenodera/tenodera.cnf)" data-pl="4.1 Konfiguracja bramki (/etc/tenodera/tenodera.cnf)">4.1 Gateway config reference</h3>
+    <p data-en="Edit /etc/tenodera/tenodera.cnf, then restart the service:" data-pl="Edytuj /etc/tenodera/tenodera.cnf, następnie zrestartuj serwis:">Edit <code>/etc/tenodera/tenodera.cnf</code>, then restart the service:</p>
+    <pre><code><span class="c-c"># ── Network ──────────────────────────────────────────────</span>
+TENODERA_BIND_ADDR=0.0.0.0        <span class="c-c"># Listen address</span>
+TENODERA_BIND_PORT=9090            <span class="c-c"># Listen port</span>
+
+<span class="c-c"># ── External URL (reverse proxy / public hostname) ───────</span>
+<span class="c-c"># TENODERA_EXTERNAL_URL=https://panel.example.com</span>
+
+<span class="c-c"># ── TLS ──────────────────────────────────────────────────</span>
+TENODERA_TLS_CERT=/etc/tenodera/tls/cert.pem
+TENODERA_TLS_KEY=/etc/tenodera/tls/key.pem
+<span class="c-c"># TENODERA_ALLOW_UNENCRYPTED=1   # dev only!</span>
+
+<span class="c-c"># ── Security ─────────────────────────────────────────────</span>
+TENODERA_IDLE_TIMEOUT=900          <span class="c-c"># Session idle timeout (seconds)</span>
+TENODERA_MAX_STARTUPS=20           <span class="c-c"># Max failed logins per IP per 5 min</span>
+
+<span class="c-c"># ── Logging ──────────────────────────────────────────────</span>
+RUST_LOG=tenodera_gateway=info</code></pre>
+
+    <h3 data-en="4.2 TLS setup" data-pl="4.2 Konfiguracja TLS">4.2 TLS setup</h3>
+    <h4 data-en="Self-signed (dev / testing)" data-pl="Samopodpisany (dev / testy)">Self-signed (dev / testing)</h4>
+    <pre><code>cd panel && sudo make tls-selfsigned</code></pre>
+    <h4>Let's Encrypt</h4>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo certbot certonly --standalone -d panel.example.com
+
+<span class="c-c"># Then in tenodera.cnf:</span>
+TENODERA_TLS_CERT=/etc/letsencrypt/live/panel.example.com/fullchain.pem
+TENODERA_TLS_KEY=/etc/letsencrypt/live/panel.example.com/privkey.pem
+
+<span class="c-c"># Restart on renewal:</span>
+echo 'systemctl restart tenodera' | sudo tee /etc/letsencrypt/renewal-hooks/deploy/tenodera.sh
+sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/tenodera.sh</code></pre>
+
+    <h3 data-en="4.3 Reverse proxy" data-pl="4.3 Reverse proxy">4.3 Reverse proxy</h3>
+    <p data-en="Set TENODERA_EXTERNAL_URL in tenodera.cnf so the gateway generates correct agent install commands. nginx example:" data-pl="Ustaw TENODERA_EXTERNAL_URL w tenodera.cnf. Przykład nginx:">Set <code>TENODERA_EXTERNAL_URL</code> in <code>tenodera.cnf</code>. nginx example:</p>
+    <pre><code>location / {
+    proxy_pass http://127.0.0.1:9090;
+    proxy_http_version 1.1;
+    proxy_set_header Upgrade $http_upgrade;
+    proxy_set_header Connection "upgrade";
+    proxy_set_header Host $host;
+    proxy_set_header X-Real-IP $remote_addr;
+    proxy_read_timeout 3600s;
+}</code></pre>
+
+    <!-- 5. Agent Config -->
+    <div id="agent-config" class="section-anchor"></div>
+    <h2><span class="n">5</span><span data-en="Agent Configuration" data-pl="Konfiguracja agenta">Agent Configuration</span></h2>
+    <p data-en="Edit /etc/tenodera/agent.cnf on each managed host, then restart the agent:" data-pl="Edytuj /etc/tenodera/agent.cnf na każdym zarządzanym hoście, następnie zrestartuj agenta:">Edit <code>/etc/tenodera/agent.cnf</code> on each managed host, then restart the agent:</p>
+    <pre><code><span class="c-c"># Gateway WebSocket endpoint</span>
+<span class="c-c"># http://  → plain WebSocket</span>
+<span class="c-c"># https:// → encrypted WebSocket</span>
+TENODERA_GATEWAY_URL=http://&lt;panel-host&gt;:9090
+
+<span class="c-c"># Bootstrap token — skip pending approval on first connect</span>
+<span class="c-c"># TENODERA_BOOTSTRAP_TOKEN=&lt;token&gt;</span>
+
+<span class="c-c"># Skip TLS cert verification (self-signed certs only)</span>
+<span class="c-c"># TENODERA_AGENT_ACCEPT_INSECURE=1</span>
+
+<span class="c-c"># Host roles (grouping label)</span>
+<span class="c-c"># role=web</span></code></pre>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Scenario" data-pl="Scenariusz">Scenario</th><th>Config</th></tr></thead>
+      <tbody>
+        <tr><td data-en="Plain HTTP" data-pl="Zwykłe HTTP">Plain HTTP</td><td><code>TENODERA_GATEWAY_URL=http://...</code></td></tr>
+        <tr><td data-en="HTTPS with CA-signed cert" data-pl="HTTPS z certyfikatem CA">HTTPS with CA-signed cert</td><td><code>TENODERA_GATEWAY_URL=https://...</code></td></tr>
+        <tr><td data-en="HTTPS with self-signed cert" data-pl="HTTPS z self-signed">HTTPS with self-signed cert</td><td><code>https://...</code> + <code>TENODERA_AGENT_ACCEPT_INSECURE=1</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- 6. Auth -->
+    <div id="auth" class="section-anchor"></div>
+    <h2><span class="n">6</span><span data-en="Authentication &amp; Access Control" data-pl="Uwierzytelnianie i kontrola dostępu">Authentication &amp; Access Control</span></h2>
+    <p data-en="Tenodera uses PAM authentication — the same credentials as the system. No separate user database." data-pl="Tenodera używa uwierzytelniania PAM — te same dane logowania co system. Żadnej osobnej bazy użytkowników.">Tenodera uses <strong>PAM authentication</strong> — the same credentials as the system. No separate user database.</p>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Role" data-pl="Rola">Role</th><th data-en="Who" data-pl="Kto">Who</th><th data-en="Permissions" data-pl="Uprawnienia">Permissions</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Admin</strong></td><td data-en="Users in sudo, wheel, or admin group" data-pl="Użytkownicy w grupie sudo, wheel lub admin">Users in <code>sudo</code>, <code>wheel</code>, or <code>admin</code> group</td><td data-en="Full read/write access to all features" data-pl="Pełny dostęp do wszystkich funkcji">Full read/write access</td></tr>
+        <tr><td><strong data-en="Read-only" data-pl="Tylko odczyt">Read-only</strong></td><td data-en="All other PAM users" data-pl="Wszyscy inni użytkownicy PAM">All other PAM users</td><td data-en="Monitor only — no write operations" data-pl="Tylko monitoring — brak operacji zapisu">Monitor only — no write operations</td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="LDAP/SSSD/FreeIPA users work transparently — PAM is configured for them at the OS level." data-pl="Użytkownicy LDAP/SSSD/FreeIPA działają transparentnie — PAM jest dla nich skonfigurowane na poziomie OS.">LDAP/SSSD/FreeIPA users work transparently — PAM is configured for them at the OS level.</p>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Setting" data-pl="Ustawienie">Setting</th><th data-en="Default" data-pl="Domyślnie">Default</th><th data-en="Config key" data-pl="Klucz konfiguracji">Config key</th></tr></thead>
+      <tbody>
+        <tr><td data-en="Idle timeout" data-pl="Timeout bezczynności">Idle timeout</td><td data-en="15 minutes" data-pl="15 minut">15 min</td><td><code>TENODERA_IDLE_TIMEOUT</code></td></tr>
+        <tr><td data-en="Max session lifetime" data-pl="Maks. czas sesji">Max session lifetime</td><td data-en="4 hours" data-pl="4 godziny">4 h</td><td>—</td></tr>
+        <tr><td data-en="Brute-force protection" data-pl="Ochrona brute-force">Brute-force protection</td><td data-en="20 attempts / 5 min / IP" data-pl="20 prób / 5 min / IP">20 / 5 min / IP</td><td><code>TENODERA_MAX_STARTUPS</code></td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- 7. Multi-host -->
+    <div id="multihost" class="section-anchor"></div>
+    <h2><span class="n">7</span><span data-en="Multi-Host Management" data-pl="Zarządzanie wieloma hostami">Multi-Host Management</span></h2>
+    <p data-en="Each managed host runs tenodera-agent which connects outbound to the gateway. The host selector (top-left) switches context — all pages instantly show data from the selected host." data-pl="Każdy zarządzany host uruchamia tenodera-agent łączący się wychodzącym połączeniem. Selektor hosta (góra-lewo) przełącza kontekst — wszystkie strony natychmiast pokazują dane wybranego hosta.">Each managed host runs <code>tenodera-agent</code> which connects outbound to the gateway. The host selector (top-left) switches context — all pages instantly show data from the selected host.</p>
+    <ul>
+      <li data-en="Hosts enter pending state on first connect — approve in Hosts → Pending" data-pl="Hosty wchodzą w stan oczekiwania przy pierwszym połączeniu — zatwierdź w Hosts → Pending">Hosts enter <strong>pending</strong> state on first connect — approve in <strong>Hosts → Pending</strong></li>
+      <li data-en="Use bootstrap tokens for unattended enrollment — generate in Hosts → Tokens" data-pl="Tokeny bootstrap dla instalacji bez nadzoru — generuj w Hosts → Tokens">Use bootstrap tokens for unattended enrollment — <strong>Hosts → Tokens</strong></li>
+      <li data-en="Agents reconnect automatically with exponential backoff on disconnect" data-pl="Agenci łączą się ponownie automatycznie z wykładniczym backoff">Agents reconnect automatically with exponential backoff on disconnect</li>
+      <li data-en="Host roles: set in agent.cnf or via the Management UI (no restart required)" data-pl="Role hosta: ustaw w agent.cnf lub przez UI Management (bez restartu)">Host roles: set in <code>agent.cnf</code> or via the Management UI (no restart required)</li>
+    </ul>
+
+    <!-- 8. Features -->
+    <div id="features" class="section-anchor"></div>
+    <h2><span class="n">8</span><span data-en="Feature Reference" data-pl="Dokumentacja funkcji">Feature Reference</span></h2>
+    <div class="tw"><table>
+      <thead><tr>
+        <th data-en="Page" data-pl="Strona">Page</th>
+        <th data-en="Description" data-pl="Opis">Description</th>
+        <th data-en="Write" data-pl="Zapis">Write</th>
+      </tr></thead>
+      <tbody>
+        <tr>
+          <td><strong>Dashboard</strong></td>
+          <td data-en="Live CPU, memory, disk I/O, network charts (90-point rolling). Top processes, interfaces, disk partitions." data-pl="Wykresy na żywo: CPU, pamięć, I/O dysku, sieć. Procesy, interfejsy, partycje.">Live CPU, memory, disk I/O, network charts. Top processes, interfaces, disk partitions.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Terminal</strong></td>
+          <td data-en="Full PTY via xterm.js. Shell as authenticated user (setuid drop). 10 000-line scrollback." data-pl="Pełne PTY przez xterm.js. Shell jako uwierzytelniony użytkownik. 10 000 linii scrollback.">Full PTY via xterm.js. Shell as authenticated user. 10 000-line scrollback.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Services</strong></td>
+          <td data-en="All loaded systemd units with state, status, description. Filter, sort. Start/stop/restart/enable/disable." data-pl="Wszystkie załadowane jednostki systemd. Filtrowanie, sortowanie. Start/stop/restart/enable/disable.">All loaded systemd units. Filter, sort. Start/stop/restart/enable/disable.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong data-en="Users &amp; Groups" data-pl="Użytkownicy i grupy">Users &amp; Groups</strong></td>
+          <td data-en="NSS-aware list (local, SSSD, FreeIPA). Lock, unlock, delete, change password, create user." data-pl="Lista przez NSS (lokalne, SSSD, FreeIPA). Blokuj, odblokuj, usuń, zmień hasło, utwórz.">NSS-aware (local, SSSD, FreeIPA). Lock, unlock, delete, change password, create.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Packages</strong></td>
+          <td data-en="Auto-detected backend: apt / dnf / pacman. Installed, search, updates, repository management." data-pl="Automatycznie wykryty backend: apt / dnf / pacman. Zainstalowane, szukaj, aktualizacje, repozytoria.">Auto-detected: apt / dnf / pacman. Installed, search, updates, repos.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Storage</strong></td>
+          <td data-en="Block device tree (lsblk-style) with size/used/free. Real-time disk I/O chart." data-pl="Drzewo urządzeń blokowych z rozmiarem/wolnym. Wykres I/O dysku w czasie rzeczywistym.">Block device tree. Real-time disk I/O chart.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Networking</strong></td>
+          <td data-en="Traffic charts per interface. Firewall management (ufw/firewalld/nftables). Interface up/down." data-pl="Wykresy ruchu na interfejs. Zapora sieciowa (ufw/firewalld/nftables). Up/down interfejsów.">Traffic charts. Firewall (ufw/firewalld/nftables). Interface up/down.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Containers</strong></td>
+          <td data-en="Docker and Podman containers and images. User and root namespace. Start, stop, remove." data-pl="Kontenery i obrazy Docker i Podman. Przestrzeń użytkownika i roota. Start, stop, usuwanie.">Docker/Podman containers and images. Start, stop, remove.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Files</strong></td>
+          <td data-en="File manager. Limited mode: home dir only. Administrative mode (superuser password): full filesystem via sudo." data-pl="Menedżer plików. Tryb ograniczony: tylko katalog domowy. Tryb administracyjny (hasło sudo): pełny system plików.">Limited mode (home dir) or Administrative mode (full fs via sudo).</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Logs</strong></td>
+          <td data-en="systemd journal with unit filter. /var/log browser with full-text search, context lines, date/time range." data-pl="Dziennik systemd z filtrem. Przeglądarka /var/log z pełnotekstowym wyszukiwaniem, zakresem dat.">systemd journal + /var/log browser with full-text search and date range.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>Cron</strong></td>
+          <td data-en="View /etc/crontab, /etc/cron.d/*, user crontabs. Human-readable schedule descriptions. Edit raw crontab." data-pl="Przeglądaj i edytuj crontaby systemowe i użytkowników. Czytelne opisy harmonogramów.">View and edit system and user crontabs.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Kdump</strong></td>
+          <td data-en="kdump/kexec-tools status, reserved memory, crash dump browser with dmesg viewer." data-pl="Status kdump/kexec-tools, zarezerwowana pamięć, przeglądarka zrzutów awarii z dmesg.">kdump status, reserved memory, crash dump browser.</td>
+          <td>—</td>
+        </tr>
+        <tr>
+          <td><strong>DNS</strong></td>
+          <td data-en="Edit /etc/resolv.conf and /etc/hosts. Interactive dig lookup (A/AAAA/MX/TXT/CNAME/…)." data-pl="Edytuj /etc/resolv.conf i /etc/hosts. Interaktywne wyszukiwanie dig.">Edit resolv.conf, /etc/hosts. Interactive dig lookup.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Certificates</strong></td>
+          <td data-en="Scan, import, remove TLS certs. Trust store management. Let's Encrypt overview. Self-signed generator." data-pl="Skanuj, importuj, usuń certyfikaty TLS. Trust store. Let's Encrypt. Generator self-signed.">TLS cert scan/import/remove. Trust store. Let's Encrypt. Self-signed generator.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+        <tr>
+          <td><strong>Management</strong></td>
+          <td data-en="Enrolled hosts, pending hosts, bootstrap tokens. Assign roles, restart or remove hosts." data-pl="Zarejestrowane hosty, oczekujące, tokeny bootstrap. Role, restart, usuwanie.">Enrolled, pending, tokens. Roles, restart, remove.</td>
+          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
+        </tr>
+      </tbody>
+    </table></div>
+
+    <!-- 9. Service Management -->
+    <div id="service-mgmt" class="section-anchor"></div>
+    <h2><span class="n">9</span><span data-en="Service Management" data-pl="Zarządzanie usługami">Service Management</span></h2>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code><span class="c-c"># Panel host</span>
+sudo systemctl status tenodera
+sudo systemctl restart tenodera
+journalctl -u tenodera -f
+
+<span class="c-c"># Agent (all hosts)</span>
+sudo systemctl status tenodera-agent
+sudo systemctl restart tenodera-agent
+journalctl -u tenodera-agent -f</code></pre>
+    <h3 data-en="Installed files" data-pl="Zainstalowane pliki">Installed files</h3>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Path" data-pl="Ścieżka">Path</th><th data-en="Description" data-pl="Opis">Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>/usr/local/bin/tenodera-gateway</code></td><td data-en="Gateway binary" data-pl="Plik binarny bramki">Gateway binary</td></tr>
+        <tr><td><code>/usr/local/bin/tenodera-pam-helper</code></td><td data-en="PAM helper (setuid root)" data-pl="Helper PAM (setuid root)">PAM helper (setuid root)</td></tr>
+        <tr><td><code>/usr/local/bin/tenodera-agent</code></td><td data-en="Agent binary (setuid root)" data-pl="Plik binarny agenta (setuid root)">Agent binary (setuid root)</td></tr>
+        <tr><td><code>/usr/share/tenodera/ui/</code></td><td data-en="Built UI assets" data-pl="Skompilowane zasoby UI">Built UI assets</td></tr>
+        <tr><td><code>/etc/tenodera/tenodera.cnf</code></td><td data-en="Gateway configuration" data-pl="Konfiguracja bramki">Gateway configuration</td></tr>
+        <tr><td><code>/etc/tenodera/agent.cnf</code></td><td data-en="Agent configuration" data-pl="Konfiguracja agenta">Agent configuration</td></tr>
+        <tr><td><code>/var/lib/tenodera-gw/hosts.json</code></td><td data-en="Enrolled hosts registry + Ed25519 public keys" data-pl="Rejestr zarejestrowanych hostów + klucze publiczne Ed25519">Enrolled hosts registry + Ed25519 public keys</td></tr>
+        <tr><td><code>/var/log/tenodera_audit.log</code></td><td data-en="Audit log (logins, logouts, privilege escalations)" data-pl="Log audytu (logowania, wylogowania, eskalacje uprawnień)">Audit log</td></tr>
+      </tbody>
+    </table></div>
+
+    <!-- 10. Health -->
+    <div id="health" class="section-anchor"></div>
+    <h2><span class="n">10</span><span data-en="Health &amp; Monitoring" data-pl="Zdrowie i monitoring">Health &amp; Monitoring</span></h2>
+    <pre><code>GET /api/health        <span class="c-c"># → { status, sessions, uptime_secs, version }</span>
+GET /api/health/ready  <span class="c-c"># → 200 OK | 503 (readiness probe)</span></code></pre>
+
+    <!-- 11. Architecture -->
+    <div id="architecture" class="section-anchor"></div>
+    <h2><span class="n">11</span><span data-en="Architecture" data-pl="Architektura">Architecture</span></h2>
+    <pre><code>                  [ Browser ]
+                       |
+                       | HTTPS / WSS  (channel-multiplexed JSON)
+                       |
+                  [ Gateway ]   Axum HTTP/WS · PAM auth · session management
+                 /      |      \
+   outbound WS  /       |       \  outbound WS
+               /        |        \
+        [ Agent ]  [ Agent ]  [ Agent ]   ...
+          host-1      host-2     localhost</code></pre>
+    <ul>
+      <li><strong>Gateway</strong> — <span data-en="Rust, Axum 0.8. Serves React UI, authenticates via PAM subprocess, routes WebSocket channels. Starts as root, drops to tenodera-gw user after binding." data-pl="Rust, Axum 0.8. Serwuje UI React, uwierzytelnia przez podproces PAM, kieruje kanały WebSocket. Startuje jako root, odpada do użytkownika tenodera-gw.">Rust, Axum 0.8. Serves React UI, authenticates via PAM subprocess, routes WebSocket channels. Starts as root, drops to <code>tenodera-gw</code> user after binding.</span></li>
+      <li><strong>Agent</strong> — <span data-en="Rust, Tokio. ~20 MB resident. Connects outbound. 39 operation types across 28 handler modules. Setuid root, drops to authenticated user's UID/GID for terminal sessions." data-pl="Rust, Tokio. ~20 MB. Połączenie wychodzące. 39 typów operacji. Setuid root, spada do UID/GID użytkownika dla terminala.">Rust, Tokio. ~20 MB. 39 operation types. Setuid root, drops to user UID/GID for terminal.</span></li>
+      <li><strong>Protocol</strong> — <span data-en="Shared Rust library. JSON messages with type field. Protocol version 2." data-pl="Wspólna biblioteka Rust. Wiadomości JSON z polem type. Protokół wersja 2.">Shared Rust library. JSON messages with type field. Protocol version 2.</span></li>
+    </ul>
+
+    <!-- 12. Security -->
+    <div id="security" class="section-anchor"></div>
+    <h2><span class="n">12</span><span data-en="Security" data-pl="Bezpieczeństwo">Security</span></h2>
+    <p data-en="See SECURITY.md on GitHub for the full security model." data-pl="Pełny model bezpieczeństwa: SECURITY.md na GitHub.">See <a href="https://github.com/ultherego/Tenodera/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a> on GitHub for the full security model.</p>
+    <ul>
+      <li data-en="PAM auth via isolated tenodera-pam-helper subprocess — gateway never handles PAM directly" data-pl="Uwierzytelnianie PAM przez izolowany podproces — bramka nigdy nie obsługuje PAM bezpośrednio">PAM auth via isolated <code>tenodera-pam-helper</code> subprocess — gateway never handles PAM directly</li>
+      <li data-en="Ed25519 TOFU agent authentication — 32-byte challenge-response; SECURITY ALERT on key mismatch" data-pl="Uwierzytelnianie agentów Ed25519 TOFU — challenge-response 32 bajtów; SECURITY ALERT przy niezgodności klucza">Ed25519 TOFU agent authentication — 32-byte challenge-response; SECURITY ALERT on key mismatch</li>
+      <li data-en="TLS required by default; HSTS (max-age=63072000; includeSubDomains)" data-pl="TLS domyślnie wymagane; HSTS (max-age=63072000; includeSubDomains)">TLS required by default; HSTS (<code>max-age=63072000; includeSubDomains</code>)</li>
+      <li data-en="WebSocket Origin validation, CSRF protection on all mutating HTTP requests" data-pl="Walidacja Origin WebSocket, ochrona CSRF na wszystkich mutujących żądaniach HTTP">WebSocket Origin validation, CSRF protection on all mutating HTTP requests</li>
+      <li data-en="Full HTTP security headers: CSP, X-Frame-Options: DENY, X-Content-Type-Options, Referrer-Policy, Permissions-Policy" data-pl="Pełne nagłówki bezpieczeństwa HTTP: CSP, X-Frame-Options: DENY, X-Content-Type-Options, Referrer-Policy">Full HTTP security headers: CSP, X-Frame-Options, X-Content-Type-Options, Referrer-Policy</li>
+      <li data-en="Gateway injects _user/_role into every channel message — agent never trusts client-supplied identity" data-pl="Bramka wstrzykuje _user/_role do każdej wiadomości — agent nigdy nie ufa tożsamości od klienta">Gateway injects <code>_user</code>/<code>_role</code> into every channel message — agent never trusts client-supplied identity</li>
+      <li data-en="Core dumps disabled at startup (setrlimit RLIMIT_CORE 0); systemd hardening: NoNewPrivileges, PrivateTmp, ProtectSystem=strict" data-pl="Zrzuty pamięci wyłączone przy starcie; hardening systemd: NoNewPrivileges, PrivateTmp, ProtectSystem=strict">Core dumps disabled; systemd hardening: NoNewPrivileges, PrivateTmp, ProtectSystem=strict</li>
+      <li data-en="Audit log: all logins, logouts, and privilege escalations → /var/log/tenodera_audit.log" data-pl="Log audytu: wszystkie logowania, wylogowania, eskalacje → /var/log/tenodera_audit.log">Audit log: all logins, logouts, privilege escalations → <code>/var/log/tenodera_audit.log</code></li>
+    </ul>
+
+    <!-- 13. Uninstall -->
+    <div id="uninstall" class="section-anchor"></div>
+    <h2><span class="n">13</span><span data-en="Uninstall" data-pl="Deinstalacja">Uninstall</span></h2>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code><span class="c-c"># Panel host (removes everything)</span>
+curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh \
+  | sudo bash -s -- --uninstall
+
+<span class="c-c"># Managed hosts (agent only)</span>
+curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-agent.sh \
+  | sudo bash -s -- --uninstall</code></pre>
+
+    <!-- 14. Troubleshooting -->
+    <div id="troubleshooting" class="section-anchor"></div>
+    <h2><span class="n">14</span><span data-en="Troubleshooting" data-pl="Rozwiązywanie problemów">Troubleshooting</span></h2>
+    <h3 data-en="Panel not starting" data-pl="Panel nie startuje">Panel not starting</h3>
+    <pre><code>journalctl -u tenodera -e</code></pre>
+    <ul>
+      <li><strong data-en="TLS certificate not found" data-pl="Certyfikat TLS nie znaleziony">TLS certificate not found</strong> — <span data-en="set TENODERA_ALLOW_UNENCRYPTED=1 or generate: cd panel && sudo make tls-selfsigned" data-pl="ustaw TENODERA_ALLOW_UNENCRYPTED=1 lub wygeneruj: cd panel && sudo make tls-selfsigned">set <code>TENODERA_ALLOW_UNENCRYPTED=1</code> or run <code>cd panel &amp;&amp; sudo make tls-selfsigned</code></span></li>
+      <li><strong data-en="Port 9090 in use" data-pl="Port 9090 zajęty">Port 9090 in use</strong> — <span data-en="change TENODERA_BIND_PORT in tenodera.cnf" data-pl="zmień TENODERA_BIND_PORT w tenodera.cnf">change <code>TENODERA_BIND_PORT</code> in <code>tenodera.cnf</code></span></li>
+    </ul>
+
+    <h3 data-en="Agent not connecting to gateway" data-pl="Agent nie łączy się z bramką">Agent not connecting to gateway</h3>
+    <pre><code>journalctl -u tenodera-agent -e</code></pre>
+    <ul>
+      <li><strong data-en="Wrong gateway URL" data-pl="Zły URL bramki">Wrong gateway URL</strong> — <span data-en="check TENODERA_GATEWAY_URL in /etc/tenodera/agent.cnf" data-pl="sprawdź TENODERA_GATEWAY_URL w /etc/tenodera/agent.cnf">check <code>TENODERA_GATEWAY_URL</code> in <code>/etc/tenodera/agent.cnf</code></span></li>
+      <li><strong data-en="Firewall blocking" data-pl="Zapora blokuje">Firewall blocking</strong> — <span data-en="managed host must reach panel on TCP 9090 (outbound only)" data-pl="zarządzany host musi dotrzeć do panelu na TCP 9090 (tylko wychodzące)">managed host must reach panel on TCP 9090 (outbound only)</span></li>
+      <li><strong data-en="TLS cert verification failing" data-pl="Błąd weryfikacji certyfikatu TLS">TLS cert failing</strong> — <span data-en="set TENODERA_AGENT_ACCEPT_INSECURE=1 for self-signed certs" data-pl="ustaw TENODERA_AGENT_ACCEPT_INSECURE=1 dla self-signed">set <code>TENODERA_AGENT_ACCEPT_INSECURE=1</code> for self-signed certs</span></li>
+    </ul>
+
+    <h3 data-en="Agent not appearing in Hosts → Pending" data-pl="Agent nie pojawia się w Hosts → Pending">Agent not in Hosts → Pending</h3>
+    <ul>
+      <li data-en="Verify TENODERA_GATEWAY_URL in agent.cnf" data-pl="Sprawdź TENODERA_GATEWAY_URL w agent.cnf"><span data-en="Verify" data-pl="Sprawdź">Verify</span> <code>TENODERA_GATEWAY_URL</code></li>
+      <li data-en="Bootstrap token invalid or expired — check Hosts → Tokens in the panel" data-pl="Token bootstrap nieważny lub wygasł — sprawdź Hosts → Tokens w panelu"><span data-en="Bootstrap token invalid or expired — check" data-pl="Token nieważny lub wygasł — sprawdź">Bootstrap token invalid or expired — check</span> <strong>Hosts → Tokens</strong></li>
+      <li data-en="Pending limit reached (max 100) — check gateway logs: journalctl -u tenodera -e" data-pl="Limit oczekujących osiągnięty (maks. 100) — sprawdź logi: journalctl -u tenodera -e"><span data-en="Pending limit reached (max 100)" data-pl="Limit oczekujących osiągnięty (maks. 100)">Pending limit reached (max 100)</span></li>
+    </ul>
+
+    <h3 data-en="Enable debug logging" data-pl="Włącz logowanie debug">Enable debug logging</h3>
+    <pre><code><span class="c-c"># In /etc/tenodera/tenodera.cnf:</span>
+RUST_LOG=tenodera_gateway=debug
+sudo systemctl restart tenodera
+journalctl -u tenodera -f</code></pre>
+
+    <h3 data-en="Login fails" data-pl="Logowanie nie działa">Login fails</h3>
+    <ul>
+      <li data-en="Verify the user exists on the panel host (not the managed host)" data-pl="Sprawdź czy użytkownik istnieje na hoście panelu (nie zarządzanym)"><span data-en="Verify the user exists on the panel host (not the managed host)" data-pl="Sprawdź czy użytkownik istnieje na hoście panelu">Verify the user exists on the <strong>panel host</strong> (not the managed host)</span></li>
+      <li data-en="Verify PAM: pamtester tenodera &lt;username&gt; authenticate" data-pl="Sprawdź PAM: pamtester tenodera &lt;username&gt; authenticate">Verify PAM: <code>pamtester tenodera &lt;username&gt; authenticate</code></li>
+      <li data-en="Check audit log: sudo tail -f /var/log/tenodera_audit.log" data-pl="Sprawdź log audytu: sudo tail -f /var/log/tenodera_audit.log">Check audit log: <code>sudo tail -f /var/log/tenodera_audit.log</code></li>
+    </ul>
+  </main>
+</div>
+
+<button class="back-top" id="backTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" aria-label="Back to top">↑</button>
+
+<script>
+  // Language
+  let currentLang = localStorage.getItem('lang') || 'en';
+
+  function setLang(lang) {
+    currentLang = lang;
+    localStorage.setItem('lang', lang);
+    document.documentElement.lang = lang;
+    document.querySelectorAll('[data-en]').forEach(el => {
+      const val = lang === 'pl' ? el.dataset.pl : el.dataset.en;
+      if (val !== undefined) el.innerHTML = val;
+    });
+    document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+    document.getElementById('btn-pl').classList.toggle('active', lang === 'pl');
+  }
+
+  // Mobile sidebar
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+  }
+  document.addEventListener('click', e => {
+    const sb = document.getElementById('sidebar');
+    if (sb.classList.contains('open') && !sb.contains(e.target) && !e.target.closest('.menu-toggle')) {
+      sb.classList.remove('open');
+    }
+  });
+
+  // Scroll spy
+  const anchors = document.querySelectorAll('.section-anchor');
+  const navLinks = document.querySelectorAll('.sidebar a');
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        navLinks.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + e.target.id));
+      }
+    });
+  }, { rootMargin: '-5% 0px -80% 0px' });
+  anchors.forEach(a => io.observe(a));
+
+  // Back to top
+  window.addEventListener('scroll', () => {
+    document.getElementById('backTop').classList.toggle('visible', window.scrollY > 400);
+  });
+
+  // Copy buttons
+  function cpre(btn) {
+    const code = btn.nextElementSibling;
+    navigator.clipboard.writeText(code.innerText.trim()).then(() => {
+      const orig = btn.textContent;
+      btn.textContent = '✓';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    });
+  }
+
+  setLang(currentLang);
+</script>
+</body>
+</html>
