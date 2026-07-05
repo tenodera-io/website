@@ -337,6 +337,15 @@
       z-index: 50;
     }
     .back-top:hover { background: var(--surface1); }
+
+    .sidebar a.sub {
+      padding-left: 2.5rem;
+      font-size: 0.78rem;
+      color: var(--overlay1);
+      border-left-color: transparent;
+    }
+    .sidebar a.sub:hover { color: var(--subtext0); background: color-mix(in srgb, var(--surface0) 30%, transparent); }
+    .sidebar a.sub.active { color: var(--green); border-left-color: var(--green); }
     .back-top.visible { display: flex; }
 
     /* ── Responsive ──────────────────────── */
@@ -391,6 +400,22 @@
     <a href="#auth" data-en="6. Authentication" data-pl="6. Uwierzytelnianie">6. Authentication</a>
     <a href="#multihost" data-en="7. Multi-host" data-pl="7. Wiele hostów">7. Multi-host</a>
     <a href="#features" data-en="8. Features" data-pl="8. Funkcje">8. Features</a>
+    <a href="#feat-dashboard" class="sub">8.1 Dashboard</a>
+    <a href="#feat-terminal" class="sub">8.2 Terminal</a>
+    <a href="#feat-services" class="sub">8.3 Services</a>
+    <a href="#feat-users" class="sub" data-en="8.4 Users &amp; Groups" data-pl="8.4 Użytkownicy">8.4 Users &amp; Groups</a>
+    <a href="#feat-packages" class="sub">8.5 Packages</a>
+    <a href="#feat-storage" class="sub">8.6 Storage</a>
+    <a href="#feat-networking" class="sub">8.7 Networking</a>
+    <a href="#feat-containers" class="sub">8.8 Containers</a>
+    <a href="#feat-files" class="sub">8.9 Files</a>
+    <a href="#feat-journal" class="sub">8.10 Logs (Journal)</a>
+    <a href="#feat-logfiles" class="sub">8.11 Log Files</a>
+    <a href="#feat-cron" class="sub">8.12 Cron Jobs</a>
+    <a href="#feat-kdump" class="sub">8.13 Kdump</a>
+    <a href="#feat-dns" class="sub">8.14 DNS</a>
+    <a href="#feat-certs" class="sub">8.15 Certificates</a>
+    <a href="#feat-management" class="sub">8.16 Management</a>
     <div class="sb-group" data-en="REFERENCE" data-pl="REFERENCJA">REFERENCE</div>
     <a href="#service-mgmt" data-en="9. Service Management" data-pl="9. Zarządzanie usługami">9. Service Management</a>
     <a href="#health" data-en="10. Health &amp; Monitoring" data-pl="10. Monitoring">10. Health &amp; Monitoring</a>
@@ -551,11 +576,20 @@ TENODERA_GATEWAY_URL=http://&lt;panel-host&gt;:9090
     <div class="tw"><table>
       <thead><tr><th data-en="Role" data-pl="Rola">Role</th><th data-en="Who" data-pl="Kto">Who</th><th data-en="Permissions" data-pl="Uprawnienia">Permissions</th></tr></thead>
       <tbody>
-        <tr><td><strong>Admin</strong></td><td data-en="Users in sudo, wheel, or admin group" data-pl="Użytkownicy w grupie sudo, wheel lub admin">Users in <code>sudo</code>, <code>wheel</code>, or <code>admin</code> group</td><td data-en="Full read/write access to all features" data-pl="Pełny dostęp do wszystkich funkcji">Full read/write access</td></tr>
+        <tr><td><strong>Admin</strong></td><td data-en="Users in sudo, wheel, admin, or admins group (admins = FreeIPA default)" data-pl="Użytkownicy w grupie sudo, wheel, admin lub admins (admins = domyślna FreeIPA)">Users in <code>sudo</code>, <code>wheel</code>, <code>admin</code>, or <code>admins</code> group (<code>admins</code> = FreeIPA default)</td><td data-en="Full read/write access to all features" data-pl="Pełny dostęp do wszystkich funkcji">Full read/write access</td></tr>
         <tr><td><strong data-en="Read-only" data-pl="Tylko odczyt">Read-only</strong></td><td data-en="All other PAM users" data-pl="Wszyscy inni użytkownicy PAM">All other PAM users</td><td data-en="Monitor only — no write operations" data-pl="Tylko monitoring — brak operacji zapisu">Monitor only — no write operations</td></tr>
       </tbody>
     </table></div>
-    <p data-en="LDAP/SSSD/FreeIPA users work transparently — PAM is configured for them at the OS level." data-pl="Użytkownicy LDAP/SSSD/FreeIPA działają transparentnie — PAM jest dla nich skonfigurowane na poziomie OS.">LDAP/SSSD/FreeIPA users work transparently — PAM is configured for them at the OS level.</p>
+    <p data-en="Role is determined at login via sudo -l -U &lt;user&gt; on the panel host. LDAP/SSSD/FreeIPA users work transparently if PAM is configured for them." data-pl="Rola jest ustalana przy logowaniu przez sudo -l -U &lt;user&gt; na hoście panelu. Użytkownicy LDAP/SSSD/FreeIPA działają transparentnie.">Role is determined at login via <code>sudo -l -U &lt;user&gt;</code>. LDAP/SSSD/FreeIPA users work transparently if PAM is configured for them.</p>
+    <h3 data-en="Account presence on managed hosts" data-pl="Obecność konta na zarządzanych hostach">Account presence on managed hosts</h3>
+    <p data-en="Tenodera authenticates you against the panel host — managed hosts are separate machines and may not have your account. The panel checks whether your login name exists on each connected host (via getent passwd, which queries NSS and works with local users, SSSD, FreeIPA, and LDAP equally). If your account is absent on a host:" data-pl="Tenodera uwierzytelnia cię względem hosta panelu — zarządzane hosty to osobne maszyny i mogą nie mieć twojego konta. Panel sprawdza czy twoja nazwa logowania istnieje na każdym hoście. Jeśli konto jest nieobecne:">Tenodera authenticates you against the <strong>panel host</strong> — managed hosts are separate machines and may not have your account. The panel checks via <code>getent passwd</code> (NSS-aware: local, SSSD, FreeIPA, LDAP). If your account is absent on a host:</p>
+    <ul>
+      <li data-en="A warning banner appears at the top of the UI when that host is active" data-pl="Baner ostrzegawczy pojawia się na górze UI gdy ten host jest aktywny">A warning banner appears at the top of the UI when that host is active</li>
+      <li data-en="A no account badge appears on the host card in Management → Enrolled" data-pl="Plakietka 'no account' pojawia się na karcie hosta w Management → Enrolled">A <strong>no account</strong> badge appears on the host card in Management → Enrolled</li>
+      <li data-en="Read-only features (Dashboard, Storage, Networking, Logs) still work — the agent collects data independently" data-pl="Funkcje tylko-odczyt (Dashboard, Storage, Networking, Logs) nadal działają">Read-only features (Dashboard, Storage, Networking, Logs) still work — the agent collects data independently</li>
+      <li data-en="Operations requiring sudo (service restart, package install, firewall changes, etc.) will fail" data-pl="Operacje wymagające sudo (restart usług, instalacja pakietów, zmiany zapory) nie będą działać">Operations requiring <code>sudo</code> (service restart, package install, firewall changes) will fail</li>
+      <li data-en="The Terminal is non-functional on that host — PTY session requires a valid system account" data-pl="Terminal nie działa na tym hoście — sesja PTY wymaga ważnego konta systemowego">The Terminal is non-functional — PTY session requires a valid system account</li>
+    </ul>
     <div class="tw"><table>
       <thead><tr><th data-en="Setting" data-pl="Ustawienie">Setting</th><th data-en="Default" data-pl="Domyślnie">Default</th><th data-en="Config key" data-pl="Klucz konfiguracji">Config key</th></tr></thead>
       <tbody>
@@ -579,90 +613,260 @@ TENODERA_GATEWAY_URL=http://&lt;panel-host&gt;:9090
     <!-- 8. Features -->
     <div id="features" class="section-anchor"></div>
     <h2><span class="n">8</span><span data-en="Feature Reference" data-pl="Dokumentacja funkcji">Feature Reference</span></h2>
+    <p data-en="This section describes every page and sub-tab in the Tenodera UI. Write operations (marked Admin) require membership in sudo, wheel, admin, or admins group. Many write operations also require entering the superuser password — stored encrypted in browser sessionStorage for the session duration." data-pl="Ta sekcja opisuje każdą stronę i zakładkę w UI Tenodera. Operacje zapisu (oznaczone Admin) wymagają przynależności do grupy sudo, wheel, admin lub admins. Wiele operacji zapisu wymaga też podania hasła superużytkownika — przechowywane zaszyfrowane w sessionStorage.">This section describes every page and sub-tab in the Tenodera UI. Write operations (<span class="badge badge-admin">Admin</span>) require membership in <code>sudo</code>, <code>wheel</code>, <code>admin</code>, or <code>admins</code> group. Many write operations also require entering the <strong>superuser password</strong> — stored encrypted in browser <code>sessionStorage</code> for the session duration.</p>
+
+    <!-- 8.1 Dashboard -->
+    <div id="feat-dashboard" class="section-anchor"></div>
+    <h3>8.1 Dashboard</h3>
+    <p data-en="Live overview of the selected host's system state. All metrics streamed over WebSocket — no page refresh needed." data-pl="Podgląd systemu wybranego hosta na żywo. Wszystkie metryki strumieniowane przez WebSocket.">Live overview of the selected host's system state. All metrics streamed over WebSocket — no page refresh needed.</p>
+    <p><strong data-en="System information panel:" data-pl="Panel informacji o systemie:">System information panel:</strong> hostname, OS (name/version/ID), uptime, boot time, timezone, CPU model, core/thread count, frequency (MHz), architecture, kernel version, CPU temperatures (per sensor, with critical threshold).</p>
+    <p><strong data-en="Real-time charts" data-pl="Wykresy w czasie rzeczywistym">Real-time charts</strong> — <span data-en="90-point rolling history:" data-pl="90-punktowa historia kroczna:">90-point rolling history:</span></p>
     <div class="tw"><table>
-      <thead><tr>
-        <th data-en="Page" data-pl="Strona">Page</th>
-        <th data-en="Description" data-pl="Opis">Description</th>
-        <th data-en="Write" data-pl="Zapis">Write</th>
-      </tr></thead>
+      <thead><tr><th data-en="Chart" data-pl="Wykres">Chart</th><th data-en="Metrics" data-pl="Metryki">Metrics</th></tr></thead>
       <tbody>
-        <tr>
-          <td><strong>Dashboard</strong></td>
-          <td data-en="Live CPU, memory, disk I/O, network charts (90-point rolling). Top processes, interfaces, disk partitions." data-pl="Wykresy na żywo: CPU, pamięć, I/O dysku, sieć. Procesy, interfejsy, partycje.">Live CPU, memory, disk I/O, network charts. Top processes, interfaces, disk partitions.</td>
-          <td>—</td>
-        </tr>
-        <tr>
-          <td><strong>Terminal</strong></td>
-          <td data-en="Full PTY via xterm.js. Shell as authenticated user (setuid drop). 10 000-line scrollback." data-pl="Pełne PTY przez xterm.js. Shell jako uwierzytelniony użytkownik. 10 000 linii scrollback.">Full PTY via xterm.js. Shell as authenticated user. 10 000-line scrollback.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Services</strong></td>
-          <td data-en="All loaded systemd units with state, status, description. Filter, sort. Start/stop/restart/enable/disable." data-pl="Wszystkie załadowane jednostki systemd. Filtrowanie, sortowanie. Start/stop/restart/enable/disable.">All loaded systemd units. Filter, sort. Start/stop/restart/enable/disable.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong data-en="Users &amp; Groups" data-pl="Użytkownicy i grupy">Users &amp; Groups</strong></td>
-          <td data-en="NSS-aware list (local, SSSD, FreeIPA). Lock, unlock, delete, change password, create user." data-pl="Lista przez NSS (lokalne, SSSD, FreeIPA). Blokuj, odblokuj, usuń, zmień hasło, utwórz.">NSS-aware (local, SSSD, FreeIPA). Lock, unlock, delete, change password, create.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Packages</strong></td>
-          <td data-en="Auto-detected backend: apt / dnf / pacman. Installed, search, updates, repository management." data-pl="Automatycznie wykryty backend: apt / dnf / pacman. Zainstalowane, szukaj, aktualizacje, repozytoria.">Auto-detected: apt / dnf / pacman. Installed, search, updates, repos.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Storage</strong></td>
-          <td data-en="Block device tree (lsblk-style) with size/used/free. Real-time disk I/O chart." data-pl="Drzewo urządzeń blokowych z rozmiarem/wolnym. Wykres I/O dysku w czasie rzeczywistym.">Block device tree. Real-time disk I/O chart.</td>
-          <td>—</td>
-        </tr>
-        <tr>
-          <td><strong>Networking</strong></td>
-          <td data-en="Traffic charts per interface. Firewall management (ufw/firewalld/nftables). Interface up/down." data-pl="Wykresy ruchu na interfejs. Zapora sieciowa (ufw/firewalld/nftables). Up/down interfejsów.">Traffic charts. Firewall (ufw/firewalld/nftables). Interface up/down.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Containers</strong></td>
-          <td data-en="Docker and Podman containers and images. User and root namespace. Start, stop, remove." data-pl="Kontenery i obrazy Docker i Podman. Przestrzeń użytkownika i roota. Start, stop, usuwanie.">Docker/Podman containers and images. Start, stop, remove.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Files</strong></td>
-          <td data-en="File manager. Limited mode: home dir only. Administrative mode (superuser password): full filesystem via sudo." data-pl="Menedżer plików. Tryb ograniczony: tylko katalog domowy. Tryb administracyjny (hasło sudo): pełny system plików.">Limited mode (home dir) or Administrative mode (full fs via sudo).</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Logs</strong></td>
-          <td data-en="systemd journal with unit filter. /var/log browser with full-text search, context lines, date/time range." data-pl="Dziennik systemd z filtrem. Przeglądarka /var/log z pełnotekstowym wyszukiwaniem, zakresem dat.">systemd journal + /var/log browser with full-text search and date range.</td>
-          <td>—</td>
-        </tr>
-        <tr>
-          <td><strong>Cron</strong></td>
-          <td data-en="View /etc/crontab, /etc/cron.d/*, user crontabs. Human-readable schedule descriptions. Edit raw crontab." data-pl="Przeglądaj i edytuj crontaby systemowe i użytkowników. Czytelne opisy harmonogramów.">View and edit system and user crontabs.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Kdump</strong></td>
-          <td data-en="kdump/kexec-tools status, reserved memory, crash dump browser with dmesg viewer." data-pl="Status kdump/kexec-tools, zarezerwowana pamięć, przeglądarka zrzutów awarii z dmesg.">kdump status, reserved memory, crash dump browser.</td>
-          <td>—</td>
-        </tr>
-        <tr>
-          <td><strong>DNS</strong></td>
-          <td data-en="Edit /etc/resolv.conf and /etc/hosts. Interactive dig lookup (A/AAAA/MX/TXT/CNAME/…)." data-pl="Edytuj /etc/resolv.conf i /etc/hosts. Interaktywne wyszukiwanie dig.">Edit resolv.conf, /etc/hosts. Interactive dig lookup.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Certificates</strong></td>
-          <td data-en="Scan, import, remove TLS certs. Trust store management. Let's Encrypt overview. Self-signed generator." data-pl="Skanuj, importuj, usuń certyfikaty TLS. Trust store. Let's Encrypt. Generator self-signed.">TLS cert scan/import/remove. Trust store. Let's Encrypt. Self-signed generator.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
-        <tr>
-          <td><strong>Management</strong></td>
-          <td data-en="Enrolled hosts, pending hosts, bootstrap tokens. Assign roles, restart or remove hosts." data-pl="Zarejestrowane hosty, oczekujące, tokeny bootstrap. Role, restart, usuwanie.">Enrolled, pending, tokens. Roles, restart, remove.</td>
-          <td><span class="badge badge-admin" data-en="Admin" data-pl="Admin">Admin</span></td>
-        </tr>
+        <tr><td>CPU</td><td data-en="User %, system % — stacked area chart" data-pl="Użytkownik %, system % — wykres warstwowy">User %, system % — stacked area chart</td></tr>
+        <tr><td data-en="Load average" data-pl="Obciążenie systemu">Load average</td><td>1-min, 5-min, 15-min load</td></tr>
+        <tr><td data-en="Memory" data-pl="Pamięć">Memory</td><td data-en="Used % (MemTotal − MemAvailable)" data-pl="Użycie % (MemTotal − MemAvailable)">Used % (MemTotal − MemAvailable)</td></tr>
+        <tr><td>Disk I/O</td><td>Read KB/s, Write KB/s</td></tr>
+        <tr><td>Network I/O</td><td data-en="RX bytes/s, TX bytes/s (aggregated)" data-pl="RX bytes/s, TX bytes/s (zagregowane)">RX bytes/s, TX bytes/s (aggregated)</td></tr>
       </tbody>
     </table></div>
+    <p><strong data-en="Disk partitions table:" data-pl="Tabela partycji dysku:">Disk partitions:</strong> device, mount point, filesystem type, total size, used, free, use%.</p>
+    <p><strong data-en="Network interfaces table:" data-pl="Tabela interfejsów sieciowych:">Network interfaces:</strong> name, state (up/down), MAC, speed (Mbps), IPv4/IPv6, RX/TX bytes and packets, error counts.</p>
+    <p><strong data-en="Top processes table:" data-pl="Tabela top procesów:">Top processes:</strong> PID, name, CPU%, memory%, user, state — sorted by CPU descending.</p>
+
+    <!-- 8.2 Terminal -->
+    <div id="feat-terminal" class="section-anchor"></div>
+    <h3>8.2 Terminal <span class="badge badge-admin">Admin</span></h3>
+    <p data-en="Full PTY running in the browser, powered by xterm.js. Visible only to admin users; hidden from read-only accounts." data-pl="Pełne PTY w przeglądarce, zasilane przez xterm.js. Widoczne tylko dla adminów.">Full PTY running in the browser, powered by xterm.js. Visible only to admin users.</p>
+    <ul>
+      <li data-en="Opens a shell as the authenticated user — agent drops to user's UID/GID before spawning the shell (no root shell exposed)" data-pl="Otwiera shell jako uwierzytelniony użytkownik — agent spada do UID/GID użytkownika (brak roota)">Opens a shell as the authenticated user — agent drops to user's UID/GID (no root shell exposed)</li>
+      <li data-en="10 000-line scrollback buffer" data-pl="10 000 linii scrollback">10 000-line scrollback buffer</li>
+      <li data-en="Font: JetBrains Mono → Fira Code → Cascadia Code → monospace fallback, 14 px" data-pl="Czcionka: JetBrains Mono → Fira Code → Cascadia Code, 14 px">Font: JetBrains Mono → Fira Code → Cascadia Code → monospace, 14 px</li>
+      <li data-en="Auto-copy: selecting text copies to clipboard (requires HTTPS or localhost — browser Clipboard API restriction)" data-pl="Auto-kopiowanie: zaznaczenie tekstu kopiuje do schowka (wymaga HTTPS lub localhost)">Auto-copy: selecting text copies to clipboard (requires HTTPS or localhost)</li>
+      <li data-en="Auto-resize: terminal resizes with the browser window (xterm.js FitAddon)" data-pl="Auto-resize: terminal dopasowuje się do okna przeglądarki">Auto-resize with browser window (xterm.js FitAddon)</li>
+      <li data-en="Connection is a WebSocket channel multiplexed through the gateway — no direct SSH to the managed host" data-pl="Połączenie to kanał WebSocket multipleksowany przez bramkę — brak bezpośredniego SSH">Connection is a WebSocket channel multiplexed through the gateway — no direct SSH</li>
+    </ul>
+    <div class="note" data-en="The terminal requires a valid system account on the managed host. If your account does not exist there, the PTY session will be rejected. See §6 for details on cross-host account presence." data-pl="Terminal wymaga ważnego konta systemowego na zarządzanym hoście. Patrz §6 w sprawie obecności konta.">⚡ The terminal requires a valid system account on the managed host. If your account does not exist there, the PTY session will be rejected. See <a href="#auth">§6</a> for details.</div>
+
+    <!-- 8.3 Services -->
+    <div id="feat-services" class="section-anchor"></div>
+    <h3>8.3 Services</h3>
+    <p data-en="Manage systemd units on the selected host." data-pl="Zarządzaj jednostkami systemd na wybranym hoście.">Manage systemd units on the selected host.</p>
+    <h4 data-en="Services tab" data-pl="Zakładka Services">Services tab</h4>
+    <p data-en="Lists all loaded systemd units with:" data-pl="Lista wszystkich załadowanych jednostek systemd z:">Lists all loaded systemd units with:</p>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Column" data-pl="Kolumna">Column</th><th data-en="Description" data-pl="Opis">Description</th></tr></thead>
+      <tbody>
+        <tr><td>Unit</td><td data-en="Unit filename (e.g. sshd.service)" data-pl="Nazwa jednostki (np. sshd.service)">Unit filename (e.g. <code>sshd.service</code>)</td></tr>
+        <tr><td>Description</td><td data-en="Unit description string" data-pl="Opis jednostki">Unit description string</td></tr>
+        <tr><td>Active</td><td><code>active</code> / <code>activating</code> / <code>deactivating</code> / <code>inactive</code> / <code>failed</code></td></tr>
+        <tr><td>State</td><td><code>running</code> / <code>exited</code> / <code>dead</code> / <code>waiting</code> / <code>mounted</code></td></tr>
+        <tr><td>Load</td><td><code>loaded</code> / <code>not-found</code> / <code>masked</code></td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="Filter by unit name (text search). Sort by Active or State column. Color coding: green = active/running, red = failed, gray = inactive. Actions (admin only): Start, Stop, Restart, Enable, Disable." data-pl="Filtruj po nazwie. Sortuj po Active lub State. Kolory: zielony = aktywny, czerwony = błąd. Akcje (admin): Start, Stop, Restart, Enable, Disable.">Filter by unit name. Sort by Active or State. Color coding: green = active/running, red = failed. <span class="badge badge-admin">Admin</span> actions: Start, Stop, Restart, Enable, Disable.</p>
+    <h4 data-en="Timers tab" data-pl="Zakładka Timers">Timers tab</h4>
+    <p data-en="Lists all systemd timer units with unit name, description, active/sub state, next scheduled run, last run, enabled state, and triggered unit." data-pl="Lista timerów systemd z nazwą, opisem, stanem, następnym uruchomieniem, ostatnim uruchomieniem i wyzwalaną jednostką.">Lists all systemd timer units: unit name, description, active/sub state, next run, last run, enabled state, triggered unit.</p>
+
+    <!-- 8.4 Users & Groups -->
+    <div id="feat-users" class="section-anchor"></div>
+    <h3>8.4 Users &amp; Groups</h3>
+    <p data-en="Manage system users and groups on the selected host." data-pl="Zarządzaj użytkownikami i grupami systemu na wybranym hoście.">Manage system users and groups on the selected host.</p>
+    <h4 data-en="Users tab" data-pl="Zakładka Users">Users tab</h4>
+    <p data-en="Lists all users visible through NSS (local /etc/passwd, LDAP, SSSD, FreeIPA):" data-pl="Lista wszystkich użytkowników przez NSS (lokalni, LDAP, SSSD, FreeIPA):">Lists all users visible through NSS (local <code>/etc/passwd</code>, LDAP, SSSD, FreeIPA):</p>
+    <div class="tw"><table>
+      <thead><tr><th>Field</th><th data-en="Description" data-pl="Opis">Description</th></tr></thead>
+      <tbody>
+        <tr><td>Username</td><td data-en="Login name" data-pl="Nazwa logowania">Login name</td></tr>
+        <tr><td>UID / GID</td><td data-en="Numeric user and primary group ID" data-pl="Numeryczne ID użytkownika i grupy">Numeric user and primary group ID</td></tr>
+        <tr><td data-en="Full name" data-pl="Pełna nazwa">Full name</td><td data-en="GECOS field" data-pl="Pole GECOS">GECOS field</td></tr>
+        <tr><td>Home</td><td data-en="Home directory path" data-pl="Ścieżka katalogu domowego">Home directory path</td></tr>
+        <tr><td>Shell</td><td data-en="Login shell" data-pl="Shell logowania">Login shell</td></tr>
+        <tr><td>Groups</td><td data-en="All groups the user belongs to" data-pl="Wszystkie grupy użytkownika">All groups the user belongs to</td></tr>
+        <tr><td>Status</td><td>Active or Locked</td></tr>
+        <tr><td data-en="Last login" data-pl="Ostatnie logowanie">Last login</td><td data-en="Timestamp of most recent login" data-pl="Czas ostatniego logowania">Timestamp of most recent login</td></tr>
+        <tr><td>Source</td><td><code>local</code> or LDAP/SSSD source</td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="Admin actions: Lock account, Unlock account, Delete user, Change password." data-pl="Akcje admina: Zablokuj, Odblokuj, Usuń, Zmień hasło."><span class="badge badge-admin">Admin</span> actions: Lock account, Unlock account, Delete user, Change password.</p>
+    <h4 data-en="Groups tab" data-pl="Zakładka Groups">Groups tab</h4>
+    <p data-en="Lists all groups visible through NSS: group name, GID, member list, system group flag." data-pl="Lista grup przez NSS: nazwa, GID, lista członków, flaga grupy systemowej.">Lists all NSS groups: group name, GID, member list, system group flag.</p>
+    <h4 data-en="Create Account tab (admin only)" data-pl="Zakładka Create Account (tylko admin)">Create Account tab <span class="badge badge-admin">Admin</span></h4>
+    <p data-en="Create a new local user: username, password, full name (GECOS), home directory, login shell, initial group memberships." data-pl="Utwórz nowego użytkownika: nazwa, hasło, pełna nazwa (GECOS), katalog domowy, shell, grupy.">Create a new local user: username, password, full name, home directory, login shell, initial group memberships.</p>
+
+    <!-- 8.5 Packages -->
+    <div id="feat-packages" class="section-anchor"></div>
+    <h3>8.5 Packages</h3>
+    <p data-en="Manage software packages. Backend auto-detected: apt (Debian/Ubuntu), dnf (RHEL/Fedora), pacman (Arch). Detected backend and distribution name shown at top." data-pl="Zarządzanie pakietami. Backend auto-wykryty: apt, dnf, pacman. Wykryty backend i dystrybucja widoczne na górze.">Manage software packages. Backend auto-detected: <code>apt</code> (Debian/Ubuntu), <code>dnf</code> (RHEL/Fedora), <code>pacman</code> (Arch).</p>
+    <ul>
+      <li><strong>Installed tab</strong> — <span data-en="lists all installed packages: name, version, repository source; filter by name" data-pl="lista zainstalowanych pakietów: nazwa, wersja, źródło; filtruj po nazwie">lists all installed packages: name, version, repository source; filter by name</span></li>
+      <li><strong>Search tab</strong> <span class="badge badge-admin">Admin</span> — <span data-en="search available packages; results show name, version, description, repository; install from search results" data-pl="szukaj dostępnych pakietów; wyniki: nazwa, wersja, opis, repo; instaluj z wyników">search available packages; install from results</span></li>
+      <li><strong>Updates tab</strong> <span class="badge badge-admin">Admin</span> — <span data-en="lists available updates: package name, current version, available version; Update all runs full system upgrade; live output streamed to UI" data-pl="lista dostępnych aktualizacji; Update all uruchamia pełną aktualizację systemu; wyjście strumieniowane na żywo">lists available updates; Update all runs full system upgrade; live output streamed to UI</span></li>
+      <li><strong>Repositories tab</strong> <span class="badge badge-admin">Admin</span> — <span data-en="view and manage configured repositories; enable/disable repos (apt: repo line/file/format/URIs/suites; dnf: name/description/enabled; pacman: server URL/SigLevel)" data-pl="przeglądaj i zarządzaj repozytoriami; włącz/wyłącz">view and manage configured repositories; enable/disable repos</span></li>
+    </ul>
+
+    <!-- 8.6 Storage -->
+    <div id="feat-storage" class="section-anchor"></div>
+    <h3>8.6 Storage</h3>
+    <p data-en="Monitor block devices and disk I/O on the selected host." data-pl="Monitoruj urządzenia blokowe i I/O dysku na wybranym hoście.">Monitor block devices and disk I/O on the selected host.</p>
+    <p><strong data-en="Block device tree" data-pl="Drzewo urządzeń blokowych">Block device tree</strong> — <span data-en="hierarchical lsblk-style tree: device name, size, type (disk/part/lvm/raid/etc.), mount points, used/free space and use% for mounted devices." data-pl="hierarchiczne drzewo (styl lsblk): nazwa, rozmiar, typ, punkty montowania, użyte/wolne miejsce.">hierarchical lsblk-style tree: device name, size, type (disk/part/lvm/raid), mount points, used/free/use% for mounted devices.</span></p>
+    <p><strong data-en="Disk I/O chart" data-pl="Wykres I/O dysku">Disk I/O chart</strong> — <span data-en="real-time area chart: read KB/s and write KB/s. Configurable polling interval (1 s to 30 min). 90-point rolling history. Interval saved in localStorage." data-pl="wykres w czasie rzeczywistym: read/write KB/s. Konfigurowalne interwały (1 s do 30 min). 90-punktowa historia. Interwał zapisywany w localStorage.">real-time read/write KB/s. Configurable interval: 1 s, 5 s, 10 s, 30 s, 1 min, 5 min, 10 min, 30 min. 90-point rolling history. Interval saved in <code>localStorage</code>.</span></p>
+
+    <!-- 8.7 Networking -->
+    <div id="feat-networking" class="section-anchor"></div>
+    <h3>8.7 Networking</h3>
+    <p data-en="Monitor and manage network configuration on the selected host." data-pl="Monitoruj i zarządzaj konfiguracją sieciową na wybranym hoście.">Monitor and manage network configuration.</p>
+    <ul>
+      <li><strong data-en="Overview tab" data-pl="Zakładka Overview">Overview tab</strong> — <span data-en="real-time traffic charts per interface: separate RX and TX lines (up to 8 interfaces, color-coded), configurable interval, 90-point rolling history" data-pl="wykresy ruchu na interfejs: RX i TX (do 8 interfejsów, kolorami), konfigurowalne interwały">real-time traffic charts per interface: RX and TX lines (up to 8 interfaces, color-coded), configurable interval, 90-point rolling history</span></li>
+      <li><strong>Firewall tab</strong> <span class="badge badge-admin">Admin</span> — <span data-en="all detected backends (ufw, firewalld, nftables): active state, rule list; add/remove rules (port/protocol, source IP/CIDR, action); supports mixed environments" data-pl="wszystkie wykryte backendy (ufw, firewalld, nftables): stan, lista reguł; dodaj/usuń reguły">all detected backends (ufw, firewalld, nftables): active state, rules; add/remove rules; supports mixed environments</span></li>
+      <li><strong>Interfaces tab</strong> <span class="badge badge-admin">Admin</span> — <span data-en="state (up/down), MAC, MTU, flags, IPv4/IPv6 addresses; bring interface up/down; VPN connections listed separately" data-pl="stan, MAC, MTU, flagi, adresy IPv4/IPv6; up/down interfejsów; oddzielna lista VPN">state, MAC, MTU, flags, IPv4/IPv6; bring interface up/down; VPN connections listed separately</span></li>
+      <li><strong>Logs tab</strong> — <span data-en="network-related log entries from the system journal" data-pl="wpisy logów sieciowych z dziennika systemowego">network-related log entries from the system journal</span></li>
+    </ul>
+
+    <!-- 8.8 Containers -->
+    <div id="feat-containers" class="section-anchor"></div>
+    <h3>8.8 Containers</h3>
+    <p data-en="Manage Docker and Podman containers on the selected host." data-pl="Zarządzaj kontenerami Docker i Podman na wybranym hoście.">Manage Docker and Podman containers on the selected host.</p>
+    <h4 data-en="Containers tab" data-pl="Zakładka Containers">Containers tab</h4>
+    <p data-en="Lists all containers from both user namespace (rootless) and root namespace:" data-pl="Lista kontenerów z przestrzeni użytkownika (rootless) i roota:">Lists all containers from both user namespace (rootless) and root namespace:</p>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Column" data-pl="Kolumna">Column</th><th data-en="Description" data-pl="Opis">Description</th></tr></thead>
+      <tbody>
+        <tr><td>Name</td><td data-en="Container name" data-pl="Nazwa kontenera">Container name</td></tr>
+        <tr><td>Image</td><td data-en="Image the container was created from" data-pl="Obraz z którego stworzono kontener">Image the container was created from</td></tr>
+        <tr><td>State</td><td><code>running</code> / <code>paused</code> / <code>restarting</code> / <code>created</code> / <code>exited</code> / <code>dead</code></td></tr>
+        <tr><td>Status</td><td data-en="Human-readable status string" data-pl="Czytelny string statusu">Human-readable status</td></tr>
+        <tr><td>Ports</td><td data-en="Exposed port mappings" data-pl="Mapowania portów">Exposed port mappings</td></tr>
+        <tr><td>Owner</td><td><code>user</code> (rootless) or <code>root</code></td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="Sorted by state (running first), then owner (user before root). Admin actions: Start, Stop, Remove." data-pl="Sortowanie: stan (uruchomione pierwsze), potem owner. Akcje admina: Start, Stop, Remove.">Sorted: running first, then user before root. <span class="badge badge-admin">Admin</span>: Start, Stop, Remove.</p>
+    <h4 data-en="Images tab (admin only)" data-pl="Zakładka Images (tylko admin)">Images tab <span class="badge badge-admin">Admin</span></h4>
+    <p data-en="Lists all images: repository, tags, size, creation date, owner. Remove image (fails with friendly error if in use by a running container)." data-pl="Lista obrazów: repo, tagi, rozmiar, data, owner. Usuwanie (błąd przyjazny gdy obraz jest używany).">Repository, tags, size, creation date, owner. Remove image (fails gracefully if in use).</p>
+
+    <!-- 8.9 Files -->
+    <div id="feat-files" class="section-anchor"></div>
+    <h3>8.9 Files</h3>
+    <p data-en="File manager for the selected host: browse, view, edit, create, and delete files." data-pl="Menedżer plików: przeglądaj, wyświetlaj, edytuj, twórz i usuwaj pliki.">File manager: browse, view, edit, create, and delete files.</p>
+    <h4 data-en="Access modes" data-pl="Tryby dostępu">Access modes</h4>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Mode" data-pl="Tryb">Mode</th><th data-en="When" data-pl="Kiedy">When</th><th data-en="Scope" data-pl="Zakres">Scope</th></tr></thead>
+      <tbody>
+        <tr><td><strong data-en="Limited" data-pl="Ograniczony">Limited</strong></td><td data-en="No superuser password active" data-pl="Brak aktywnego hasła superużytkownika">No superuser password active</td><td data-en="Home directory only (/home/&lt;user&gt;)" data-pl="Tylko katalog domowy (/home/&lt;user&gt;)">Home directory only (<code>/home/&lt;user&gt;</code>)</td></tr>
+        <tr><td><strong data-en="Administrative" data-pl="Administracyjny">Administrative</strong></td><td data-en="Superuser password active (padlock in top bar)" data-pl="Aktywne hasło superużytkownika (kłódka w pasku)">Superuser password active</td><td data-en="Full filesystem — root-owned paths via sudo" data-pl="Pełny system plików — ścieżki root przez sudo">Full filesystem via sudo</td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="Restriction is enforced at the agent level — the agent rejects file operations whose resolved path falls outside /home/&lt;user&gt; in Limited mode." data-pl="Ograniczenie jest wymuszane na poziomie agenta — agent odrzuca operacje poza /home/&lt;user&gt; w trybie Limited.">Restriction enforced at the agent level. Symlink targets are resolved (canonicalized) before applying the home-directory restriction.</p>
+    <p data-en="Features: navigation breadcrumb, path autocomplete (Administrative mode), directories-first sorted listing, file viewer with 200-line pagination, inline editor, new file creation, delete with confirmation. Directory deletion is not yet implemented — use the Terminal for recursive directory removal." data-pl="Funkcje: nawigacja breadcrumb, autouzupełnianie ścieżek (tryb Admin), sortowanie katalogi-pierwsze, przeglądarka plików z paginacją 200 linii, edytor, tworzenie pliku, usuwanie z potwierdzeniem. Usuwanie katalogów niezaimplementowane — używaj Terminala.">Features: navigation breadcrumb, path autocomplete (Administrative mode), sorted listing (dirs first), 200-line paginated viewer, inline editor, new file creation, delete with confirmation.</p>
+    <div class="note" data-en="Directory deletion is not yet implemented — use the Terminal for recursive directory removal." data-pl="Usuwanie katalogów nie jest jeszcze zaimplementowane — użyj Terminala do rekursywnego usuwania.">⚡ Directory deletion is not yet implemented — use the Terminal for recursive directory removal.</div>
+
+    <!-- 8.10 Logs (Journal) -->
+    <div id="feat-journal" class="section-anchor"></div>
+    <h3>8.10 Logs (Journal)</h3>
+    <p data-en="Query the systemd journal on the selected host." data-pl="Przeglądaj dziennik systemd na wybranym hoście.">Query the systemd journal on the selected host.</p>
+    <ul>
+      <li data-en="Unit filter: filter by unit name (debounced 400 ms)" data-pl="Filtr jednostki: filtruj po nazwie (debounce 400 ms)"><strong>Unit filter</strong> — filter by unit name (debounced 400 ms)</li>
+      <li data-en="Line count: configurable number of entries (default: 100)" data-pl="Liczba linii: konfigurowalna (domyślnie: 100)"><strong>Line count</strong> — configurable (default: 100)</li>
+      <li data-en="Each entry: timestamp, unit name, priority, message text" data-pl="Każdy wpis: timestamp, nazwa jednostki, priorytet, treść wiadomości"><strong>Each entry:</strong> timestamp, unit name, priority, message text</li>
+      <li data-en="Superuser password enables access to protected journal entries" data-pl="Hasło superużytkownika umożliwia dostęp do chronionych wpisów">Superuser password enables access to protected journal entries</li>
+    </ul>
+
+    <!-- 8.11 Log Files -->
+    <div id="feat-logfiles" class="section-anchor"></div>
+    <h3>8.11 Log Files</h3>
+    <p data-en="Browse and search plain-text log files in /var/log on the selected host." data-pl="Przeglądaj i przeszukuj pliki logów w /var/log na wybranym hoście.">Browse and search plain-text log files in <code>/var/log</code>.</p>
+    <p data-en="File list: all files in /var/log recursively, with filename, path, size, last-modified; filter by filename. Root-owned non-world-readable files require the superuser password." data-pl="Lista plików: wszystkie pliki w /var/log rekursywnie, z nazwą, ścieżką, rozmiarem, datą modyfikacji. Pliki root wymagają hasła superużytkownika.">File list: all files in <code>/var/log</code> recursively; filename, path, size, last-modified. Root-owned non-world-readable files require superuser password.</p>
+    <p><strong>Tail view</strong> — <span data-en="last N lines (default: 100, configurable)" data-pl="ostatnie N linii (domyślnie: 100, konfigurowalne)">last N lines (default: 100, configurable).</span></p>
+    <p><strong>Search view</strong> — <span data-en="full-text search with context lines (Before/After), max results, date/time range filter. Results show matched lines with surrounding context. When a date/time range is set without a keyword, all lines within the time window are returned." data-pl="wyszukiwanie pełnotekstowe z wierszami kontekstu (Before/After), max wyniki, filtr zakresu dat/czasu.">full-text search with Before/After context lines, max results, date/time range. When date/time range is set without a keyword, all lines within the window are returned.</span></p>
+    <h4 data-en="Tenodera audit log (/var/log/tenodera_audit.log)" data-pl="Log audytu Tenodera (/var/log/tenodera_audit.log)">Tenodera audit log</h4>
+    <p data-en="Events logged: login attempt (username, IP, success/failure), logout (duration), privilege escalation (superuser password activation)." data-pl="Zdarzenia: próba logowania (użytkownik, IP, wynik), wylogowanie (czas trwania), eskalacja uprawnień.">Events: login attempt (username, IP, success/failure), logout (duration), privilege escalation (superuser password activation).</p>
+    <p data-en="Log rotation (/etc/logrotate.d/tenodera): daily, keep 3, max 1 GB, gzip (delaycompress), copytruncate — no service restart required." data-pl="Rotacja logów: codziennie, 3 rotacje, maks. 1 GB, gzip (delaycompress), copytruncate.">Log rotation (<code>/etc/logrotate.d/tenodera</code>): daily, keep 3, max 1 GB, gzip (delaycompress), copytruncate — no service restart required.</p>
+
+    <!-- 8.12 Cron -->
+    <div id="feat-cron" class="section-anchor"></div>
+    <h3>8.12 Cron Jobs</h3>
+    <p data-en="View and manage cron jobs on the selected host. Sources: /etc/crontab, /etc/cron.d/*, per-user crontabs." data-pl="Przeglądaj i zarządzaj cron jobs. Źródła: /etc/crontab, /etc/cron.d/*, crontaby użytkowników.">View and manage cron jobs. Sources: <code>/etc/crontab</code>, <code>/etc/cron.d/*</code>, per-user crontabs.</p>
+    <p data-en="Each entry shows: source (file path or User: &lt;username&gt;), schedule (raw cron expression + human-readable description: @reboot → At boot; 0 3 * * * → Daily at 03:00; */6 * * * * → Every 6h), user, command, comment." data-pl="Każdy wpis: źródło, harmonogram (wyrażenie cron + opis: @reboot → At boot; 0 3 * * * → Daily at 03:00), użytkownik, polecenie, komentarz.">Each entry: source, schedule (raw + human-readable description), user, command, comment.</p>
+    <p data-en="Edit (admin only): click a source to open its raw content in an editor; save writes back to the file." data-pl="Edycja (admin): kliknij źródło aby edytować; zapis zapisuje plik."><span class="badge badge-admin">Admin</span>: click a source to open in editor; save writes back to the file.</p>
+
+    <!-- 8.13 Kdump -->
+    <div id="feat-kdump" class="section-anchor"></div>
+    <h3>8.13 Kernel Dump (kdump)</h3>
+    <p data-en="Monitor kernel crash dump configuration on the selected host." data-pl="Monitoruj konfigurację zrzutów awarii jądra na wybranym hoście.">Monitor kernel crash dump configuration.</p>
+    <h4 data-en="Status panel" data-pl="Panel statusu">Status panel</h4>
+    <div class="tw"><table>
+      <thead><tr><th>Field</th><th data-en="Description" data-pl="Opis">Description</th></tr></thead>
+      <tbody>
+        <tr><td>Installed</td><td data-en="Whether kdump is installed (kdump-tools on Debian, kexec-tools on RHEL/Fedora)" data-pl="Czy kdump jest zainstalowany (kdump-tools na Debian, kexec-tools na RHEL/Fedora)">Whether kdump is installed (<code>kdump-tools</code> on Debian, <code>kexec-tools</code> on RHEL)</td></tr>
+        <tr><td>Service</td><td data-en="Service name (kdump / kdump-tools), active state, enabled state" data-pl="Nazwa serwisu (kdump / kdump-tools), stan aktywny, stan enabled">Service name, active state, enabled state</td></tr>
+        <tr><td data-en="Crash kernel loaded" data-pl="Załadowane jądro crash">Crash kernel loaded</td><td data-en="Whether a secondary kernel is loaded in reserved memory" data-pl="Czy jądro dodatkowe jest załadowane w zarezerwowanej pamięci">Whether a secondary kernel is loaded in reserved memory</td></tr>
+        <tr><td data-en="Reserved memory" data-pl="Zarezerwowana pamięć">Reserved memory</td><td data-en="Bytes reserved for the crash kernel" data-pl="Bajty zarezerwowane dla jądra crash">Bytes reserved for the crash kernel</td></tr>
+        <tr><td data-en="Kernel version" data-pl="Wersja jądra">Kernel version</td><td data-en="Running kernel version" data-pl="Aktualna wersja jądra">Running kernel version</td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="Crash dumps browser: lists existing crash dump directories (typically /var/crash) with name, type, size, vmcore presence, dmesg presence, timestamp. Expand to see files. View dmesg reads the dmesg capture inline." data-pl="Przeglądarka zrzutów: lista katalogów (zwykle /var/crash) z nazwą, typem, rozmiarem, obecnością vmcore i dmesg. Rozwiń aby zobaczyć pliki. Wyświetl dmesg inline.">Crash dumps browser: lists directories (typically <code>/var/crash</code>) with name, type, size, vmcore/dmesg presence, timestamp. Expand to see files. View dmesg inline.</p>
+
+    <!-- 8.14 DNS -->
+    <div id="feat-dns" class="section-anchor"></div>
+    <h3>8.14 DNS</h3>
+    <p data-en="Manage DNS configuration on the selected host." data-pl="Zarządzaj konfiguracją DNS na wybranym hoście.">Manage DNS configuration.</p>
+    <ul>
+      <li><strong>Resolver tab</strong> <span class="badge badge-admin">Admin</span> — <span data-en="display and edit /etc/resolv.conf: nameserver list, search domains" data-pl="wyświetl i edytuj /etc/resolv.conf: lista DNS, domeny wyszukiwania">display and edit <code>/etc/resolv.conf</code>: nameservers, search domains</span></li>
+      <li><strong>/etc/hosts tab</strong> <span class="badge badge-admin">Admin</span> — <span data-en="display and edit /etc/hosts" data-pl="wyświetl i edytuj /etc/hosts">display and edit <code>/etc/hosts</code></span></li>
+      <li><strong>Lookup tab</strong> — <span data-en="interactive DNS lookup (wraps dig): enter hostname or IP, select query type: A, AAAA, MX, NS, TXT, CNAME, PTR, SOA, SRV; results as returned by dig" data-pl="interaktywne wyszukiwanie DNS (opakowuje dig): hostname lub IP, typ zapytania: A, AAAA, MX, NS, TXT, CNAME, PTR, SOA, SRV">interactive <code>dig</code> lookup: hostname or IP, query type (A, AAAA, MX, NS, TXT, CNAME, PTR, SOA, SRV)</span></li>
+      <li><strong>systemd-resolved tab</strong> <span class="badge badge-admin">Admin</span> — <span data-en="shows whether systemd-resolved is active, displays configuration, allows restarting the resolved service" data-pl="pokazuje czy systemd-resolved jest aktywny, konfiguracja, restart serwisu">shows systemd-resolved status, configuration, allows service restart</span></li>
+    </ul>
+
+    <!-- 8.15 Certificates -->
+    <div id="feat-certs" class="section-anchor"></div>
+    <h3>8.15 Certificates</h3>
+    <p data-en="Manage TLS certificates on the selected host." data-pl="Zarządzaj certyfikatami TLS na wybranym hoście.">Manage TLS certificates on the selected host.</p>
+    <h4 data-en="Certificates tab" data-pl="Zakładka Certificates">Certificates tab</h4>
+    <p data-en="Scans common certificate locations:" data-pl="Skanuje typowe lokalizacje certyfikatów:">Scans common certificate locations:</p>
+    <div class="tw"><table>
+      <thead><tr><th>Field</th><th data-en="Description" data-pl="Opis">Description</th></tr></thead>
+      <tbody>
+        <tr><td>CN</td><td data-en="Certificate subject Common Name" data-pl="Common Name podmiotu certyfikatu">Certificate subject Common Name</td></tr>
+        <tr><td>Issuer</td><td data-en="Issuer CN and organization" data-pl="CN i organizacja wystawcy">Issuer CN and organization</td></tr>
+        <tr><td>Valid from / until</td><td>notBefore / notAfter dates</td></tr>
+        <tr><td data-en="Days remaining" data-pl="Pozostałe dni">Days remaining</td><td data-en="Days until expiry (highlighted red when close)" data-pl="Dni do wygaśnięcia (czerwone gdy bliskie)">Days until expiry (highlighted red when close)</td></tr>
+        <tr><td>SANs</td><td data-en="Subject Alternative Names" data-pl="Alternatywne nazwy podmiotu">Subject Alternative Names</td></tr>
+        <tr><td>Is CA</td><td data-en="Whether this is a CA certificate" data-pl="Czy to certyfikat CA">Whether this is a CA certificate</td></tr>
+        <tr><td>Source</td><td data-en="File path where the certificate was found" data-pl="Ścieżka pliku certyfikatu">File path where certificate was found</td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="Admin actions: Import certificate (paste PEM cert + key — validated before saving); Remove certificate (requires superuser password)." data-pl="Akcje admina: Import certyfikatu (wklej PEM — walidacja przed zapisem); Usuń certyfikat (wymaga hasła superużytkownika)."><span class="badge badge-admin">Admin</span>: Import certificate (paste PEM cert + key; validated before saving); Remove certificate (requires superuser password).</p>
+    <h4 data-en="Trust Store tab (admin only)" data-pl="Zakładka Trust Store (tylko admin)">Trust Store tab <span class="badge badge-admin">Admin</span></h4>
+    <p data-en="Manage system certificate trust store: list trusted CA certificates, add/remove trusted CAs." data-pl="Zarządzaj trust store: lista zaufanych CA, dodaj/usuń.">List trusted CA certificates; add/remove trusted CAs.</p>
+    <h4 data-en="Let's Encrypt tab" data-pl="Zakładka Let's Encrypt">Let's Encrypt tab</h4>
+    <p data-en="Lists Certbot-managed certificates: domain name, covered domains, expiry date, days remaining, paths to cert and key files." data-pl="Lista certyfikatów Certbota: domena, pokryte domeny, data wygaśnięcia, ścieżki plików.">Lists Certbot-managed certificates: domain, covered domains, expiry, days remaining, cert and key paths.</p>
+    <h4 data-en="Self-Signed tab (admin only)" data-pl="Zakładka Self-Signed (tylko admin)">Self-Signed tab <span class="badge badge-admin">Admin</span></h4>
+    <p data-en="Generate a self-signed TLS certificate: Common Name, validity period. Generated cert and key saved to specified paths." data-pl="Generuj self-signed certyfikat TLS: CN, okres ważności. Cert i klucz zapisywane we wskazanych ścieżkach.">Generate a self-signed TLS certificate: Common Name, validity period. Cert and key saved to specified paths.</p>
+
+    <!-- 8.16 Management -->
+    <div id="feat-management" class="section-anchor"></div>
+    <h3>8.16 Management <span class="badge badge-admin">Admin</span></h3>
+    <p data-en="Admin-only panel for managing all connected agents. Three tabs: Enrolled, Pending, and Tokens." data-pl="Panel wyłącznie dla adminów do zarządzania wszystkimi agentami. Trzy zakładki: Enrolled, Pending, Tokens.">Admin-only panel for managing all connected agents. Three tabs: Enrolled, Pending, and Tokens.</p>
+    <h4 data-en="Enrolled tab" data-pl="Zakładka Enrolled">Enrolled tab</h4>
+    <p data-en="All hosts that have completed the TOFU handshake and are registered with the gateway." data-pl="Wszystkie hosty które przeszły handshake TOFU i są zarejestrowane w bramce.">All hosts that have completed the TOFU handshake:</p>
+    <div class="tw"><table>
+      <thead><tr><th data-en="Column" data-pl="Kolumna">Column</th><th data-en="Description" data-pl="Opis">Description</th></tr></thead>
+      <tbody>
+        <tr><td>Hostname</td><td data-en="Agent hostname as reported in the Hello handshake" data-pl="Hostname agenta z handshake Hello">Agent hostname from <code>Hello</code> handshake</td></tr>
+        <tr><td>Status</td><td data-en="Online / offline indicator" data-pl="Wskaźnik online / offline">Online / offline indicator</td></tr>
+        <tr><td>IP</td><td data-en="Remote IP address of the agent connection" data-pl="Zdalny adres IP połączenia agenta">Remote IP of the agent connection</td></tr>
+        <tr><td>Added</td><td data-en="Date the host was first enrolled" data-pl="Data pierwszej rejestracji hosta">Date first enrolled</td></tr>
+        <tr><td>Uptime</td><td data-en="Agent process uptime (online hosts only)" data-pl="Czas pracy agenta (tylko hosty online)">Agent process uptime (online only)</td></tr>
+        <tr><td>Roles</td><td data-en="Role labels used to group hosts" data-pl="Etykiety ról do grupowania hostów">Role labels</td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="Each card may display badges: local (green) = panel host itself; active (blue) = currently selected host; no account (yellow) = your login name does not exist on this host. The distro name (e.g. DEBIAN, FEDORA) is shown in the card corner." data-pl="Plakietki na kartach: local (zielony) = host panelu; active (niebieski) = aktualnie wybrany; no account (żółty) = twoje konto nie istnieje na tym hoście.">Badges: <strong>local</strong> (green) = panel host; <strong>active</strong> (blue) = currently selected; <strong>no account</strong> (yellow) = your account absent on this host. Distro name shown in card corner.</p>
+    <p data-en="Actions: Switch (make active host), Role (edit role labels — type and press Enter or comma), Restart (send restart command to agent), Remove (host re-enters pending on next connect)." data-pl="Akcje: Switch (ustaw aktywny), Role (edytuj etykiety), Restart (wyślij restart do agenta), Remove (host wejdzie w pending przy następnym połączeniu).">Actions: <strong>Switch</strong> (make active), <strong>Role</strong> (tag-style input), <strong>Restart</strong> (sends restart to agent service), <strong>Remove</strong> (host re-enters pending on next connect).</p>
+    <h4 data-en="Pending tab" data-pl="Zakładka Pending">Pending tab</h4>
+    <p data-en="Agents connected but not yet approved. List refreshes every 5 seconds. Shows hostname, fingerprint (SHA-256 of public key), IP, waiting time. Approve: optionally enter a display name, gateway saves the public key and sends HelloAck. Pending entries time out after 24 hours." data-pl="Agenci połączeni ale niezatwierdzeni. Odświeżanie co 5 sekund. Pokazuje hostname, fingerprint (SHA-256), IP, czas oczekiwania. Approve: opcjonalnie wpisz nazwę, bramka zapisuje klucz i wysyła HelloAck. Timeout: 24 godziny.">Agents connected but not yet approved. Refreshes every 5 s. Shows hostname, fingerprint (SHA-256), IP, waiting time. Approve: optionally enter display name; gateway saves key and sends <code>HelloAck</code>. Entries time out after 24 h if not approved.</p>
+    <h4 data-en="Tokens tab" data-pl="Zakładka Tokens">Tokens tab</h4>
+    <p data-en="Bootstrap tokens for unattended enrollment. Create token options: TTL (1 h – 30 days; default 24 h), single-use (consumed on first use), hostname binding (restrict to specific hostname), re-enroll (allow replacing an existing host's key). After creation, an install command is generated with gateway URL and token pre-filled — copy to clipboard. Revoke: immediately invalidate a token." data-pl="Tokeny bootstrap do automatycznej rejestracji. Opcje: TTL (1h–30 dni; domyślnie 24h), single-use, hostname binding, re-enroll (rotacja klucza). Po utworzeniu generowana jest komenda instalacyjna. Revoke: unieważnia token.">Bootstrap tokens for unattended enrollment. Options: TTL (1 h–30 days; default 24 h), single-use, hostname binding, re-enroll (key rotation). After creation, ready-to-use install command generated. Revoke: immediately invalidate a token.</p>
 
     <!-- 9. Service Management -->
     <div id="service-mgmt" class="section-anchor"></div>
@@ -696,6 +900,16 @@ journalctl -u tenodera-agent -f</code></pre>
     <h2><span class="n">10</span><span data-en="Health &amp; Monitoring" data-pl="Zdrowie i monitoring">Health &amp; Monitoring</span></h2>
     <pre><code>GET /api/health        <span class="c-c"># → { status, sessions, uptime_secs, version }</span>
 GET /api/health/ready  <span class="c-c"># → 200 OK | 503 (readiness probe)</span></code></pre>
+    <h3><code>GET /api/health</code></h3>
+    <p data-en="Returns a JSON object:" data-pl="Zwraca obiekt JSON:">Returns a JSON object:</p>
+    <pre><code>{
+  <span class="c-g">"status"</span>: <span class="c-p">"ok"</span>,
+  <span class="c-g">"sessions"</span>: <span class="c-b">2</span>,
+  <span class="c-g">"uptime_secs"</span>: <span class="c-b">3600</span>,
+  <span class="c-g">"version"</span>: <span class="c-p">"0.1.0"</span>
+}</code></pre>
+    <h3><code>GET /api/health/ready</code></h3>
+    <p data-en="Returns 200 OK when the agent binary exists and is executable, 503 Service Unavailable otherwise. Use as a readiness probe in load balancers or container orchestration (e.g. Kubernetes)." data-pl="Zwraca 200 OK gdy plik binarny agenta istnieje i jest wykonywalny, 503 w przeciwnym razie. Używaj jako sonda gotowości w load balancerach lub orkiestracji kontenerów.">Returns <code>200 OK</code> when the agent binary exists and is executable, <code>503 Service Unavailable</code> otherwise. Use as a <strong>readiness probe</strong> in load balancers or container orchestration (e.g. Kubernetes).</p>
 
     <!-- 11. Architecture -->
     <div id="architecture" class="section-anchor"></div>
@@ -715,6 +929,40 @@ GET /api/health/ready  <span class="c-c"># → 200 OK | 503 (readiness probe)</s
       <li><strong>Agent</strong> — <span data-en="Rust, Tokio. ~20 MB resident. Connects outbound. 39 operation types across 28 handler modules. Setuid root, drops to authenticated user's UID/GID for terminal sessions." data-pl="Rust, Tokio. ~20 MB. Połączenie wychodzące. 39 typów operacji. Setuid root, spada do UID/GID użytkownika dla terminala.">Rust, Tokio. ~20 MB. 39 operation types. Setuid root, drops to user UID/GID for terminal.</span></li>
       <li><strong>Protocol</strong> — <span data-en="Shared Rust library. JSON messages with type field. Protocol version 2." data-pl="Wspólna biblioteka Rust. Wiadomości JSON z polem type. Protokół wersja 2.">Shared Rust library. JSON messages with type field. Protocol version 2.</span></li>
     </ul>
+    <h3 data-en="Wire protocol" data-pl="Protokół sieciowy">Wire protocol</h3>
+    <p data-en="Messages are JSON objects with a type field:" data-pl="Wiadomości to obiekty JSON z polem type:">Messages are JSON objects with a <code>type</code> field:</p>
+    <div class="tw"><table>
+      <thead><tr><th>Type</th><th data-en="Direction" data-pl="Kierunek">Direction</th><th data-en="Description" data-pl="Opis">Description</th></tr></thead>
+      <tbody>
+        <tr><td><code>hello</code></td><td>agent → gateway</td><td data-en="Agent announces hostname, protocol version, and Ed25519 public key" data-pl="Agent ogłasza hostname, wersję protokołu i klucz publiczny Ed25519">Agent announces hostname, protocol version, and Ed25519 public key</td></tr>
+        <tr><td><code>challenge</code></td><td>gateway → agent</td><td data-en="Gateway sends a 32-byte random nonce for the agent to sign" data-pl="Bramka wysyła 32-bajtowy losowy nonce do podpisania przez agenta">Gateway sends a 32-byte random nonce for the agent to sign</td></tr>
+        <tr><td><code>challenge_response</code></td><td>agent → gateway</td><td data-en="Agent returns the Ed25519 signature of the challenge payload" data-pl="Agent zwraca podpis Ed25519 dla payload challenge">Agent returns the Ed25519 signature of the challenge</td></tr>
+        <tr><td><code>hello_ack</code></td><td>gateway → agent</td><td data-en="Gateway acknowledges after successful authentication; carries gateway ID" data-pl="Bramka potwierdza po udanym uwierzytelnieniu; zawiera ID bramki">Gateway acknowledges after successful authentication; carries gateway ID</td></tr>
+        <tr><td><code>open</code></td><td>browser → gateway</td><td data-en="Open a named channel (e.g. system_info, terminal_pty)" data-pl="Otwiera nazwany kanał (np. system_info, terminal_pty)">Open a named channel (e.g. <code>system_info</code>, <code>terminal_pty</code>)</td></tr>
+        <tr><td><code>ready</code></td><td>agent → browser</td><td data-en="Agent acknowledges streaming channel" data-pl="Agent potwierdza kanał strumieniowy">Agent acknowledges streaming channel</td></tr>
+        <tr><td><code>data</code></td><td data-en="bidirectional" data-pl="dwukierunkowy">bidirectional</td><td data-en="Channel payload" data-pl="Ładunek kanału">Channel payload</td></tr>
+        <tr><td><code>control</code></td><td data-en="bidirectional" data-pl="dwukierunkowy">bidirectional</td><td data-en="Signals (PTY resize, etc.)" data-pl="Sygnały (resize PTY itp.)">Signals (PTY resize, etc.)</td></tr>
+        <tr><td><code>close</code></td><td data-en="bidirectional" data-pl="dwukierunkowy">bidirectional</td><td data-en="Clean or error channel close" data-pl="Czyste lub błędne zamknięcie kanału">Clean or error channel close</td></tr>
+        <tr><td><code>auth</code> / <code>authresult</code></td><td>browser → gateway</td><td data-en="Session authentication phase" data-pl="Faza uwierzytelniania sesji">Session authentication phase</td></tr>
+        <tr><td><code>ping</code> / <code>pong</code></td><td data-en="bidirectional" data-pl="dwukierunkowy">bidirectional</td><td data-en="Keepalive" data-pl="Keepalive">Keepalive</td></tr>
+      </tbody>
+    </table></div>
+    <p data-en="Current protocol version: 2" data-pl="Aktualna wersja protokołu: 2"><strong data-en="Current protocol version:" data-pl="Aktualna wersja protokołu:">Current protocol version:</strong> 2</p>
+    <h3 data-en="Project structure" data-pl="Struktura projektu">Project structure</h3>
+    <pre><code>panel/                   <span class="c-c">Central server (gateway + UI)</span>
+  crates/gateway/        <span class="c-c">Axum HTTP/WS gateway, PAM auth, agent registry</span>
+  ui/                    <span class="c-c">React 19 + TypeScript SPA (Vite 6)</span>
+  Makefile               <span class="c-c">Build &amp; install</span>
+  systemd/               <span class="c-c">tenodera.service</span>
+
+agent/                   <span class="c-c">Agent binary (deployed to managed hosts)</span>
+  src/handlers/          <span class="c-c">28 handler modules (39 registered handlers)</span>
+  Makefile               <span class="c-c">Build &amp; install</span>
+  systemd/               <span class="c-c">tenodera-agent.service</span>
+
+protocol/                <span class="c-c">Shared message types (Rust library crate)</span>
+
+packaging/               <span class="c-c">RPM spec files (tenodera.spec, tenodera-agent.spec)</span></code></pre>
 
     <!-- 12. Security -->
     <div id="security" class="section-anchor"></div>
@@ -765,6 +1013,22 @@ curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-ag
       <li data-en="Verify TENODERA_GATEWAY_URL in agent.cnf" data-pl="Sprawdź TENODERA_GATEWAY_URL w agent.cnf"><span data-en="Verify" data-pl="Sprawdź">Verify</span> <code>TENODERA_GATEWAY_URL</code></li>
       <li data-en="Bootstrap token invalid or expired — check Hosts → Tokens in the panel" data-pl="Token bootstrap nieważny lub wygasł — sprawdź Hosts → Tokens w panelu"><span data-en="Bootstrap token invalid or expired — check" data-pl="Token nieważny lub wygasł — sprawdź">Bootstrap token invalid or expired — check</span> <strong>Hosts → Tokens</strong></li>
       <li data-en="Pending limit reached (max 100) — check gateway logs: journalctl -u tenodera -e" data-pl="Limit oczekujących osiągnięty (maks. 100) — sprawdź logi: journalctl -u tenodera -e"><span data-en="Pending limit reached (max 100)" data-pl="Limit oczekujących osiągnięty (maks. 100)">Pending limit reached (max 100)</span></li>
+    </ul>
+
+    <h3 data-en="Agent challenge rejected" data-pl="Odrzucony challenge agenta">Agent challenge rejected</h3>
+    <p data-en="Gateway logs show challenge verification failed. The agent's key store at /var/lib/tenodera/ may be corrupted or the key was rotated manually." data-pl="Logi bramki pokazują 'challenge verification failed'. Magazyn kluczy agenta /var/lib/tenodera/ może być uszkodzony lub klucz był ręcznie rotowany.">Gateway logs show <code>challenge verification failed</code>. The agent's key store at <code>/var/lib/tenodera/</code> may be corrupted or the key was rotated manually.</p>
+    <p data-en="Fix: delete the agent's key store and restart (the agent will generate a new key pair and re-enter the pending state):" data-pl="Naprawa: usuń magazyn kluczy agenta i zrestartuj (agent wygeneruje nową parę kluczy i wejdzie ponownie w stan oczekiwania):">Fix: delete the agent's key store and restart:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo systemctl stop tenodera-agent
+sudo rm -rf /var/lib/tenodera/
+sudo systemctl start tenodera-agent</code></pre>
+    <p data-en="Then approve the host again in Hosts → Pending. If the host was previously enrolled, remove it first via Hosts → Enrolled → Remove so the new key is accepted." data-pl="Następnie zatwierdź hosta ponownie w Hosts → Pending. Jeśli host był wcześniej zarejestrowany, najpierw go usuń przez Hosts → Enrolled → Remove.">Then approve the host again in <strong>Hosts → Pending</strong>. If previously enrolled, remove it first via <strong>Hosts → Enrolled → Remove</strong> so the new key is accepted.</p>
+
+    <h3 data-en="Host not appearing in UI" data-pl="Host nie pojawia się w UI">Host not appearing in UI</h3>
+    <ul>
+      <li data-en="Check agent is running: sudo systemctl status tenodera-agent" data-pl="Sprawdź czy agent działa: sudo systemctl status tenodera-agent">Check agent is running: <code>sudo systemctl status tenodera-agent</code></li>
+      <li data-en="Check agent logs: journalctl -u tenodera-agent -f" data-pl="Sprawdź logi agenta: journalctl -u tenodera-agent -f">Check agent logs: <code>journalctl -u tenodera-agent -f</code></li>
+      <li data-en="Look for Hello handshake message in the logs — if it is there, the gateway is connected" data-pl="Szukaj wiadomości Hello w logach — jeśli jest, bramka jest połączona">Look for <code>Hello</code> handshake in the logs — if it's there, the gateway is connected</li>
+      <li data-en="Verify TENODERA_GATEWAY_URL points to the correct panel host" data-pl="Sprawdź czy TENODERA_GATEWAY_URL wskazuje na właściwy host panelu">Verify <code>TENODERA_GATEWAY_URL</code> points to the correct panel host</li>
     </ul>
 
     <h3 data-en="Enable debug logging" data-pl="Włącz logowanie debug">Enable debug logging</h3>
