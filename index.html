@@ -27,6 +27,7 @@
       --yellow:   #f9e2af;
     }
 
+    html { scroll-behavior: smooth; }
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
 
@@ -74,6 +75,9 @@
       transition: color 0.15s;
     }
     .nav-links a:hover { color: var(--text); }
+    .nav-section { color: var(--overlay1); font-size: 0.82rem; }
+    .nav-sep { width: 1px; height: 1rem; background: var(--surface1); flex-shrink: 0; }
+    @media (max-width: 1020px) { .hide-nav { display: none !important; } }
 
     .nav-gh {
       display: flex;
@@ -648,6 +652,14 @@
 <nav>
   <a href="." class="nav-logo"><img src="assets/tenodera_icon.webp" alt="Tenodera" style="height:28px;width:28px;object-fit:contain;vertical-align:middle;margin-right:0.4rem;">Tenodera</a>
   <div class="nav-links">
+    <a href="#features"      class="hide-nav nav-section" data-en="Features"      data-pl="Funkcje">Features</a>
+    <a href="#screenshots"   class="hide-nav nav-section" data-en="Screenshots"   data-pl="Screenshoty">Screenshots</a>
+    <a href="#requirements"  class="hide-nav nav-section" data-en="Requirements"  data-pl="Wymagania">Requirements</a>
+    <a href="#quickstart"    class="hide-nav nav-section" data-en="Quick Start"   data-pl="Szybki Start">Quick Start</a>
+    <a href="#architecture"  class="hide-nav nav-section" data-en="Architecture"  data-pl="Architektura">Architecture</a>
+    <a href="#security"      class="hide-nav nav-section" data-en="Security"      data-pl="Bezpieczeństwo">Security</a>
+    <a href="#faq"           class="hide-nav nav-section">FAQ</a>
+    <div class="nav-sep hide-nav"></div>
     <a href="docs/" class="hide-mobile" data-en="Docs" data-pl="Dokumentacja">Docs</a>
     <a href="https://github.com/ultherego/Tenodera" target="_blank" rel="noopener" class="nav-gh">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -693,7 +705,7 @@
 <hr class="divider">
 
 <!-- Features -->
-<section class="section">
+<section class="section" id="features">
   <div class="section-label" data-en="FEATURES" data-pl="FUNKCJE">FEATURES</div>
   <h2 class="section-title" data-en="Everything you need to manage Linux servers" data-pl="Wszystko czego potrzebujesz do zarządzania serwerami Linux">Everything you need to manage Linux servers</h2>
   <p class="section-desc" data-en="Real-time visibility and full control over your infrastructure — from a single, self-hosted web interface." data-pl="Widoczność w czasie rzeczywistym i pełna kontrola nad infrastrukturą — z jednego, samodzielnego interfejsu webowego.">
@@ -736,7 +748,7 @@
 <hr class="divider">
 
 <!-- Screenshots -->
-<section class="section">
+<section class="section" id="screenshots">
   <div class="section-label" data-en="SCREENSHOTS" data-pl="ZRZUTY EKRANU">SCREENSHOTS</div>
   <h2 class="section-title" data-en="See it in action" data-pl="Zobacz w akcji">See it in action</h2>
   <p class="section-desc" data-en="A clean, dark interface built with React — designed for long admin sessions." data-pl="Czysty, ciemny interfejs w React — zaprojektowany dla długich sesji administracyjnych.">
@@ -809,7 +821,7 @@
 <hr class="divider">
 
 <!-- Requirements -->
-<section class="section">
+<section class="section" id="requirements">
   <div class="section-label" data-en="REQUIREMENTS" data-pl="WYMAGANIA">REQUIREMENTS</div>
   <h2 class="section-title" data-en="What you need" data-pl="Co potrzebujesz">What you need</h2>
   <p class="section-desc" data-en="Tenodera ships as a static binary — no runtime dependencies. If your system runs systemd, you're good to go." data-pl="Tenodera to statyczny binarny plik — brak zależności runtime. Jeśli system działa na systemd, wszystko gotowe.">
@@ -852,7 +864,7 @@
 <hr class="divider">
 
 <!-- Quick Start -->
-<section class="section">
+<section class="section" id="quickstart">
   <div class="section-label" data-en="QUICK START" data-pl="SZYBKI START">QUICK START</div>
   <h2 class="section-title" data-en="Up and running in minutes" data-pl="Działa w kilka minut">Up and running in minutes</h2>
   <p class="section-desc" data-en="The installer handles everything: Rust, Node.js, build, binary install, systemd service. One command on the panel host, one on each managed host." data-pl="Instalator zajmuje się wszystkim: Rust, Node.js, kompilacja, instalacja, serwis systemd. Jedna komenda na hoście panelu, jedna na każdym zarządzanym hoście.">
@@ -885,7 +897,7 @@
 <hr class="divider">
 
 <!-- Architecture -->
-<section class="section">
+<section class="section" id="architecture">
   <div class="section-label" data-en="ARCHITECTURE" data-pl="ARCHITEKTURA">ARCHITECTURE</div>
   <h2 class="section-title" data-en="How it works" data-pl="Jak to działa">How it works</h2>
   <p class="section-desc" data-en="Agents connect outbound — the gateway never initiates connections to managed hosts. All communication is multiplexed over a single authenticated WebSocket per host." data-pl="Agenci łączą się wychodzącym połączeniem — bramka nigdy nie inicjuje połączeń z zarządzanymi hostami. Cała komunikacja jest multipleksowana przez jeden uwierzytelniony WebSocket na hosta.">
@@ -957,7 +969,7 @@
 <hr class="divider">
 
 <!-- Security -->
-<section class="section">
+<section class="section" id="security">
   <div class="section-label" data-en="SECURITY" data-pl="BEZPIECZEŃSTWO">SECURITY</div>
   <h2 class="section-title" data-en="Built with security in mind" data-pl="Zaprojektowany z myślą o bezpieczeństwie">Built with security in mind</h2>
   <p class="section-desc" data-en="No agent opens inbound ports. No separate credential store. Designed to be auditable from day one." data-pl="Żaden agent nie otwiera portów przychodzących. Brak osobnej bazy haseł. Zaprojektowany tak, by był audytowalny od pierwszego dnia.">
@@ -1012,7 +1024,7 @@
 <hr class="divider">
 
 <!-- FAQ -->
-<section class="section">
+<section class="section" id="faq">
   <div class="section-label">FAQ</div>
   <h2 class="section-title" data-en="Common questions" data-pl="Najczęstsze pytania">Common questions</h2>
   <div class="faq-list">
