@@ -823,8 +823,16 @@
   }
 
   setLang(currentLang);
+</script>
 
-  // Lightbox
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
+  <img id="lightbox-img" src="" alt="">
+  <div class="lightbox-caption" id="lightbox-caption"></div>
+</div>
+
+<script>
+  // Lightbox — div must exist before this script runs
   const lb      = document.getElementById('lightbox');
   const lbImg   = document.getElementById('lightbox-img');
   const lbCap   = document.getElementById('lightbox-caption');
@@ -851,12 +859,6 @@
   lb.addEventListener('click', e => { if (e.target === lb) closeLightbox(); });
   document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
 </script>
-
-<div class="lightbox" id="lightbox">
-  <button class="lightbox-close" onclick="closeLightbox()" aria-label="Close">✕</button>
-  <img id="lightbox-img" src="" alt="">
-  <div class="lightbox-caption" id="lightbox-caption"></div>
-</div>
 
 </body>
 </html>
