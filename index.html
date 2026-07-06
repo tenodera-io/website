@@ -502,6 +502,123 @@
       font-weight: 500;
     }
 
+    /* ── Requirements ───────────────────── */
+    .req-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+    .req-item {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 10px;
+      padding: 1.25rem;
+    }
+    .req-item-label {
+      font-size: 0.72rem;
+      color: var(--overlay1);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 0.35rem;
+      font-weight: 600;
+    }
+    .req-item-value {
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 600;
+      margin-bottom: 0.2rem;
+    }
+    .req-item-note {
+      font-size: 0.78rem;
+      color: var(--subtext0);
+      line-height: 1.45;
+    }
+
+    /* ── Security ────────────────────────── */
+    .sec-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
+      gap: 0.75rem;
+      margin-top: 2rem;
+    }
+    .sec-item {
+      display: flex;
+      gap: 0.9rem;
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 10px;
+      padding: 1.1rem 1.25rem;
+    }
+    .sec-icon {
+      color: var(--green);
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+    .sec-item-title {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 0.2rem;
+    }
+    .sec-item-desc {
+      font-size: 0.8rem;
+      color: var(--subtext0);
+      line-height: 1.5;
+    }
+
+    /* ── FAQ ─────────────────────────────── */
+    .faq-list {
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    details.faq-item {
+      background: var(--mantle);
+      border: 1px solid var(--surface0);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    details.faq-item[open] { border-color: var(--surface1); }
+    details.faq-item summary {
+      padding: 1.1rem 1.5rem;
+      cursor: pointer;
+      font-weight: 600;
+      color: var(--text);
+      font-size: 0.9rem;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+      gap: 1rem;
+    }
+    details.faq-item summary::-webkit-details-marker { display: none; }
+    details.faq-item summary::after {
+      content: '+';
+      color: var(--green);
+      font-size: 1.3rem;
+      font-weight: 300;
+      flex-shrink: 0;
+    }
+    details.faq-item[open] summary::after { content: '−'; }
+    .faq-answer {
+      padding: 1rem 1.5rem 1.1rem;
+      color: var(--subtext1);
+      font-size: 0.875rem;
+      line-height: 1.7;
+      border-top: 1px solid var(--surface0);
+    }
+    .faq-answer code {
+      background: var(--surface0);
+      padding: 0.1em 0.4em;
+      border-radius: 4px;
+      font-size: 0.85em;
+      font-family: 'JetBrains Mono', 'Fira Code', monospace;
+    }
+
     /* ── Footer ──────────────────────────── */
     footer {
       border-top: 1px solid var(--surface0);
@@ -691,6 +808,49 @@
 
 <hr class="divider">
 
+<!-- Requirements -->
+<section class="section">
+  <div class="section-label" data-en="REQUIREMENTS" data-pl="WYMAGANIA">REQUIREMENTS</div>
+  <h2 class="section-title" data-en="What you need" data-pl="Co potrzebujesz">What you need</h2>
+  <p class="section-desc" data-en="Tenodera ships as a static binary — no runtime dependencies. If your system runs systemd, you're good to go." data-pl="Tenodera to statyczny binarny plik — brak zależności runtime. Jeśli system działa na systemd, wszystko gotowe.">
+    Tenodera ships as a static binary — no runtime dependencies. If your system runs systemd, you're good to go.
+  </p>
+  <div class="req-grid">
+    <div class="req-item">
+      <div class="req-item-label">OS</div>
+      <div class="req-item-value" data-en="Any Linux with systemd" data-pl="Dowolny Linux z systemd">Any Linux with systemd</div>
+      <div class="req-item-note">Debian · Ubuntu · RHEL · Fedora · Arch</div>
+    </div>
+    <div class="req-item">
+      <div class="req-item-label" data-en="Architecture" data-pl="Architektura">Architecture</div>
+      <div class="req-item-value">x86_64</div>
+      <div class="req-item-note" data-en="arm64 planned" data-pl="arm64 planowane">arm64 planned</div>
+    </div>
+    <div class="req-item">
+      <div class="req-item-label" data-en="Runtime deps" data-pl="Zależności runtime">Runtime deps</div>
+      <div class="req-item-value" data-en="None" data-pl="Brak">None</div>
+      <div class="req-item-note" data-en="No JVM · no Python · no Node.js" data-pl="Bez JVM · Pythona · Node.js">No JVM · no Python · no Node.js</div>
+    </div>
+    <div class="req-item">
+      <div class="req-item-label" data-en="Ports" data-pl="Porty">Ports</div>
+      <div class="req-item-value">9090 · 9091</div>
+      <div class="req-item-note" data-en="Panel :9090 inbound, Agent :9091 outbound only" data-pl="Panel :9090 przychodzący, Agent :9091 tylko wychodzący">Panel :9090 inbound · Agent :9091 outbound only</div>
+    </div>
+    <div class="req-item">
+      <div class="req-item-label" data-en="Auth" data-pl="Uwierzytelnianie">Auth</div>
+      <div class="req-item-value">PAM · sudo · wheel</div>
+      <div class="req-item-note" data-en="FreeIPA · LDAP · SSSD supported via PAM" data-pl="FreeIPA · LDAP · SSSD obsługiwane przez PAM">FreeIPA · LDAP · SSSD supported via PAM</div>
+    </div>
+    <div class="req-item">
+      <div class="req-item-label" data-en="Disk" data-pl="Dysk">Disk</div>
+      <div class="req-item-value">~20 MB</div>
+      <div class="req-item-note" data-en="per binary (panel or agent)" data-pl="na binarny plik (panel lub agent)">per binary (panel or agent)</div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
 <!-- Quick Start -->
 <section class="section">
   <div class="section-label" data-en="QUICK START" data-pl="SZYBKI START">QUICK START</div>
@@ -791,6 +951,95 @@
       <div class="arch-prop-label" data-en="Protocol" data-pl="Protokół">Protocol</div>
       <div class="arch-prop-value" data-en="JSON over WebSocket · v2" data-pl="JSON przez WebSocket · v2">JSON over WebSocket · v2</div>
     </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- Security -->
+<section class="section">
+  <div class="section-label" data-en="SECURITY" data-pl="BEZPIECZEŃSTWO">SECURITY</div>
+  <h2 class="section-title" data-en="Built with security in mind" data-pl="Zaprojektowany z myślą o bezpieczeństwie">Built with security in mind</h2>
+  <p class="section-desc" data-en="No agent opens inbound ports. No separate credential store. Designed to be auditable from day one." data-pl="Żaden agent nie otwiera portów przychodzących. Brak osobnej bazy haseł. Zaprojektowany tak, by był audytowalny od pierwszego dnia.">
+    No agent opens inbound ports. No separate credential store. Designed to be auditable from day one.
+  </p>
+  <div class="sec-list">
+    <div class="sec-item">
+      <div class="sec-icon">✓</div>
+      <div>
+        <div class="sec-item-title" data-en="PAM authentication" data-pl="Uwierzytelnianie PAM">PAM authentication</div>
+        <div class="sec-item-desc" data-en="Credentials validated against the OS — no password database to protect or leak." data-pl="Dane logowania weryfikowane przez system operacyjny — żadna baza haseł do ochrony ani wycieku.">Credentials validated against the OS — no password database to protect or leak.</div>
+      </div>
+    </div>
+    <div class="sec-item">
+      <div class="sec-icon">✓</div>
+      <div>
+        <div class="sec-item-title" data-en="No inbound ports on agents" data-pl="Brak portów przychodzących na agentach">No inbound ports on agents</div>
+        <div class="sec-item-desc" data-en="Agents connect outbound over WebSocket — no firewall rules, no open attack surface on managed hosts." data-pl="Agenci łączą się wychodzącym WebSocket — brak reguł zapory, brak otwartej powierzchni ataku.">Agents connect outbound over WebSocket — no firewall rules, no open attack surface on managed hosts.</div>
+      </div>
+    </div>
+    <div class="sec-item">
+      <div class="sec-icon">✓</div>
+      <div>
+        <div class="sec-item-title" data-en="Audit log" data-pl="Log audytu">Audit log</div>
+        <div class="sec-item-desc" data-en="Every login, logout, and privilege escalation is written to /var/log/tenodera_audit.log." data-pl="Każde logowanie, wylogowanie i eskalacja uprawnień jest zapisywana do /var/log/tenodera_audit.log.">Every login, logout, and privilege escalation written to <code>/var/log/tenodera_audit.log</code>.</div>
+      </div>
+    </div>
+    <div class="sec-item">
+      <div class="sec-icon">✓</div>
+      <div>
+        <div class="sec-item-title" data-en="Rate limiting &amp; brute-force protection" data-pl="Rate limiting i ochrona przed brute-force">Rate limiting &amp; brute-force protection</div>
+        <div class="sec-item-desc" data-en="Login attempts are rate-limited per IP. Repeated failures trigger a temporary lockout." data-pl="Próby logowania są ograniczane per IP. Wielokrotne niepowodzenia powodują tymczasową blokadę.">Login attempts rate-limited per IP. Repeated failures trigger a temporary lockout.</div>
+      </div>
+    </div>
+    <div class="sec-item">
+      <div class="sec-icon">✓</div>
+      <div>
+        <div class="sec-item-title">CSRF · CSP · Secure headers</div>
+        <div class="sec-item-desc" data-en="All state-changing requests require a CSRF token. Strict Content Security Policy and security headers are set on every response." data-pl="Każde żądanie modyfikujące stan wymaga tokenu CSRF. Strict Content Security Policy i nagłówki bezpieczeństwa ustawiane na każdej odpowiedzi.">All state-changing requests require a CSRF token. Strict CSP and security headers on every response.</div>
+      </div>
+    </div>
+    <div class="sec-item">
+      <div class="sec-icon">✓</div>
+      <div>
+        <div class="sec-item-title" data-en="Privilege separation" data-pl="Separacja uprawnień">Privilege separation</div>
+        <div class="sec-item-desc" data-en="The gateway drops to a dedicated service account after startup. PAM operations run in an isolated subprocess." data-pl="Bramka opada do dedykowanego konta serwisowego po starcie. Operacje PAM uruchamiane w izolowanym podprocesie.">Gateway drops to a dedicated service account after startup. PAM operations run in an isolated subprocess.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- FAQ -->
+<section class="section">
+  <div class="section-label">FAQ</div>
+  <h2 class="section-title" data-en="Common questions" data-pl="Najczęstsze pytania">Common questions</h2>
+  <div class="faq-list">
+    <details class="faq-item">
+      <summary data-en="Do I need a VPN to connect managed hosts?" data-pl="Czy potrzebuję VPN do podłączenia zarządzanych hostów?">Do I need a VPN to connect managed hosts?</summary>
+      <div class="faq-answer" data-en="No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel address on port 9091, it works across NAT, cloud, and private networks with no VPN or firewall rules required." data-pl="Nie. Agenci łączą się wychodzącym połączeniem do panelu przez WebSocket — panel nigdy nie inicjuje połączeń do zarządzanych hostów. Dopóki zarządzany host może dotrzeć do adresu panelu na porcie 9091, działa przez NAT, chmurę i sieci prywatne bez VPN ani reguł zapory.">No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel on port 9091, it works across NAT, cloud, and private networks with no VPN or firewall rules required.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-en="Does it work with FreeIPA / LDAP / Active Directory?" data-pl="Czy działa z FreeIPA / LDAP / Active Directory?">Does it work with FreeIPA / LDAP / Active Directory?</summary>
+      <div class="faq-answer" data-en="Yes — Tenodera uses PAM, so any identity provider that integrates with PAM works automatically. This includes FreeIPA, SSSD + LDAP, Winbind, and local accounts. No extra configuration is needed on the Tenodera side." data-pl="Tak — Tenodera używa PAM, więc każdy dostawca tożsamości zintegrowany z PAM działa automatycznie. Dotyczy to FreeIPA, SSSD + LDAP, Winbind i kont lokalnych. Żadna dodatkowa konfiguracja po stronie Tenodera nie jest wymagana.">Yes — Tenodera uses PAM, so any identity provider that integrates with PAM works automatically. This includes FreeIPA, SSSD + LDAP, Winbind, and local accounts. No extra configuration needed on the Tenodera side.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-en="What happens if an agent goes offline?" data-pl="Co się dzieje gdy agent przejdzie offline?">What happens if an agent goes offline?</summary>
+      <div class="faq-answer" data-en="The host is marked as offline in the panel UI. All other connected hosts continue working normally — each agent has its own independent WebSocket connection. The agent reconnects automatically when it comes back online." data-pl="Host zostaje oznaczony jako offline w panelu. Wszystkie inne podłączone hosty działają normalnie — każdy agent ma własne niezależne połączenie WebSocket. Agent automatycznie ponawia połączenie po powrocie do sieci.">The host is marked as offline in the panel UI. All other connected hosts continue working normally — each agent has its own independent WebSocket connection. The agent reconnects automatically when it comes back online.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-en="Does Tenodera store my passwords?" data-pl="Czy Tenodera przechowuje moje hasła?">Does Tenodera store my passwords?</summary>
+      <div class="faq-answer" data-en="No. Passwords are passed directly to PAM and never written to disk or stored in memory beyond authentication. Sessions use short-lived tokens. The password field is zeroed in memory immediately after the PAM call returns." data-pl="Nie. Hasła są przekazywane bezpośrednio do PAM i nigdy nie są zapisywane na dysk ani przechowywane w pamięci po uwierzytelnieniu. Sesje używają krótkotrwałych tokenów. Pole hasła jest zerowane w pamięci natychmiast po zwróceniu wywołania PAM.">No. Passwords are passed directly to PAM and never written to disk. Sessions use short-lived tokens. The password field is zeroed in memory immediately after the PAM call returns.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-en="Can the panel and an agent run on the same host?" data-pl="Czy panel i agent mogą działać na tym samym hoście?">Can the panel and an agent run on the same host?</summary>
+      <div class="faq-answer" data-en="Yes. Install both tenodera and tenodera-agent on the same machine. The agent will appear as localhost in the panel alongside any remote hosts." data-pl="Tak. Zainstaluj zarówno tenodera jak i tenodera-agent na tej samej maszynie. Agent pojawi się jako localhost w panelu obok zdalnych hostów.">Yes. Install both <code>tenodera</code> and <code>tenodera-agent</code> on the same machine. The agent appears as <code>localhost</code> in the panel alongside any remote hosts.</div>
+    </details>
+    <details class="faq-item">
+      <summary data-en="Is it production-ready?" data-pl="Czy jest gotowy do produkcji?">Is it production-ready?</summary>
+      <div class="faq-answer" data-en="Tenodera is functional and actively used, but still in early development — expect rough edges and breaking changes between releases. It is suitable for homelab, internal tooling, and non-critical infrastructure. For mission-critical production use, review the open issues on GitHub first." data-pl="Tenodera jest funkcjonalne i aktywnie używane, ale wciąż na wczesnym etapie rozwoju — spodziewaj się nieoszlifowanych elementów i breaking changes między wersjami. Nadaje się do homelabów, narzędzi wewnętrznych i niekrytycznej infrastruktury. Do produkcji krytycznej najpierw przejrzyj otwarte issue na GitHubie.">Tenodera is functional and actively used, but still in early development — expect rough edges and breaking changes between releases. Suitable for homelab, internal tooling, and non-critical infrastructure. For mission-critical production use, review the open issues on GitHub first.</div>
+    </details>
   </div>
 </section>
 
