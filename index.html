@@ -571,16 +571,64 @@
   </p>
   <div class="screenshots-grid">
     <div class="screenshot-wrap" id="ss-dashboard">
-      <img src="assets/screenshots/dashboard.png" alt="Dashboard" onerror="this.closest('.screenshot-wrap').innerHTML=ph('📊','Dashboard')">
+      <img src="assets/screenshots/dashboard.webp" alt="Dashboard" onerror="this.closest('.screenshot-wrap').innerHTML=ph('📊','Dashboard')">
       <div class="screenshot-caption" data-en="Dashboard — real-time system overview" data-pl="Dashboard — przegląd systemu w czasie rzeczywistym">Dashboard — real-time system overview</div>
     </div>
     <div class="screenshot-wrap" id="ss-terminal">
-      <img src="assets/screenshots/terminal.png" alt="Terminal" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🖥️','Terminal')">
+      <img src="assets/screenshots/terminal.webp" alt="Terminal" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🖥️','Terminal')">
       <div class="screenshot-caption" data-en="Terminal — browser-based PTY via xterm.js" data-pl="Terminal — PTY w przeglądarce przez xterm.js">Terminal — browser-based PTY via xterm.js</div>
     </div>
+    <div class="screenshot-wrap" id="ss-services">
+      <img src="assets/screenshots/services.webp" alt="Services" onerror="this.closest('.screenshot-wrap').innerHTML=ph('⚙️','Services')">
+      <div class="screenshot-caption" data-en="Services — manage systemd units" data-pl="Services — zarządzaj jednostkami systemd">Services — manage systemd units</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-users">
+      <img src="assets/screenshots/users.webp" alt="Users &amp; Groups" onerror="this.closest('.screenshot-wrap').innerHTML=ph('👥','Users &amp; Groups')">
+      <div class="screenshot-caption" data-en="Users &amp; Groups — NSS-aware user management" data-pl="Użytkownicy i grupy — zarządzanie przez NSS">Users &amp; Groups — NSS-aware user management</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-packages">
+      <img src="assets/screenshots/packages.webp" alt="Packages" onerror="this.closest('.screenshot-wrap').innerHTML=ph('📦','Packages')">
+      <div class="screenshot-caption" data-en="Packages — apt / dnf / pacman auto-detected" data-pl="Pakiety — automatycznie wykryty backend apt / dnf / pacman">Packages — apt / dnf / pacman auto-detected</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-storage">
+      <img src="assets/screenshots/storage.webp" alt="Storage" onerror="this.closest('.screenshot-wrap').innerHTML=ph('💾','Storage')">
+      <div class="screenshot-caption" data-en="Storage — block device tree and disk I/O chart" data-pl="Storage — drzewo urządzeń blokowych i wykres I/O">Storage — block device tree and disk I/O chart</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-networking">
+      <img src="assets/screenshots/networking.webp" alt="Networking" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🌐','Networking')">
+      <div class="screenshot-caption" data-en="Networking — traffic charts, firewall, interfaces" data-pl="Sieć — wykresy ruchu, zapora, interfejsy">Networking — traffic charts, firewall, interfaces</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-containers">
+      <img src="assets/screenshots/containers.webp" alt="Containers" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🐳','Containers')">
+      <div class="screenshot-caption" data-en="Containers — Docker and Podman management" data-pl="Kontenery — zarządzanie Docker i Podman">Containers — Docker and Podman management</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-files">
+      <img src="assets/screenshots/files.webp" alt="Files" onerror="this.closest('.screenshot-wrap').innerHTML=ph('📁','Files')">
+      <div class="screenshot-caption" data-en="Files — browser-based file manager with sudo support" data-pl="Pliki — menedżer plików z obsługą sudo">Files — browser-based file manager with sudo support</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-logs">
+      <img src="assets/screenshots/log.webp" alt="Logs (Journal)" onerror="this.closest('.screenshot-wrap').innerHTML=ph('📋','Logs')">
+      <div class="screenshot-caption" data-en="Logs — systemd journal with unit filter" data-pl="Logi — dziennik systemd z filtrem jednostki">Logs — systemd journal with unit filter</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-logfiles">
+      <img src="assets/screenshots/logs.webp" alt="Log Files" onerror="this.closest('.screenshot-wrap').innerHTML=ph('📄','Log Files')">
+      <div class="screenshot-caption" data-en="Log Files — /var/log browser with full-text search" data-pl="Pliki logów — przeglądarka /var/log z wyszukiwaniem">Log Files — /var/log browser with full-text search</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-cron">
+      <img src="assets/screenshots/cronjob.webp" alt="Cron Jobs" onerror="this.closest('.screenshot-wrap').innerHTML=ph('⏰','Cron Jobs')">
+      <div class="screenshot-caption" data-en="Cron Jobs — view and edit system and user crontabs" data-pl="Cron — przeglądaj i edytuj crontaby systemowe i użytkowników">Cron Jobs — view and edit system and user crontabs</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-dns">
+      <img src="assets/screenshots/dns.webp" alt="DNS" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🔍','DNS')">
+      <div class="screenshot-caption" data-en="DNS — resolv.conf, /etc/hosts, interactive dig lookup" data-pl="DNS — resolv.conf, /etc/hosts, interaktywne wyszukiwanie dig">DNS — resolv.conf, /etc/hosts, interactive dig lookup</div>
+    </div>
+    <div class="screenshot-wrap" id="ss-certificates">
+      <img src="assets/screenshots/certificats.webp" alt="Certificates" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🔐','Certificates')">
+      <div class="screenshot-caption" data-en="Certificates — TLS cert scan, import, trust store" data-pl="Certyfikaty — skan TLS, import, trust store">Certificates — TLS cert scan, import, trust store</div>
+    </div>
     <div class="screenshot-wrap" id="ss-management">
-      <img src="assets/screenshots/management.png" alt="Management" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🌐','Multi-host Management')">
-      <div class="screenshot-caption" data-en="Management — multi-host overview" data-pl="Management — przegląd wielu hostów">Management — multi-host overview</div>
+      <img src="assets/screenshots/management.webp" alt="Management" onerror="this.closest('.screenshot-wrap').innerHTML=ph('🖥️','Management')">
+      <div class="screenshot-caption" data-en="Management — enrolled hosts, pending, bootstrap tokens" data-pl="Management — zarejestrowane hosty, oczekujące, tokeny">Management — enrolled hosts, pending, bootstrap tokens</div>
     </div>
   </div>
 </section>
