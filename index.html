@@ -623,6 +623,24 @@
       font-family: 'JetBrains Mono', 'Fira Code', monospace;
     }
 
+    /* ── Section GIF background ─────────── */
+    .section-bg-wrap {
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .section-bg-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: rgba(30, 30, 46, 0.84);
+      pointer-events: none;
+    }
+    .section-bg-wrap > .section {
+      position: relative;
+      z-index: 1;
+    }
+
     /* ── Footer ──────────────────────────── */
     footer {
       border-top: 1px solid var(--surface0);
@@ -705,6 +723,7 @@
 <hr class="divider">
 
 <!-- Features -->
+<div class="section-bg-wrap" style="background-image:url('assets/catppuccin-mocha-green-admin-hosts-1080p.gif')">
 <section class="section" id="features">
   <div class="section-label" data-en="FEATURES" data-pl="FUNKCJE">FEATURES</div>
   <h2 class="section-title" data-en="Everything you need to manage Linux servers" data-pl="Wszystko czego potrzebujesz do zarządzania serwerami Linux">Everything you need to manage Linux servers</h2>
@@ -744,10 +763,12 @@
     </div>
   </div>
 </section>
+</div>
 
 <hr class="divider">
 
 <!-- Screenshots -->
+<div class="section-bg-wrap" style="background-image:url('assets/catppuccin-mocha-green-rain-1080p.gif')">
 <section class="section" id="screenshots">
   <div class="section-label" data-en="SCREENSHOTS" data-pl="ZRZUTY EKRANU">SCREENSHOTS</div>
   <h2 class="section-title" data-en="See it in action" data-pl="Zobacz w akcji">See it in action</h2>
@@ -817,10 +838,12 @@
     </div>
   </div>
 </section>
+</div>
 
 <hr class="divider">
 
 <!-- Requirements -->
+<div class="section-bg-wrap" style="background-image:url('assets/catppuccin-mocha-green-waves-slow-1080p.gif')">
 <section class="section" id="requirements">
   <div class="section-label" data-en="REQUIREMENTS" data-pl="WYMAGANIA">REQUIREMENTS</div>
   <h2 class="section-title" data-en="What you need" data-pl="Co potrzebujesz">What you need</h2>
@@ -860,6 +883,7 @@
     </div>
   </div>
 </section>
+</div>
 
 <hr class="divider">
 
