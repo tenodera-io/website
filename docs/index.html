@@ -421,8 +421,9 @@
     <a href="#health" data-en="10. Health &amp; Monitoring" data-pl="10. Monitoring">10. Health &amp; Monitoring</a>
     <a href="#architecture" data-en="11. Architecture" data-pl="11. Architektura">11. Architecture</a>
     <a href="#security" data-en="12. Security" data-pl="12. Bezpieczeństwo">12. Security</a>
-    <a href="#uninstall" data-en="13. Uninstall" data-pl="13. Deinstalacja">13. Uninstall</a>
-    <a href="#troubleshooting" data-en="14. Troubleshooting" data-pl="14. Rozwiązywanie problemów">14. Troubleshooting</a>
+    <a href="#docker" data-en="13. Docker / Containerization" data-pl="13. Docker / Konteneryzacja">13. Docker / Containerization</a>
+    <a href="#uninstall" data-en="14. Uninstall" data-pl="14. Deinstalacja">14. Uninstall</a>
+    <a href="#troubleshooting" data-en="15. Troubleshooting" data-pl="15. Rozwiązywanie problemów">15. Troubleshooting</a>
   </nav>
 
   <main class="content">
@@ -979,9 +980,71 @@ packaging/               <span class="c-c">RPM spec files (tenodera.spec, tenode
       <li data-en="Audit log: all logins, logouts, and privilege escalations → /var/log/tenodera_audit.log" data-pl="Log audytu: wszystkie logowania, wylogowania, eskalacje → /var/log/tenodera_audit.log">Audit log: all logins, logouts, privilege escalations → <code>/var/log/tenodera_audit.log</code></li>
     </ul>
 
-    <!-- 13. Uninstall -->
+    <!-- 13. Docker / Containerization -->
+    <div id="docker" class="section-anchor"></div>
+    <h2><span class="n">13</span><span data-en="Docker / Containerization" data-pl="Docker / Konteneryzacja">Docker / Containerization</span></h2>
+    <p data-en="Tenodera cannot run correctly inside a standard Docker container. This is a fundamental architectural constraint — three independent mechanisms each break when containerized." data-pl="Tenodera nie może poprawnie działać wewnątrz standardowego kontenera Docker. To fundamentalne ograniczenie architektoniczne — trzy niezależne mechanizmy przestają działać po skonteneryzowaniu.">Tenodera <strong data-en="cannot run correctly inside a standard Docker container" data-pl="nie może poprawnie działać wewnątrz standardowego kontenera Docker">cannot run correctly inside a standard Docker container</strong>. This is a fundamental architectural constraint — three independent mechanisms each break when containerized.</p>
+
+    <h3 data-en="Why containerization fails" data-pl="Dlaczego konteneryzacja nie działa">Why containerization fails</h3>
+
+    <h4 data-en="1. PAM authentication requires the host user database" data-pl="1. Uwierzytelnianie PAM wymaga bazy użytkowników hosta">1. PAM authentication requires the host user database</h4>
+    <p data-en="Tenodera authenticates every login through the Linux PAM stack (/etc/pam.d/tenodera). PAM resolves users against NSS — /etc/passwd, /etc/shadow, and optionally SSSD, FreeIPA, or LDAP via their sockets and shared libraries. Inside a Docker container, PAM sees the container's own minimal user database, not the host's." data-pl="Tenodera uwierzytelnia każde logowanie przez stos PAM (/etc/pam.d/tenodera). PAM rozwiązuje użytkowników przez NSS — /etc/passwd, /etc/shadow, oraz opcjonalnie SSSD, FreeIPA lub LDAP przez ich sockety i biblioteki. Wewnątrz kontenera PAM widzi minimalną bazę użytkowników kontenera, nie hosta.">Tenodera authenticates every login through the Linux PAM stack (<code>/etc/pam.d/tenodera</code>). PAM resolves users against NSS — <code>/etc/passwd</code>, <code>/etc/shadow</code>, and optionally SSSD, FreeIPA, or LDAP via their sockets and shared libraries. Inside a Docker container, PAM sees the container's own minimal user database, not the host's.</p>
+    <p data-en="Even if you bind-mount /etc/passwd and /etc/shadow from the host, the following issues remain:" data-pl="Nawet jeśli zamountujesz /etc/passwd i /etc/shadow z hosta, pozostają następujące problemy:">Even if you bind-mount <code>/etc/passwd</code> and <code>/etc/shadow</code> from the host, the following issues remain:</p>
+    <ul>
+      <li data-en="SSSD / FreeIPA / LDAP authenticate via Unix sockets (/var/run/sssd/public/sss_cli, /var/run/samba/winbindd_privileged) and shared libraries (pam_sss.so, pam_winbind.so). Mounting only the user files is not enough — you also need the live sockets, PAM modules, and matching library versions." data-pl="SSSD / FreeIPA / LDAP uwierzytelniają przez sockety Unix (/var/run/sssd/public/sss_cli) i biblioteki współdzielone (pam_sss.so). Samo zamontowanie plików użytkowników to za mało — potrzeba też żywych socketów, modułów PAM i zgodnych wersji bibliotek.">SSSD / FreeIPA / LDAP authenticate via Unix sockets (<code>/var/run/sssd/public/sss_cli</code>) and shared libraries (<code>pam_sss.so</code>, <code>pam_winbind.so</code>). Mounting only the user files is not enough — you also need the live sockets, PAM modules, and matching library versions.</li>
+      <li data-en="PAM modules (pam_unix.so, pam_sss.so) are shared libraries linked against specific glibc versions. A container built on a different base image will have the wrong library versions, causing pam_authenticate() to segfault or silently fail." data-pl="Moduły PAM (pam_unix.so, pam_sss.so) to biblioteki współdzielone linkowane z konkretnymi wersjami glibc. Kontener zbudowany na innym obrazie bazowym będzie miał złe wersje bibliotek, powodując segfault lub ciche niepowodzenie pam_authenticate().">PAM modules (<code>pam_unix.so</code>, <code>pam_sss.so</code>) are shared libraries linked against specific glibc versions. A container built on a different base image will have the wrong library versions, causing <code>pam_authenticate()</code> to segfault or silently fail.</li>
+      <li data-en="/etc/pam.d/tenodera is installed on the host by the Tenodera installer. Inside the container this file does not exist unless explicitly mounted." data-pl="/etc/pam.d/tenodera jest instalowany na hoście przez instalator Tenodera. Wewnątrz kontenera ten plik nie istnieje, chyba że jest jawnie zamountowany."><code>/etc/pam.d/tenodera</code> is installed on the host by the Tenodera installer. Inside the container this file does not exist unless explicitly mounted.</li>
+    </ul>
+
+    <h4 data-en="2. Setuid root subprocess conflicts with Docker's security model" data-pl="2. Podproces setuid root koliduje z modelem bezpieczeństwa Dockera">2. Setuid root subprocess conflicts with Docker's security model</h4>
+    <p data-en="PAM authentication and PTY user-switching run through tenodera-pam-helper, a binary that must be setuid root. The gateway spawns it as the unprivileged tenodera-gw user; the setuid bit allows the helper to escalate to root only for the PAM call. Docker prevents this in two ways:" data-pl="Uwierzytelnianie PAM i przełączanie PTY użytkownika działają przez tenodera-pam-helper — binarny plik który musi być setuid root. Bramka spawuje go jako nieuprzywilejowany użytkownik tenodera-gw. Docker zapobiega temu na dwa sposoby:">PAM authentication and PTY user-switching run through <code>tenodera-pam-helper</code>, a binary that must be setuid root. The gateway spawns it as the unprivileged <code>tenodera-gw</code> user. Docker prevents this in two ways:</p>
+    <ul>
+      <li data-en="User namespace remapping — when Docker remaps UIDs (default in rootless Docker and common in hardened deployments), the setuid bit is ignored because the file is owned by a remapped UID, not real root." data-pl="Remapowanie przestrzeni nazw użytkowników — gdy Docker remapuje UID, bit setuid jest ignorowany, bo plik należy do remapowanego UID, nie prawdziwego roota."><strong>User namespace remapping</strong> — when Docker remaps UIDs (default in rootless Docker), the setuid bit is ignored because the file is owned by a remapped UID, not real root.</li>
+      <li data-en="no-new-privileges — Docker's default seccomp profile and most Kubernetes pod security policies set PR_SET_NO_NEW_PRIVS, which is inherited by all child processes and explicitly prevents setuid binaries from gaining additional privileges." data-pl="no-new-privileges — domyślny profil seccomp Dockera i większość polityk bezpieczeństwa Kubernetes ustawia PR_SET_NO_NEW_PRIVS, co zapobiega zdobywaniu uprawnień przez binarki setuid."><strong><code>no-new-privileges</code></strong> — Docker's default seccomp profile and most Kubernetes pod security policies set <code>PR_SET_NO_NEW_PRIVS</code>, which is inherited by all child processes and prevents setuid binaries from gaining elevated privileges.</li>
+    </ul>
+
+    <h4 data-en="3. The panel's purpose requires unrestricted host access" data-pl="3. Cel panelu wymaga nieograniczonego dostępu do hosta">3. The panel's purpose requires unrestricted host access</h4>
+    <p data-en="Tenodera manages the OS it runs on. Providing its full feature set requires access to host resources that make --privileged unavoidable:" data-pl="Tenodera zarządza systemem operacyjnym na którym działa. Pełny zestaw funkcji wymaga dostępu do zasobów hosta, co czyni --privileged nieuniknięcym:">Tenodera manages the OS it runs on. Full feature set requires access to:</p>
+    <table>
+      <thead><tr><th data-en="Feature" data-pl="Funkcja">Feature</th><th data-en="Required host access" data-pl="Wymagany dostęp do hosta">Required host access</th></tr></thead>
+      <tbody>
+        <tr><td>Services</td><td>systemd D-Bus socket (<code>/run/systemd/private</code>)</td></tr>
+        <tr><td>Packages</td><td><code>/var/lib/dpkg</code>, <code>/var/lib/rpm</code>, package manager lock files</td></tr>
+        <tr><td>Storage</td><td>Block device nodes (<code>/dev/sd*</code>, <code>/dev/nvme*</code>), <code>/proc/mounts</code></td></tr>
+        <tr><td>Networking</td><td><code>/proc/net/*</code>, nftables/iptables netlink sockets</td></tr>
+        <tr><td>Containers</td><td>Docker / Podman socket (<code>/var/run/docker.sock</code>)</td></tr>
+        <tr><td>Files</td><td>Root filesystem (<code>/etc</code>, <code>/var</code>, <code>/home</code>, arbitrary paths)</td></tr>
+        <tr><td>Logs</td><td><code>/var/log/*</code>, <code>/run/log/journal/*</code></td></tr>
+        <tr><td>Terminal</td><td>PTY devices (<code>/dev/pts/*</code>), process namespace</td></tr>
+        <tr><td data-en="Users" data-pl="Użytkownicy">Users</td><td><code>/etc/passwd</code>, <code>/etc/shadow</code>, <code>/etc/group</code> (write)</td></tr>
+      </tbody>
+    </table>
+    <p data-en="Granting all of this requires --privileged. A --privileged container has the same kernel access as a root process on the host — container isolation is entirely removed." data-pl="Przyznanie tego wszystkiego wymaga --privileged. Kontener --privileged ma taki sam dostęp do kernela jak root na hoście — izolacja kontenera jest całkowicie usunięta.">Granting all of this requires <code>--privileged</code>. A <code>--privileged</code> container has the same kernel access as a root process on the host — container isolation is entirely removed.</p>
+
+    <h3 data-en="Why --privileged is not a solution" data-pl="Dlaczego --privileged to nie rozwiązanie">Why <code>--privileged</code> is not a solution</h3>
+    <p data-en="Even with --privileged, PAM still sees the wrong user database unless /etc is fully bind-mounted (which means the container and host share /etc, breaking container isolation further). SSSD / FreeIPA sockets are still not available inside the container unless also bind-mounted. Library version mismatches between the container base image and host PAM modules remain. The result is a --privileged container that is harder to debug, slower to start, and less reliable than the binary running natively — with no isolation benefit." data-pl="Nawet z --privileged, PAM nadal widzi złą bazę użytkowników, chyba że /etc jest w pełni zamountowany. Sockety SSSD / FreeIPA wciąż nie są dostępne. Niezgodność wersji bibliotek PAM pozostaje. Wynik: kontener --privileged trudniejszy do debugowania, wolniejszy do startu i mniej niezawodny niż binarka uruchomiona natywnie — bez żadnej korzyści z izolacji.">Even with <code>--privileged</code>: PAM still sees the wrong user database unless <code>/etc</code> is fully bind-mounted; SSSD / FreeIPA sockets are still unavailable; library version mismatches persist. The result is a <code>--privileged</code> container that is harder to debug, slower to start, and less reliable than the binary running natively — with no isolation benefit.</p>
+
+    <h3 data-en="What Docker can be used for: build environments" data-pl="Do czego Docker się nadaje: środowisko budowania">What Docker can be used for: build environments</h3>
+    <p data-en="Docker is appropriate as a build environment for producing Tenodera binaries — for CI/CD pipelines, cross-compilation (e.g. aarch64 on x86_64), and release artifacts. The resulting binaries are then deployed and run directly on the host, not inside Docker." data-pl="Docker nadaje się jako środowisko budowania binarek Tenodera — dla pipeline'ów CI/CD, cross-kompilacji (np. aarch64 na x86_64) i artefaktów releasów. Wynikowe binarki są instalowane i uruchamiane bezpośrednio na hoście, nie wewnątrz Dockera.">Docker is appropriate as a <strong data-en="build environment" data-pl="środowisko budowania">build environment</strong> — for CI/CD pipelines, cross-compilation, and release artifacts. The resulting binaries are deployed and run <strong>directly on the host</strong>, not inside Docker.</p>
+    <pre><code>FROM rust:1.82-bookworm
+RUN apt-get update &amp;&amp; apt-get install -y libpam0g-dev nodejs npm
+WORKDIR /build
+COPY panel/ ./panel/
+COPY protocol/ ./protocol/
+RUN cd panel &amp;&amp; cargo build --release
+# docker cp &lt;container&gt;:/build/panel/target/release/tenodera-gateway ./</code></pre>
+
+    <h3 data-en="Recommended production setup" data-pl="Zalecany setup produkcyjny">Recommended production setup</h3>
+    <p data-en="Install directly on the host using the one-line installer. For TLS, either configure the gateway directly (§4.2) or place nginx/Caddy in front of it (§4.3)." data-pl="Zainstaluj bezpośrednio na hoście używając instalatora. Dla TLS skonfiguruj bramkę bezpośrednio (§4.2) lub umieść nginx/Caddy przed nią (§4.3).">Install directly on the host using the one-line installer. For TLS, either configure the gateway directly (<a href="#panel-config">§4.2</a>) or place nginx/Caddy in front of it (<a href="#panel-config">§4.3</a>).</p>
+    <pre><code>Host OS (bare metal or VM)
+├── tenodera-gateway    (systemd, drops to tenodera-gw after bind)
+├── tenodera-pam-helper (setuid root, spawned by gateway for auth)
+├── tenodera-agent      (systemd, connects outbound to gateway)
+└── nginx / Caddy       (optional reverse proxy for TLS termination)</code></pre>
+
+    <!-- 14. Uninstall -->
     <div id="uninstall" class="section-anchor"></div>
-    <h2><span class="n">13</span><span data-en="Uninstall" data-pl="Deinstalacja">Uninstall</span></h2>
+    <h2><span class="n">14</span><span data-en="Uninstall" data-pl="Deinstalacja">Uninstall</span></h2>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code><span class="c-c"># Panel host (removes everything)</span>
 curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh \
   | sudo bash -s -- --uninstall
@@ -992,7 +1055,7 @@ curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-ag
 
     <!-- 14. Troubleshooting -->
     <div id="troubleshooting" class="section-anchor"></div>
-    <h2><span class="n">14</span><span data-en="Troubleshooting" data-pl="Rozwiązywanie problemów">Troubleshooting</span></h2>
+    <h2><span class="n">15</span><span data-en="Troubleshooting" data-pl="Rozwiązywanie problemów">Troubleshooting</span></h2>
     <h3 data-en="Panel not starting" data-pl="Panel nie startuje">Panel not starting</h3>
     <pre><code>journalctl -u tenodera -e</code></pre>
     <ul>
