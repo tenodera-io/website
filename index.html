@@ -636,7 +636,8 @@
       background: rgba(30, 30, 46, 0.84);
       pointer-events: none;
     }
-    .section-bg-wrap > .section {
+    .section-bg-wrap > .section,
+    .section-bg-wrap > .hero {
       position: relative;
       z-index: 1;
     }
@@ -693,6 +694,7 @@
 </nav>
 
 <!-- Hero -->
+<div class="section-bg-wrap" style="background-image:url('assets/catppuccin-mocha-green-admin-hosts-1080p.gif')">
 <section class="hero">
   <img src="assets/tenodera.webp" alt="Tenodera" style="height:96px;width:auto;margin-bottom:1.25rem;display:block;margin-left:auto;margin-right:auto;">
   <div class="hero-badge">
@@ -719,11 +721,11 @@
     <button class="copy-btn" onclick="copyInstall()" data-en="Copy" data-pl="Kopiuj">Copy</button>
   </div>
 </section>
+</div>
 
 <hr class="divider">
 
 <!-- Features -->
-<div class="section-bg-wrap" style="background-image:url('assets/catppuccin-mocha-green-admin-hosts-1080p.gif')">
 <section class="section" id="features">
   <div class="section-label" data-en="FEATURES" data-pl="FUNKCJE">FEATURES</div>
   <h2 class="section-title" data-en="Everything you need to manage Linux servers" data-pl="Wszystko czego potrzebujesz do zarządzania serwerami Linux">Everything you need to manage Linux servers</h2>
@@ -763,7 +765,6 @@
     </div>
   </div>
 </section>
-</div>
 
 <hr class="divider">
 
@@ -843,7 +844,6 @@
 <hr class="divider">
 
 <!-- Requirements -->
-<div class="section-bg-wrap" style="background-image:url('assets/catppuccin-mocha-green-waves-slow-1080p.gif')">
 <section class="section" id="requirements">
   <div class="section-label" data-en="REQUIREMENTS" data-pl="WYMAGANIA">REQUIREMENTS</div>
   <h2 class="section-title" data-en="What you need" data-pl="Co potrzebujesz">What you need</h2>
@@ -883,11 +883,11 @@
     </div>
   </div>
 </section>
-</div>
 
 <hr class="divider">
 
 <!-- Quick Start -->
+<div class="section-bg-wrap" style="background-image:url('assets/catppuccin-mocha-green-waves-slow-1080p.gif')">
 <section class="section" id="quickstart">
   <div class="section-label" data-en="QUICK START" data-pl="SZYBKI START">QUICK START</div>
   <h2 class="section-title" data-en="Up and running in minutes" data-pl="Działa w kilka minut">Up and running in minutes</h2>
@@ -917,6 +917,7 @@
     Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd and x86_64.
   </p>
 </section>
+</div>
 
 <hr class="divider">
 
