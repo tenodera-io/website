@@ -376,7 +376,7 @@
     <span class="page-label" data-en="Documentation" data-pl="Dokumentacja">Documentation</span>
   </div>
   <div class="header-right">
-    <a href="https://github.com/ultherego/Tenodera" target="_blank" rel="noopener">
+    <a href="https://github.com/tenodera-io/tenodera" target="_blank" rel="noopener">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
       GitHub
     </a>
@@ -475,21 +475,21 @@
     <h2><span class="n">3</span><span data-en="Installation" data-pl="Instalacja">Installation</span></h2>
     <h3 data-en="3.1 Panel (gateway + UI)" data-pl="3.1 Panel (bramka + UI)">3.1 Panel (gateway + UI)</h3>
     <p data-en="Run on the host that will serve the web interface:" data-pl="Uruchom na hoście, który będzie serwował interfejs webowy:">Run on the host that will serve the web interface:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh | sudo bash</code></pre>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh | sudo bash</code></pre>
     <p data-en="After install, log in at http://&lt;host&gt;:9090 with any PAM system user." data-pl="Po instalacji zaloguj się pod http://&lt;host&gt;:9090 dowolnym użytkownikiem systemowym PAM.">After install, log in at <code>http://&lt;host&gt;:9090</code> with any PAM system user.</p>
     <div class="note" data-en="The panel starts in HTTP mode by default. Configure TLS before exposing to untrusted networks — see §4.2." data-pl="Panel domyślnie startuje w trybie HTTP. Skonfiguruj TLS przed udostępnieniem w niezaufanych sieciach — patrz §4.2.">⚡ The panel starts in HTTP mode by default. Configure TLS before exposing to untrusted networks — see §4.2.</div>
 
     <h3 data-en="3.2 Agent (managed hosts)" data-pl="3.2 Agent (zarządzane hosty)">3.2 Agent (managed hosts)</h3>
     <p data-en="Run on each host you want to manage:" data-pl="Uruchom na każdym hoście, którym chcesz zarządzać:">Run on each host you want to manage:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-agent.sh \
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
   | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090</code></pre>
     <p data-en="The host enters pending state — approve it in Hosts → Pending." data-pl="Host wchodzi w stan oczekiwania — zatwierdź go w Hosts → Pending.">The host enters <strong data-en="pending" data-pl="oczekiwania">pending</strong> state — approve it in <strong>Hosts → Pending</strong>.</p>
     <p data-en="For unattended installs, generate a bootstrap token in Hosts → Tokens:" data-pl="Dla instalacji bez nadzoru wygeneruj token bootstrap w Hosts → Tokens:">For unattended installs, generate a bootstrap token in <strong>Hosts → Tokens</strong>:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-agent.sh \
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
   | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090 --token &lt;bootstrap-token&gt;</code></pre>
 
     <h3 data-en="3.3 Build from source" data-pl="3.3 Kompilacja ze źródeł">3.3 Build from source</h3>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>git clone https://github.com/ultherego/Tenodera
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>git clone https://github.com/tenodera-io/tenodera
 cd Tenodera
 cd panel && sudo make all   <span class="c-c"># panel host</span>
 cd agent && sudo make all   <span class="c-c"># managed hosts</span></code></pre>
@@ -968,7 +968,7 @@ packaging/               <span class="c-c">RPM spec files (tenodera.spec, tenode
     <!-- 12. Security -->
     <div id="security" class="section-anchor"></div>
     <h2><span class="n">12</span><span data-en="Security" data-pl="Bezpieczeństwo">Security</span></h2>
-    <p data-en="See SECURITY.md on GitHub for the full security model." data-pl="Pełny model bezpieczeństwa: SECURITY.md na GitHub.">See <a href="https://github.com/ultherego/Tenodera/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a> on GitHub for the full security model.</p>
+    <p data-en="See SECURITY.md on GitHub for the full security model." data-pl="Pełny model bezpieczeństwa: SECURITY.md na GitHub.">See <a href="https://github.com/tenodera-io/tenodera/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a> on GitHub for the full security model.</p>
     <ul>
       <li data-en="PAM auth via isolated tenodera-pam-helper subprocess — gateway never handles PAM directly" data-pl="Uwierzytelnianie PAM przez izolowany podproces — bramka nigdy nie obsługuje PAM bezpośrednio">PAM auth via isolated <code>tenodera-pam-helper</code> subprocess — gateway never handles PAM directly</li>
       <li data-en="Ed25519 TOFU agent authentication — 32-byte challenge-response; SECURITY ALERT on key mismatch" data-pl="Uwierzytelnianie agentów Ed25519 TOFU — challenge-response 32 bajtów; SECURITY ALERT przy niezgodności klucza">Ed25519 TOFU agent authentication — 32-byte challenge-response; SECURITY ALERT on key mismatch</li>
@@ -1046,11 +1046,11 @@ RUN cd panel &amp;&amp; cargo build --release
     <div id="uninstall" class="section-anchor"></div>
     <h2><span class="n">14</span><span data-en="Uninstall" data-pl="Deinstalacja">Uninstall</span></h2>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code><span class="c-c"># Panel host (removes everything)</span>
-curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh \
+curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh \
   | sudo bash -s -- --uninstall
 
 <span class="c-c"># Managed hosts (agent only)</span>
-curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-agent.sh \
+curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
   | sudo bash -s -- --uninstall</code></pre>
 
     <!-- 14. Troubleshooting -->

@@ -686,7 +686,7 @@
     <a href="#faq"           class="hide-nav nav-section">FAQ</a>
     <div class="nav-sep hide-nav"></div>
     <a href="docs/" class="hide-mobile" data-en="Docs" data-pl="Dokumentacja">Docs</a>
-    <a href="https://github.com/ultherego/Tenodera" target="_blank" rel="noopener" class="nav-gh">
+    <a href="https://github.com/tenodera-io/tenodera" target="_blank" rel="noopener" class="nav-gh">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
         <path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/>
       </svg>
@@ -714,7 +714,7 @@
     A self-hosted admin panel for Linux servers. Terminal, services, packages, containers, files, firewall, and more — no VPN, no SSH tunnels required.
   </p>
   <div class="hero-actions">
-    <a href="https://github.com/ultherego/Tenodera" class="btn-primary" target="_blank" rel="noopener">
+    <a href="https://github.com/tenodera-io/tenodera" class="btn-primary" target="_blank" rel="noopener">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"/></svg>
       <span data-en="View on GitHub" data-pl="Zobacz na GitHub">View on GitHub</span>
     </a>
@@ -723,7 +723,7 @@
     </a>
   </div>
   <div class="install-box">
-    <pre id="install-cmd">curl -sSfL https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh | sudo bash</pre>
+    <pre id="install-cmd">curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh | sudo bash</pre>
     <button class="copy-btn" onclick="copyInstall()" data-en="Copy" data-pl="Kopiuj">Copy</button>
   </div>
 </section>
@@ -909,14 +909,14 @@
   <div id="content-panel" class="code-block">
     <button class="code-copy" onclick="copyCode('panel')" data-en="Copy" data-pl="Kopiuj">Copy</button>
     <pre><span class="c-comment"># Install panel on your gateway host</span>
-<span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera.sh <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span>
+<span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span>
 
 <span class="c-comment"># Access at http://&lt;host&gt;:9090 — log in with any system user</span></pre>
   </div>
   <div id="content-agent" class="code-block" style="display:none">
     <button class="code-copy" onclick="copyCode('agent')" data-en="Copy" data-pl="Kopiuj">Copy</button>
     <pre><span class="c-comment"># Install agent on each managed host</span>
-<span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/ultherego/Tenodera/main/tenodera-agent.sh \
+<span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
   <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span> <span class="c-flag">-s</span> <span class="c-flag">--</span> <span class="c-flag">--gateway</span> <span class="c-val">http://&lt;panel-host&gt;:9090</span>
 
 <span class="c-comment"># Approve the host in the panel under: Hosts → Pending</span></pre>
@@ -1102,7 +1102,7 @@
 <footer>
   <p>
     Tenodera &mdash;
-    <a href="https://github.com/ultherego/Tenodera" target="_blank" rel="noopener">GitHub</a> &middot;
+    <a href="https://github.com/tenodera-io/tenodera" target="_blank" rel="noopener">GitHub</a> &middot;
     <a href="docs/" data-en="Documentation" data-pl="Dokumentacja">Documentation</a> &middot;
     <span data-en="MIT License" data-pl="Licencja MIT">MIT License</span>
   </p>
