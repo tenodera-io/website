@@ -46,7 +46,9 @@
       z-index: 100;
       background: color-mix(in srgb, var(--mantle) 92%, transparent);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--surface0);
+      border-bottom: 1px solid color-mix(in srgb, var(--green) 32%, transparent);
+      box-shadow: 0 2px 12px color-mix(in srgb, var(--green) 7%, transparent),
+                  0 8px 24px rgba(0, 0, 0, 0.4);
       padding: 0 2rem;
       height: 60px;
       display: flex;
@@ -78,6 +80,50 @@
     .nav-section { color: var(--overlay1); font-size: 0.82rem; }
     .nav-sep { width: 1px; height: 1rem; background: var(--surface1); flex-shrink: 0; }
     @media (max-width: 1020px) { .hide-nav { display: none !important; } }
+
+    .nav-burger {
+      display: none;
+      background: none;
+      border: none;
+      color: var(--subtext1);
+      width: 36px;
+      height: 36px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 1.25rem;
+      line-height: 1;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.15s, color 0.15s;
+      flex-shrink: 0;
+    }
+    .nav-burger:hover { background: var(--surface0); color: var(--text); }
+    @media (max-width: 1020px) { .nav-burger { display: flex; } }
+
+    .nav-mobile {
+      display: none;
+      position: absolute;
+      top: 60px;
+      left: 0;
+      right: 0;
+      flex-direction: column;
+      background: color-mix(in srgb, var(--mantle) 96%, transparent);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid color-mix(in srgb, var(--green) 32%, transparent);
+      box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+      padding: 0.5rem 2rem 0.9rem;
+    }
+    .nav-mobile.open { display: flex; }
+    .nav-mobile a {
+      color: var(--subtext1);
+      text-decoration: none;
+      font-size: 0.95rem;
+      padding: 0.65rem 0;
+      border-bottom: 1px solid var(--surface0);
+      transition: color 0.15s;
+    }
+    .nav-mobile a:last-child { border-bottom: none; }
+    .nav-mobile a:hover { color: var(--green); }
 
     .nav-gh {
       display: flex;
@@ -696,6 +742,17 @@
       <button onclick="setLang('en')" id="btn-en" class="active">EN</button>
       <button onclick="setLang('pl')" id="btn-pl">PL</button>
     </div>
+    <button class="nav-burger" onclick="toggleMenu()" aria-label="Menu" aria-expanded="false" id="nav-burger">☰</button>
+  </div>
+  <div class="nav-mobile" id="nav-mobile">
+    <a href="#features"      data-en="Features"      data-pl="Funkcje">Features</a>
+    <a href="#screenshots"   data-en="Screenshots"   data-pl="Screenshoty">Screenshots</a>
+    <a href="#requirements"  data-en="Requirements"  data-pl="Wymagania">Requirements</a>
+    <a href="#quickstart"    data-en="Quick Start"   data-pl="Szybki Start">Quick Start</a>
+    <a href="#architecture"  data-en="Architecture"  data-pl="Architektura">Architecture</a>
+    <a href="#security"      data-en="Security"      data-pl="Bezpieczeństwo">Security</a>
+    <a href="#faq">FAQ</a>
+    <a href="docs/" data-en="Docs" data-pl="Dokumentacja">Docs</a>
   </div>
 </nav>
 
@@ -1127,6 +1184,23 @@
     document.getElementById('btn-en').classList.toggle('active', lang === 'en');
     document.getElementById('btn-pl').classList.toggle('active', lang === 'pl');
   }
+
+  // Mobile menu
+  function toggleMenu() {
+    const menu = document.getElementById('nav-mobile');
+    const burger = document.getElementById('nav-burger');
+    const open = menu.classList.toggle('open');
+    burger.setAttribute('aria-expanded', open);
+    burger.textContent = open ? '✕' : '☰';
+  }
+  document.querySelectorAll('#nav-mobile a').forEach(a => {
+    a.addEventListener('click', () => {
+      document.getElementById('nav-mobile').classList.remove('open');
+      const burger = document.getElementById('nav-burger');
+      burger.setAttribute('aria-expanded', 'false');
+      burger.textContent = '☰';
+    });
+  });
 
   // Tabs
   function showTab(tab) {
