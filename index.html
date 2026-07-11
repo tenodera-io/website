@@ -966,7 +966,8 @@
     Install signed .deb / .rpm packages in seconds — they configure the service, user, and systemd unit for you. Prefer building from source? The one-line installer still works (and covers Arch).
   </p>
   <div class="install-tabs">
-    <button class="tab-btn active" onclick="showTab('pkg')" id="tab-pkg" data-en="Packages (.deb / .rpm)" data-pl="Pakiety (.deb / .rpm)">Packages (.deb / .rpm)</button>
+    <button class="tab-btn active" onclick="showTab('pkgdeb')" id="tab-pkgdeb" data-en="Debian / Ubuntu (.deb)" data-pl="Debian / Ubuntu (.deb)">Debian / Ubuntu (.deb)</button>
+    <button class="tab-btn" onclick="showTab('pkgrpm')" id="tab-pkgrpm" data-en="Fedora (.rpm)" data-pl="Fedora (.rpm)">Fedora (.rpm)</button>
     <button class="tab-btn" onclick="showTab('panel')" id="tab-panel" data-en="Panel — from source" data-pl="Panel — ze źródeł">Panel — from source</button>
     <button class="tab-btn" onclick="showTab('agent')" id="tab-agent" data-en="Agent — from source" data-pl="Agent — ze źródeł">Agent — from source</button>
   </div>
@@ -985,14 +986,25 @@
 
 <span class="c-comment"># Approve the host in the panel under: Hosts → Pending</span></pre>
   </div>
-  <div id="content-pkg" class="code-block">
-    <button class="code-copy" onclick="copyCode('pkg')" data-en="Copy" data-pl="Kopiuj">Copy</button>
-    <pre><span class="c-comment"># Panel host — download the signed .deb / .rpm from the Releases page, then:</span>
-<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera_*.deb ./tenodera-agent_*.deb</span>   <span class="c-comment"># Debian / Ubuntu</span>
-<span class="c-cmd">sudo dnf install</span> <span class="c-val">./tenodera-*.rpm ./tenodera-agent-*.rpm</span>   <span class="c-comment"># Fedora</span>
+  <div id="content-pkgdeb" class="code-block">
+    <button class="code-copy" onclick="copyCode('pkgdeb')" data-en="Copy" data-pl="Kopiuj">Copy</button>
+    <pre><span class="c-comment"># Panel host — download the signed .deb from Releases, then:</span>
+<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera_*.deb ./tenodera-agent_*.deb</span>
 
 <span class="c-comment"># Managed host — install just the agent, then point it at your panel:</span>
 <span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera-agent_*.deb</span>
+<span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|127.0.0.1|&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
+<span class="c-cmd">sudo systemctl enable --now</span> tenodera-agent
+
+<span class="c-comment"># Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
+  </div>
+  <div id="content-pkgrpm" class="code-block" style="display:none">
+    <button class="code-copy" onclick="copyCode('pkgrpm')" data-en="Copy" data-pl="Kopiuj">Copy</button>
+    <pre><span class="c-comment"># Panel host — download the signed .rpm from Releases, then:</span>
+<span class="c-cmd">sudo dnf install</span> <span class="c-val">./tenodera-*.rpm ./tenodera-agent-*.rpm</span>
+
+<span class="c-comment"># Managed host — install just the agent, then point it at your panel:</span>
+<span class="c-cmd">sudo dnf install</span> <span class="c-val">./tenodera-agent-*.rpm</span>
 <span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|127.0.0.1|&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
 <span class="c-cmd">sudo systemctl enable --now</span> tenodera-agent
 
@@ -1224,12 +1236,10 @@
 
   // Tabs
   function showTab(tab) {
-    document.getElementById('content-panel').style.display = tab === 'panel' ? 'block' : 'none';
-    document.getElementById('content-agent').style.display = tab === 'agent' ? 'block' : 'none';
-    document.getElementById('content-pkg').style.display = tab === 'pkg' ? 'block' : 'none';
-    document.getElementById('tab-panel').classList.toggle('active', tab === 'panel');
-    document.getElementById('tab-agent').classList.toggle('active', tab === 'agent');
-    document.getElementById('tab-pkg').classList.toggle('active', tab === 'pkg');
+    ['pkgdeb', 'pkgrpm', 'panel', 'agent'].forEach(function (t) {
+      document.getElementById('content-' + t).style.display = t === tab ? 'block' : 'none';
+      document.getElementById('tab-' + t).classList.toggle('active', t === tab);
+    });
   }
 
   // Copy
