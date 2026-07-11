@@ -779,12 +779,16 @@
       <span data-en="Read the Docs" data-pl="Dokumentacja">Read the Docs</span>
     </a>
   </div>
+  <div class="install-tabs" style="justify-content:center;max-width:620px;margin:0 auto 0.6rem;">
+    <button class="tab-btn active" onclick="heroDistro('deb')" id="hdist-deb">Debian / Ubuntu</button>
+    <button class="tab-btn" onclick="heroDistro('rpm')" id="hdist-rpm">Fedora</button>
+  </div>
   <div class="install-box">
-    <pre id="install-cmd"># download the signed .deb / .rpm from Releases, then:
-sudo apt install ./tenodera_*.deb ./tenodera-agent_*.deb    # Debian / Ubuntu
-sudo dnf install ./tenodera-*.rpm ./tenodera-agent-*.rpm    # Fedora</pre>
+    <pre id="hero-deb">sudo apt install ./tenodera_*.deb ./tenodera-agent_*.deb</pre>
+    <pre id="hero-rpm" style="display:none">sudo dnf install ./tenodera-*.rpm ./tenodera-agent-*.rpm</pre>
     <button class="copy-btn" onclick="copyInstall()" data-en="Copy" data-pl="Kopiuj">Copy</button>
   </div>
+  <p style="max-width:620px;margin:0.6rem auto 0;font-size:0.75rem;color:var(--subtext0);text-align:center" data-en="Download the signed .deb / .rpm from the Releases page first." data-pl="Najpierw pobierz podpisany plik .deb / .rpm ze strony Releases.">Download the signed .deb / .rpm from the Releases page first.</p>
 </section>
 </div>
 
@@ -1229,8 +1233,16 @@ sudo dnf install ./tenodera-*.rpm ./tenodera-agent-*.rpm    # Fedora</pre>
   }
 
   // Copy
+  function heroDistro(d) {
+    document.getElementById('hero-deb').style.display = d === 'deb' ? 'block' : 'none';
+    document.getElementById('hero-rpm').style.display = d === 'rpm' ? 'block' : 'none';
+    document.getElementById('hdist-deb').classList.toggle('active', d === 'deb');
+    document.getElementById('hdist-rpm').classList.toggle('active', d === 'rpm');
+  }
+
   function copyInstall() {
-    navigator.clipboard.writeText(document.getElementById('install-cmd').textContent.trim()).then(() => {
+    const id = document.getElementById('hero-rpm').style.display === 'none' ? 'hero-deb' : 'hero-rpm';
+    navigator.clipboard.writeText(document.getElementById(id).textContent.trim()).then(() => {
       const btn = document.querySelector('.install-box .copy-btn');
       const orig = btn.textContent;
       btn.textContent = '✓';
