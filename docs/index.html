@@ -488,7 +488,21 @@
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
   | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090 --token &lt;bootstrap-token&gt;</code></pre>
 
-    <h3 data-en="3.3 Build from source" data-pl="3.3 Kompilacja ze źródeł">3.3 Build from source</h3>
+    <h3 data-en="3.3 Install from packages" data-pl="3.3 Instalacja z paczek">3.3 Install from packages</h3>
+    <p data-en="Every release ships signed .deb (Debian 12+ / Ubuntu 24.04+) and .rpm (Fedora) packages for amd64 and arm64 — no compiling. On a panel host, install the panel and the agent together:" data-pl="Każde wydanie zawiera podpisane paczki .deb (Debian 12+ / Ubuntu 24.04+) i .rpm (Fedora) dla amd64 i arm64 — bez kompilacji. Na hoście panelu zainstaluj panel razem z agentem:">Every <a href="https://github.com/tenodera-io/tenodera/releases">release</a> ships signed <code>.deb</code> (Debian 12+ / Ubuntu 24.04+) and <code>.rpm</code> (Fedora) packages for amd64 and arm64 — no compiling. On a panel host, install the panel and the agent together:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code><span class="c-c"># Debian / Ubuntu</span>
+sudo apt install ./tenodera_&lt;ver&gt;_amd64.deb ./tenodera-agent_&lt;ver&gt;_amd64.deb
+<span class="c-c"># Fedora</span>
+sudo dnf install ./tenodera-&lt;ver&gt;.x86_64.rpm ./tenodera-agent-&lt;ver&gt;.x86_64.rpm</code></pre>
+    <p data-en="The panel package configures itself (config, service account, data dir), then enables and starts the gateway on port 9090. On a managed host, install just the agent and point it at your panel:" data-pl="Paczka panelu konfiguruje się sama (config, konto serwisowe, katalog danych), po czym włącza i startuje bramkę na porcie 9090. Na hoście zarządzanym zainstaluj sam agent i wskaż mu swój panel:">The panel package configures itself (config, service account, data dir), then enables and starts the gateway on port 9090. On a managed host, install just the agent and point it at your panel:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo apt install ./tenodera-agent_&lt;ver&gt;_amd64.deb   <span class="c-c"># or: dnf install ./...rpm</span>
+sudo sed -i 's|127.0.0.1|&lt;panel-host&gt;|' /etc/tenodera/agent.cnf
+sudo systemctl enable --now tenodera-agent</code></pre>
+    <p data-en="Verify the download — every release includes SHA256SUMS signed with minisign; the public key is in SECURITY.md:" data-pl="Zweryfikuj pobranie — każde wydanie zawiera SHA256SUMS podpisane przez minisign; klucz publiczny jest w SECURITY.md:">Verify the download — every release includes <code>SHA256SUMS</code> signed with <a href="https://jedisct1.github.io/minisign/">minisign</a>; the public key is in <a href="https://github.com/tenodera-io/tenodera/blob/main/SECURITY.md">SECURITY.md</a>:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>minisign -Vm SHA256SUMS -P &lt;public-key&gt;
+sha256sum --ignore-missing -c SHA256SUMS</code></pre>
+
+    <h3 data-en="3.4 Build from source" data-pl="3.4 Kompilacja ze źródeł">3.4 Build from source</h3>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>git clone https://github.com/tenodera-io/tenodera
 cd Tenodera
 cd panel && sudo make all   <span class="c-c"># panel host</span>
@@ -1045,6 +1059,7 @@ RUN cd panel &amp;&amp; cargo build --release
     <!-- 14. Uninstall -->
     <div id="uninstall" class="section-anchor"></div>
     <h2><span class="n">14</span><span data-en="Uninstall" data-pl="Deinstalacja">Uninstall</span></h2>
+    <p data-en="If you installed with the source installer (curl), uninstall the same way:" data-pl="Jeśli instalowałeś instalatorem ze źródeł (curl), odinstaluj tak samo:">If you installed with the source installer (<code>curl</code>), uninstall the same way:</p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code><span class="c-c"># Panel host (removes everything)</span>
 curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh \
   | sudo bash -s -- --uninstall
@@ -1052,6 +1067,11 @@ curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.
 <span class="c-c"># Managed hosts (agent only)</span>
 curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
   | sudo bash -s -- --uninstall</code></pre>
+    <p data-en="If you installed from packages, use your package manager instead — it stops and disables the services:" data-pl="Jeśli instalowałeś z paczek, użyj menedżera pakietów — zatrzyma i wyłączy usługi:">If you installed from packages, use your package manager instead — it stops and disables the services:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code><span class="c-c"># Debian / Ubuntu</span>
+sudo apt remove tenodera tenodera-agent      <span class="c-c"># add --purge to drop /etc/tenodera</span>
+<span class="c-c"># Fedora</span>
+sudo dnf remove tenodera tenodera-agent</code></pre>
 
     <!-- 14. Troubleshooting -->
     <div id="troubleshooting" class="section-anchor"></div>

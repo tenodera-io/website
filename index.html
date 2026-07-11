@@ -962,6 +962,7 @@
   <div class="install-tabs">
     <button class="tab-btn active" onclick="showTab('panel')" id="tab-panel" data-en="Panel (gateway + UI)" data-pl="Panel (bramka + UI)">Panel (gateway + UI)</button>
     <button class="tab-btn" onclick="showTab('agent')" id="tab-agent" data-en="Agent (managed host)" data-pl="Agent (zarządzany host)">Agent (managed host)</button>
+    <button class="tab-btn" onclick="showTab('pkg')" id="tab-pkg" data-en="Packages (.deb / .rpm)" data-pl="Pakiety (.deb / .rpm)">Packages (.deb / .rpm)</button>
   </div>
   <div id="content-panel" class="code-block">
     <button class="code-copy" onclick="copyCode('panel')" data-en="Copy" data-pl="Kopiuj">Copy</button>
@@ -978,8 +979,19 @@
 
 <span class="c-comment"># Approve the host in the panel under: Hosts → Pending</span></pre>
   </div>
-  <p style="margin-top:1.5rem; font-size:0.875rem; color:var(--subtext0)" data-en="Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd and x86_64." data-pl="Obsługiwane: Debian, Ubuntu, RHEL, Fedora, Arch — dowolny Linux z systemd i x86_64.">
-    Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd and x86_64.
+  <div id="content-pkg" class="code-block" style="display:none">
+    <button class="code-copy" onclick="copyCode('pkg')" data-en="Copy" data-pl="Kopiuj">Copy</button>
+    <pre><span class="c-comment"># Prebuilt signed packages (amd64 / arm64) — download from the Releases page</span>
+<span class="c-comment"># Debian 12+ / Ubuntu 24.04+</span>
+<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera_&lt;ver&gt;_amd64.deb ./tenodera-agent_&lt;ver&gt;_amd64.deb</span>
+
+<span class="c-comment"># Fedora</span>
+<span class="c-cmd">sudo dnf install</span> <span class="c-val">./tenodera-&lt;ver&gt;.x86_64.rpm ./tenodera-agent-&lt;ver&gt;.x86_64.rpm</span>
+
+<span class="c-comment"># Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
+  </div>
+  <p style="margin-top:1.5rem; font-size:0.875rem; color:var(--subtext0)" data-en="Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd, on x86_64 or arm64." data-pl="Obsługiwane: Debian, Ubuntu, RHEL, Fedora, Arch — dowolny Linux z systemd, na x86_64 lub arm64.">
+    Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd, on x86_64 or arm64.
   </p>
 </section>
 </div>
@@ -1206,8 +1218,10 @@
   function showTab(tab) {
     document.getElementById('content-panel').style.display = tab === 'panel' ? 'block' : 'none';
     document.getElementById('content-agent').style.display = tab === 'agent' ? 'block' : 'none';
+    document.getElementById('content-pkg').style.display = tab === 'pkg' ? 'block' : 'none';
     document.getElementById('tab-panel').classList.toggle('active', tab === 'panel');
     document.getElementById('tab-agent').classList.toggle('active', tab === 'agent');
+    document.getElementById('tab-pkg').classList.toggle('active', tab === 'pkg');
   }
 
   // Copy
