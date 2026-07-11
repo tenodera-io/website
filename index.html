@@ -780,7 +780,9 @@
     </a>
   </div>
   <div class="install-box">
-    <pre id="install-cmd">curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh | sudo bash</pre>
+    <pre id="install-cmd"># download the signed .deb / .rpm from Releases, then:
+sudo apt install ./tenodera_*.deb ./tenodera-agent_*.deb    # Debian / Ubuntu
+sudo dnf install ./tenodera-*.rpm ./tenodera-agent-*.rpm    # Fedora</pre>
     <button class="copy-btn" onclick="copyInstall()" data-en="Copy" data-pl="Kopiuj">Copy</button>
   </div>
 </section>
@@ -956,15 +958,15 @@
 <section class="section" id="quickstart">
   <div class="section-label" data-en="QUICK START" data-pl="SZYBKI START">QUICK START</div>
   <h2 class="section-title" data-en="Up and running in minutes" data-pl="Działa w kilka minut">Up and running in minutes</h2>
-  <p class="section-desc" data-en="The installer handles everything: Rust, Node.js, build, binary install, systemd service. One command on the panel host, one on each managed host." data-pl="Instalator zajmuje się wszystkim: Rust, Node.js, kompilacja, instalacja, serwis systemd. Jedna komenda na hoście panelu, jedna na każdym zarządzanym hoście.">
-    The installer handles everything: Rust, Node.js, build, binary install, systemd service. One command on the panel host, one on each managed host.
+  <p class="section-desc" data-en="Install signed .deb / .rpm packages in seconds — they configure the service, user, and systemd unit for you. Prefer building from source? The one-line installer still works (and covers Arch)." data-pl="Zainstaluj podpisane paczki .deb / .rpm w kilka sekund — same konfigurują usługę, użytkownika i jednostkę systemd. Wolisz ze źródeł? Jednoliniowy instalator nadal działa (i obsługuje Arch).">
+    Install signed .deb / .rpm packages in seconds — they configure the service, user, and systemd unit for you. Prefer building from source? The one-line installer still works (and covers Arch).
   </p>
   <div class="install-tabs">
-    <button class="tab-btn active" onclick="showTab('panel')" id="tab-panel" data-en="Panel (gateway + UI)" data-pl="Panel (bramka + UI)">Panel (gateway + UI)</button>
-    <button class="tab-btn" onclick="showTab('agent')" id="tab-agent" data-en="Agent (managed host)" data-pl="Agent (zarządzany host)">Agent (managed host)</button>
-    <button class="tab-btn" onclick="showTab('pkg')" id="tab-pkg" data-en="Packages (.deb / .rpm)" data-pl="Pakiety (.deb / .rpm)">Packages (.deb / .rpm)</button>
+    <button class="tab-btn active" onclick="showTab('pkg')" id="tab-pkg" data-en="Packages (.deb / .rpm)" data-pl="Pakiety (.deb / .rpm)">Packages (.deb / .rpm)</button>
+    <button class="tab-btn" onclick="showTab('panel')" id="tab-panel" data-en="Panel — from source" data-pl="Panel — ze źródeł">Panel — from source</button>
+    <button class="tab-btn" onclick="showTab('agent')" id="tab-agent" data-en="Agent — from source" data-pl="Agent — ze źródeł">Agent — from source</button>
   </div>
-  <div id="content-panel" class="code-block">
+  <div id="content-panel" class="code-block" style="display:none">
     <button class="code-copy" onclick="copyCode('panel')" data-en="Copy" data-pl="Kopiuj">Copy</button>
     <pre><span class="c-comment"># Install panel on your gateway host</span>
 <span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span>
@@ -979,14 +981,16 @@
 
 <span class="c-comment"># Approve the host in the panel under: Hosts → Pending</span></pre>
   </div>
-  <div id="content-pkg" class="code-block" style="display:none">
+  <div id="content-pkg" class="code-block">
     <button class="code-copy" onclick="copyCode('pkg')" data-en="Copy" data-pl="Kopiuj">Copy</button>
-    <pre><span class="c-comment"># Prebuilt signed packages (amd64 / arm64) — download from the Releases page</span>
-<span class="c-comment"># Debian 12+ / Ubuntu 24.04+</span>
-<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera_&lt;ver&gt;_amd64.deb ./tenodera-agent_&lt;ver&gt;_amd64.deb</span>
+    <pre><span class="c-comment"># Panel host — download the signed .deb / .rpm from the Releases page, then:</span>
+<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera_*.deb ./tenodera-agent_*.deb</span>   <span class="c-comment"># Debian / Ubuntu</span>
+<span class="c-cmd">sudo dnf install</span> <span class="c-val">./tenodera-*.rpm ./tenodera-agent-*.rpm</span>   <span class="c-comment"># Fedora</span>
 
-<span class="c-comment"># Fedora</span>
-<span class="c-cmd">sudo dnf install</span> <span class="c-val">./tenodera-&lt;ver&gt;.x86_64.rpm ./tenodera-agent-&lt;ver&gt;.x86_64.rpm</span>
+<span class="c-comment"># Managed host — install just the agent, then point it at your panel:</span>
+<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera-agent_*.deb</span>
+<span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|127.0.0.1|&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
+<span class="c-cmd">sudo systemctl enable --now</span> tenodera-agent
 
 <span class="c-comment"># Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
   </div>
