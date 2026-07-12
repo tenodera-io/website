@@ -473,45 +473,55 @@
     <!-- 3. Installation -->
     <div id="installation" class="section-anchor"></div>
     <h2><span class="n">3</span><span data-en="Installation" data-pl="Instalacja">Installation</span></h2>
-    <h3 data-en="3.1 Panel (gateway + UI)" data-pl="3.1 Panel (bramka + UI)">3.1 Panel (gateway + UI)</h3>
-    <p data-en="Run on the host that will serve the web interface:" data-pl="Uruchom na hoście, który będzie serwował interfejs webowy:">Run on the host that will serve the web interface:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh | sudo bash</code></pre>
-    <p data-en="After install, log in at http://&lt;host&gt;:9090 with any PAM system user." data-pl="Po instalacji zaloguj się pod http://&lt;host&gt;:9090 dowolnym użytkownikiem systemowym PAM.">After install, log in at <code>http://&lt;host&gt;:9090</code> with any PAM system user.</p>
-    <div class="note" data-en="The panel starts in HTTP mode by default. Configure TLS before exposing to untrusted networks — see §4.2." data-pl="Panel domyślnie startuje w trybie HTTP. Skonfiguruj TLS przed udostępnieniem w niezaufanych sieciach — patrz §4.2.">⚡ The panel starts in HTTP mode by default. Configure TLS before exposing to untrusted networks — see §4.2.</div>
-
-    <h3 data-en="3.2 Agent (managed hosts)" data-pl="3.2 Agent (zarządzane hosty)">3.2 Agent (managed hosts)</h3>
-    <p data-en="Run on each host you want to manage:" data-pl="Uruchom na każdym hoście, którym chcesz zarządzać:">Run on each host you want to manage:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
-  | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090</code></pre>
-    <p data-en="The host enters pending state — approve it in Hosts → Pending." data-pl="Host wchodzi w stan oczekiwania — zatwierdź go w Hosts → Pending.">The host enters <strong data-en="pending" data-pl="oczekiwania">pending</strong> state — approve it in <strong>Hosts → Pending</strong>.</p>
-    <p data-en="For unattended installs, generate a bootstrap token in Hosts → Tokens:" data-pl="Dla instalacji bez nadzoru wygeneruj token bootstrap w Hosts → Tokens:">For unattended installs, generate a bootstrap token in <strong>Hosts → Tokens</strong>:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
-  | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090 --token &lt;bootstrap-token&gt;</code></pre>
-
-    <h3 data-en="3.3 Install from packages" data-pl="3.3 Instalacja z paczek">3.3 Install from packages</h3>
-    <p data-en="Every release ships signed .deb (Debian 12+ / Ubuntu 24.04+) and .rpm (Fedora) packages for amd64 and arm64 — no compiling. On a panel host, install the panel and the agent together:" data-pl="Każde wydanie zawiera podpisane paczki .deb (Debian 12+ / Ubuntu 24.04+) i .rpm (Fedora) dla amd64 i arm64 — bez kompilacji. Na hoście panelu zainstaluj panel razem z agentem:">Every <a href="https://github.com/tenodera-io/tenodera/releases">release</a> ships signed <code>.deb</code> (Debian 12+ / Ubuntu 24.04+) and <code>.rpm</code> (Fedora) packages for amd64 and arm64 — no compiling. On a panel host, install the panel and the agent together:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code><span class="c-c"># Debian / Ubuntu — version-less URLs always fetch the latest release</span>
-wget https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera_amd64.deb
+    <h3 data-en="3.1 Panel host (packages)" data-pl="3.1 Host panelu (paczki)">3.1 Panel host (packages)</h3>
+    <p data-en="Signed .deb (Debian 12+ / Ubuntu 24.04+) and .rpm (Fedora / RHEL) packages ship with every release, for amd64 and arm64 — no compiling. Filenames carry no version, so releases/latest/download/… always fetches the newest release. On a panel host, install the panel and the agent together." data-pl="Podpisane paczki .deb (Debian 12+ / Ubuntu 24.04+) i .rpm (Fedora / RHEL) są dołączane do każdego wydania, dla amd64 i arm64 — bez kompilacji. Nazwy plików nie zawierają wersji, więc releases/latest/download/… zawsze pobiera najnowsze wydanie. Na hoście panelu zainstaluj panel razem z agentem.">Signed <code>.deb</code> (Debian 12+ / Ubuntu 24.04+) and <code>.rpm</code> (Fedora / RHEL) packages ship with every <a href="https://github.com/tenodera-io/tenodera/releases">release</a>, for amd64 and arm64 — no compiling. Filenames carry no version, so <code>releases/latest/download/…</code> always fetches the newest release. On a panel host, install the panel and the agent together.</p>
+    <p><strong>Debian / Ubuntu</strong></p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>wget https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera_amd64.deb
 wget https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent_amd64.deb
-sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb
-<span class="c-c"># Fedora — dnf installs straight from the URL</span>
-sudo dnf install \
+sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</code></pre>
+    <p data-en="Fedora / RHEL — dnf installs straight from the URL:" data-pl="Fedora / RHEL — dnf instaluje wprost z adresu URL:"><strong>Fedora / RHEL</strong> — <code>dnf</code> installs straight from the URL:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo dnf install \
   https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-x86_64.rpm \
   https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent-x86_64.rpm</code></pre>
-    <p data-en="The panel package configures itself (config, service account, data dir), then enables and starts the gateway on port 9090. On a managed host, install just the agent and point it at your panel:" data-pl="Paczka panelu konfiguruje się sama (config, konto serwisowe, katalog danych), po czym włącza i startuje bramkę na porcie 9090. Na hoście zarządzanym zainstaluj sam agent i wskaż mu swój panel:">The panel package configures itself (config, service account, data dir), then enables and starts the gateway on port 9090. On a managed host, install just the agent and point it at your panel:</p>
+    <p data-en="The panel package configures itself (config, service account, data dir), enables and starts the gateway on port 9090, and starts the local agent. Log in at http://<host>:9090 with any PAM system user that has sudo." data-pl="Paczka panelu konfiguruje się sama (config, konto serwisowe, katalog danych), włącza i startuje bramkę na porcie 9090 oraz startuje lokalnego agenta. Zaloguj się pod http://<host>:9090 dowolnym użytkownikiem systemowym PAM z uprawnieniami sudo.">The panel package configures itself (config, service account, data dir), enables and starts the gateway on port 9090, and starts the local agent. Log in at <code>http://&lt;host&gt;:9090</code> with any PAM system user that has <code>sudo</code>.</p>
+    <div class="note" data-en="The panel starts in HTTP mode by default. Configure TLS before exposing to untrusted networks — see §4.2." data-pl="Panel domyślnie startuje w trybie HTTP. Skonfiguruj TLS przed udostępnieniem w niezaufanych sieciach — patrz §4.2.">⚡ The panel starts in HTTP mode by default. Configure TLS before exposing to untrusted networks — see §4.2.</div>
+
+    <h3 data-en="3.2 Managed hosts (packages)" data-pl="3.2 Zarządzane hosty (paczki)">3.2 Managed hosts (packages)</h3>
+    <p data-en="On each host you want to manage, install just the agent." data-pl="Na każdym hoście, którym chcesz zarządzać, zainstaluj sam agent.">On each host you want to manage, install just the agent.</p>
+    <p><strong>Debian / Ubuntu</strong></p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>wget https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent_amd64.deb
-sudo apt install ./tenodera-agent_amd64.deb   <span class="c-c"># Fedora: dnf install &lt;.../tenodera-agent-x86_64.rpm&gt;</span>
-sudo sed -i 's|127.0.0.1|&lt;panel-host&gt;|' /etc/tenodera/agent.cnf
+sudo apt install ./tenodera-agent_amd64.deb</code></pre>
+    <p><strong>Fedora / RHEL</strong></p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo dnf install https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent-x86_64.rpm</code></pre>
+    <p data-en="Then, on either distro, point the agent at your panel and start it:" data-pl="Następnie, niezależnie od dystrybucji, wskaż agentowi swój panel i uruchom go:">Then, on either distro, point the agent at your panel and start it:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo sed -i 's|127.0.0.1|&lt;panel-host&gt;|' /etc/tenodera/agent.cnf
 sudo systemctl enable --now tenodera-agent</code></pre>
-    <p data-en="Verify the download — every release includes SHA256SUMS signed with minisign; the public key is in SECURITY.md:" data-pl="Zweryfikuj pobranie — każde wydanie zawiera SHA256SUMS podpisane przez minisign; klucz publiczny jest w SECURITY.md:">Verify the download — every release includes <code>SHA256SUMS</code> signed with <a href="https://jedisct1.github.io/minisign/">minisign</a>; the public key is in <a href="https://github.com/tenodera-io/tenodera/blob/main/SECURITY.md">SECURITY.md</a>:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>minisign -Vm SHA256SUMS -P &lt;public-key&gt;
+    <p data-en="The host enters pending state — approve it in Hosts → Pending. To skip approval, generate a bootstrap token in Hosts → Tokens and pass --token to the curl installer (§3.4)." data-pl="Host wchodzi w stan oczekiwania — zatwierdź go w Hosts → Pending. Aby pominąć zatwierdzanie, wygeneruj token bootstrap w Hosts → Tokens i przekaż --token do instalatora curl (§3.4).">The host enters <strong data-en="pending" data-pl="oczekiwania">pending</strong> state — approve it in <strong>Hosts → Pending</strong>. To skip approval, generate a bootstrap token in <strong>Hosts → Tokens</strong> and pass <code>--token</code> to the curl installer (§3.4).</p>
+    <div class="note" data-en="arm64 / aarch64: swap amd64 → arm64 (.deb) and x86_64 → aarch64 (.rpm). For a specific version, replace latest with the release tag, e.g. releases/download/v0.1.7/tenodera_amd64.deb." data-pl="arm64 / aarch64: zamień amd64 → arm64 (.deb) i x86_64 → aarch64 (.rpm). Dla konkretnej wersji zamień latest na tag wydania, np. releases/download/v0.1.7/tenodera_amd64.deb.">📦 arm64 / aarch64: swap <code>amd64</code> → <code>arm64</code> (.deb) and <code>x86_64</code> → <code>aarch64</code> (.rpm). For a specific version, replace <code>latest</code> with the release tag, e.g. <code>releases/download/v0.1.7/tenodera_amd64.deb</code>.</div>
+
+    <h3 data-en="3.3 Verify the download" data-pl="3.3 Weryfikacja pobrania">3.3 Verify the download</h3>
+    <p data-en="Every release includes SHA256SUMS signed with minisign; the public key is in SECURITY.md:" data-pl="Każde wydanie zawiera SHA256SUMS podpisane przez minisign; klucz publiczny jest w SECURITY.md:">Every release includes <code>SHA256SUMS</code> signed with <a href="https://jedisct1.github.io/minisign/">minisign</a>; the public key is in <a href="https://github.com/tenodera-io/tenodera/blob/main/SECURITY.md">SECURITY.md</a>:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>wget https://github.com/tenodera-io/tenodera/releases/latest/download/SHA256SUMS
+wget https://github.com/tenodera-io/tenodera/releases/latest/download/SHA256SUMS.minisig
+minisign -Vm SHA256SUMS -P &lt;public-key&gt;
 sha256sum --ignore-missing -c SHA256SUMS</code></pre>
 
-    <h3 data-en="3.4 Build from source" data-pl="3.4 Kompilacja ze źródeł">3.4 Build from source</h3>
+    <h3 data-en="3.4 Install from source (curl / build)" data-pl="3.4 Instalacja ze źródeł (curl / kompilacja)">3.4 Install from source (curl / build)</h3>
+    <p data-en="Prefer to build from source instead of a package? The curl installer pulls dependencies, compiles (~3–4 min), and wires up the systemd services. On the panel host it installs and enrolls the local agent automatically:" data-pl="Wolisz zbudować ze źródeł zamiast paczki? Instalator curl pobiera zależności, kompiluje (~3–4 min) i konfiguruje serwisy systemd. Na hoście panelu instaluje i rejestruje lokalnego agenta automatycznie:">Prefer to build from source instead of a package? The curl installer pulls dependencies, compiles (~3–4 min), and wires up the systemd services. On the panel host it installs and enrolls the local agent automatically:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh | sudo bash</code></pre>
+    <p data-en="Managed hosts:" data-pl="Zarządzane hosty:">Managed hosts:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
+  | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090</code></pre>
+    <p data-en="Unattended (skip approval) — pass a bootstrap token from Hosts → Tokens:" data-pl="Bez nadzoru (pomiń zatwierdzanie) — przekaż token bootstrap z Hosts → Tokens:">Unattended (skip approval) — pass a bootstrap token from <strong>Hosts → Tokens</strong>:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
+  | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090 --token &lt;bootstrap-token&gt;</code></pre>
+    <p data-en="Or build manually with make:" data-pl="Albo zbuduj ręcznie przez make:">Or build manually with <code>make</code>:</p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>git clone https://github.com/tenodera-io/tenodera
 cd Tenodera
-cd panel && sudo make all   <span class="c-c"># panel host</span>
-cd agent && sudo make all   <span class="c-c"># managed hosts</span></code></pre>
+
+cd panel &amp;&amp; sudo make all   <span class="c-c"># panel host</span>
+
+cd agent &amp;&amp; sudo make all   <span class="c-c"># managed hosts</span></code></pre>
 
     <!-- 4. Panel Config -->
     <div id="panel-config" class="section-anchor"></div>
