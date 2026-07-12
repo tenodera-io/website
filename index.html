@@ -784,11 +784,12 @@
     <button class="tab-btn" onclick="heroDistro('rpm')" id="hdist-rpm">Fedora</button>
   </div>
   <div class="install-box">
-    <pre id="hero-deb">sudo apt install ./tenodera_*.deb ./tenodera-agent_*.deb</pre>
-    <pre id="hero-rpm" style="display:none">sudo dnf install ./tenodera-*.rpm ./tenodera-agent-*.rpm</pre>
+    <pre id="hero-deb">wget https://github.com/tenodera-io/tenodera/releases/latest/download/{tenodera,tenodera-agent}_amd64.deb
+sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
+    <pre id="hero-rpm" style="display:none">sudo dnf install https://github.com/tenodera-io/tenodera/releases/latest/download/{tenodera,tenodera-agent}-x86_64.rpm</pre>
     <button class="copy-btn" onclick="copyInstall()" data-en="Copy" data-pl="Kopiuj">Copy</button>
   </div>
-  <p style="max-width:620px;margin:0.6rem auto 0;font-size:0.75rem;color:var(--subtext0);text-align:center" data-en="Download the signed .deb / .rpm from the Releases page first." data-pl="Najpierw pobierz podpisany plik .deb / .rpm ze strony Releases.">Download the signed .deb / .rpm from the Releases page first.</p>
+  <p style="max-width:620px;margin:0.6rem auto 0;font-size:0.75rem;color:var(--subtext0);text-align:center" data-en="Version-less URLs always fetch the latest signed release. arm64: swap amd64 → arm64 / x86_64 → aarch64." data-pl="Bezwersyjne adresy zawsze pobierają najnowsze podpisane wydanie. arm64: zamień amd64 → arm64 / x86_64 → aarch64.">Version-less URLs always fetch the latest signed release. arm64: swap amd64 → arm64 / x86_64 → aarch64.</p>
 </section>
 </div>
 
@@ -988,27 +989,32 @@
   </div>
   <div id="content-pkgdeb" class="code-block">
     <button class="code-copy" onclick="copyCode('pkgdeb')" data-en="Copy" data-pl="Kopiuj">Copy</button>
-    <pre><span class="c-comment"># Panel host — download the signed .deb from Releases, then:</span>
-<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera_*.deb ./tenodera-agent_*.deb</span>
+    <pre><span class="c-comment"># Panel host — download the latest signed .deb, then install:</span>
+<span class="c-cmd">wget</span> <span class="c-val">https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera_amd64.deb</span>
+<span class="c-cmd">wget</span> <span class="c-val">https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent_amd64.deb</span>
+<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera_amd64.deb ./tenodera-agent_amd64.deb</span>
 
 <span class="c-comment"># Managed host — install just the agent, then point it at your panel:</span>
-<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera-agent_*.deb</span>
+<span class="c-cmd">wget</span> <span class="c-val">https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent_amd64.deb</span>
+<span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera-agent_amd64.deb</span>
 <span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|127.0.0.1|&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
 <span class="c-cmd">sudo systemctl enable --now</span> tenodera-agent
 
-<span class="c-comment"># Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
+<span class="c-comment"># arm64: swap amd64 → arm64.  Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
   </div>
   <div id="content-pkgrpm" class="code-block" style="display:none">
     <button class="code-copy" onclick="copyCode('pkgrpm')" data-en="Copy" data-pl="Kopiuj">Copy</button>
-    <pre><span class="c-comment"># Panel host — download the signed .rpm from Releases, then:</span>
-<span class="c-cmd">sudo dnf install</span> <span class="c-val">./tenodera-*.rpm ./tenodera-agent-*.rpm</span>
+    <pre><span class="c-comment"># Panel host — dnf installs the latest signed .rpm straight from the URL:</span>
+<span class="c-cmd">sudo dnf install</span> <span class="c-val">\</span>
+  <span class="c-val">https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-x86_64.rpm \</span>
+  <span class="c-val">https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent-x86_64.rpm</span>
 
 <span class="c-comment"># Managed host — install just the agent, then point it at your panel:</span>
-<span class="c-cmd">sudo dnf install</span> <span class="c-val">./tenodera-agent-*.rpm</span>
+<span class="c-cmd">sudo dnf install</span> <span class="c-val">https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent-x86_64.rpm</span>
 <span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|127.0.0.1|&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
 <span class="c-cmd">sudo systemctl enable --now</span> tenodera-agent
 
-<span class="c-comment"># Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
+<span class="c-comment"># aarch64: swap x86_64 → aarch64.  Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
   </div>
   <p style="margin-top:1.5rem; font-size:0.875rem; color:var(--subtext0)" data-en="Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd, on x86_64 or arm64." data-pl="Obsługiwane: Debian, Ubuntu, RHEL, Fedora, Arch — dowolny Linux z systemd, na x86_64 lub arm64.">
     Supported: Debian, Ubuntu, RHEL, Fedora, Arch — any Linux with systemd, on x86_64 or arm64.
