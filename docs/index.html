@@ -44,7 +44,9 @@
       z-index: 100;
       background: color-mix(in srgb, var(--mantle) 92%, transparent);
       backdrop-filter: blur(12px);
-      border-bottom: 1px solid var(--surface0);
+      border-bottom: 1px solid color-mix(in srgb, var(--green) 32%, transparent);
+      box-shadow: 0 2px 12px color-mix(in srgb, var(--green) 7%, transparent),
+                  0 8px 24px rgba(0, 0, 0, 0.4);
       padding: 0 1.5rem;
       height: 56px;
       display: flex;
@@ -58,8 +60,8 @@
       color: var(--green);
       text-decoration: none;
       font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: -0.3px;
+      font-size: 1.2rem;
+      letter-spacing: -0.5px;
     }
 
     .breadcrumb-sep { color: var(--surface2); font-size: 1.1rem; }
@@ -82,12 +84,13 @@
     }
     .header-right a:hover { color: var(--text); }
     .nav-page {
+      font-size: 0.82rem;
       padding: 0.34rem 0.7rem; border-radius: 7px;
       transition: color 0.15s, background 0.15s;
     }
-    .nav-page:hover { background: color-mix(in srgb, var(--green) 14%, transparent); }
-    .nav-page.active { background: var(--green); color: var(--crust); font-weight: 600; }
-    .nav-page.active:hover { color: var(--crust); }
+    .nav-page:hover { background: color-mix(in srgb, #695284 28%, transparent); }
+    .nav-page.active { background: #695284; color: #fff; font-weight: 600; }
+    .nav-page.active:hover { color: #fff; }
 
     .lang-toggle {
       display: flex;
