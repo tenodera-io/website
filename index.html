@@ -947,8 +947,8 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
     </div>
     <div class="req-item">
       <div class="req-item-label" data-en="Architecture" data-pl="Architektura">Architecture</div>
-      <div class="req-item-value">x86_64</div>
-      <div class="req-item-note" data-en="arm64 planned" data-pl="arm64 planowane">arm64 planned</div>
+      <div class="req-item-value">x86_64 · arm64</div>
+      <div class="req-item-note" data-en="amd64 (.deb) / x86_64 (.rpm) and arm64 / aarch64 packages" data-pl="paczki amd64 (.deb) / x86_64 (.rpm) oraz arm64 / aarch64">amd64 / x86_64 and arm64 / aarch64 packages</div>
     </div>
     <div class="req-item">
       <div class="req-item-label" data-en="Runtime deps" data-pl="Zależności runtime">Runtime deps</div>
@@ -957,8 +957,8 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
     </div>
     <div class="req-item">
       <div class="req-item-label" data-en="Ports" data-pl="Porty">Ports</div>
-      <div class="req-item-value">9090 · 9091</div>
-      <div class="req-item-note" data-en="Panel :9090 inbound, Agent :9091 outbound only" data-pl="Panel :9090 przychodzący, Agent :9091 tylko wychodzący">Panel :9090 inbound · Agent :9091 outbound only</div>
+      <div class="req-item-value">9090</div>
+      <div class="req-item-note" data-en="Panel :9090 (inbound). Agents have no inbound port — they dial the panel outbound." data-pl="Panel :9090 (przychodzący). Agenci nie mają portu przychodzącego — łączą się do panelu wychodząco.">Panel :9090 inbound. Agents: no inbound port — outbound only to the panel.</div>
     </div>
     <div class="req-item">
       <div class="req-item-label" data-en="Auth" data-pl="Uwierzytelnianie">Auth</div>
@@ -1183,7 +1183,7 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
     </details>
     <details class="faq-item">
       <summary data-en="Do I need a VPN to connect managed hosts?" data-pl="Czy potrzebuję VPN do podłączenia zarządzanych hostów?">Do I need a VPN to connect managed hosts?</summary>
-      <div class="faq-answer" data-en="No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel address on port 9091, it works across NAT, cloud, and private networks with no VPN or firewall rules required." data-pl="Nie. Agenci łączą się wychodzącym połączeniem do panelu przez WebSocket — panel nigdy nie inicjuje połączeń do zarządzanych hostów. Dopóki zarządzany host może dotrzeć do adresu panelu na porcie 9091, działa przez NAT, chmurę i sieci prywatne bez VPN ani reguł zapory.">No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel on port 9091, it works across NAT, cloud, and private networks with no VPN or firewall rules required.</div>
+      <div class="faq-answer" data-en="No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel address on port 9090, it works across NAT, cloud, and private networks with no VPN or firewall rules required." data-pl="Nie. Agenci łączą się wychodzącym połączeniem do panelu przez WebSocket — panel nigdy nie inicjuje połączeń do zarządzanych hostów. Dopóki zarządzany host może dotrzeć do adresu panelu na porcie 9090, działa przez NAT, chmurę i sieci prywatne bez VPN ani reguł zapory.">No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel on port 9090, it works across NAT, cloud, and private networks with no VPN or firewall rules required.</div>
     </details>
     <details class="faq-item">
       <summary data-en="Does it work with FreeIPA / LDAP / Active Directory?" data-pl="Czy działa z FreeIPA / LDAP / Active Directory?">Does it work with FreeIPA / LDAP / Active Directory?</summary>
