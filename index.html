@@ -957,8 +957,8 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
     </div>
     <div class="req-item">
       <div class="req-item-label" data-en="Ports" data-pl="Porty">Ports</div>
-      <div class="req-item-value">9090</div>
-      <div class="req-item-note" data-en="Panel :9090 (inbound). Agents have no inbound port — they dial the panel outbound." data-pl="Panel :9090 (przychodzący). Agenci nie mają portu przychodzącego — łączą się do panelu wychodząco.">Panel :9090 inbound. Agents: no inbound port — outbound only to the panel.</div>
+      <div class="req-item-value">443</div>
+      <div class="req-item-note" data-en="Panel :443 (HTTPS via the bundled Caddy proxy; the gateway itself stays on loopback). Agents have no inbound port — they dial the panel outbound." data-pl="Panel :443 (HTTPS przez dołączone proxy Caddy; sama bramka zostaje na loopbacku). Agenci nie mają portu przychodzącego — łączą się do panelu wychodząco.">Panel :443 (HTTPS via the bundled Caddy proxy; the gateway stays on loopback). Agents: no inbound port — outbound only.</div>
     </div>
     <div class="req-item">
       <div class="req-item-label" data-en="Auth" data-pl="Uwierzytelnianie">Auth</div>
@@ -994,15 +994,17 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
     <pre><span class="c-comment"># Install panel on your gateway host</span>
 <span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span>
 
-<span class="c-comment"># Access at http://&lt;host&gt;:9090 — log in with any system user</span></pre>
+<span class="c-comment"># Access at https://&lt;host&gt; (Caddy reverse proxy, set up automatically —</span>
+<span class="c-comment"># accept the self-signed cert). Log in with any sudo-capable system user.</span></pre>
   </div>
   <div id="content-agent" class="code-block" style="display:none">
     <button class="code-copy" onclick="copyCode('agent')" data-en="Copy" data-pl="Kopiuj">Copy</button>
     <pre><span class="c-comment"># Install agent on each managed host</span>
 <span class="c-cmd">curl</span> <span class="c-flag">-sSfL</span> https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
-  <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span> <span class="c-flag">-s</span> <span class="c-flag">--</span> <span class="c-flag">--gateway</span> <span class="c-val">http://&lt;panel-host&gt;:9090</span>
+  <span class="c-flag">|</span> <span class="c-cmd">sudo bash</span> <span class="c-flag">-s</span> <span class="c-flag">--</span> <span class="c-flag">--gateway</span> <span class="c-val">https://&lt;panel-host&gt;</span> <span class="c-flag">--insecure</span>
 
-<span class="c-comment"># Approve the host in the panel under: Hosts → Pending</span></pre>
+<span class="c-comment"># (bare host, no :9090; --insecure accepts the default self-signed cert)</span>
+<span class="c-comment"># Approve the host in the panel under: Management → Pending</span></pre>
   </div>
   <div id="content-pkgdeb" class="code-block">
     <button class="code-copy" onclick="copyCode('pkgdeb')" data-en="Copy" data-pl="Kopiuj">Copy</button>
@@ -1014,7 +1016,8 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
 <span class="c-comment"># Managed host — install just the agent, then point it at your panel:</span>
 <span class="c-cmd">wget</span> <span class="c-val">https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent_amd64.deb</span>
 <span class="c-cmd">sudo apt install</span> <span class="c-val">./tenodera-agent_amd64.deb</span>
-<span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|127.0.0.1|&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
+<span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|^TENODERA_GATEWAY_URL=.*|TENODERA_GATEWAY_URL=https://&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
+<span class="c-cmd">echo</span> <span class="c-val">'TENODERA_AGENT_ACCEPT_INSECURE=1'</span> <span class="c-flag">|</span> <span class="c-cmd">sudo tee -a</span> /etc/tenodera/agent.cnf  <span class="c-comment"># self-signed cert only</span>
 <span class="c-cmd">sudo systemctl enable --now</span> tenodera-agent
 
 <span class="c-comment"># arm64: swap amd64 → arm64.  Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
@@ -1028,7 +1031,8 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
 
 <span class="c-comment"># Managed host — install just the agent, then point it at your panel:</span>
 <span class="c-cmd">sudo dnf install</span> <span class="c-val">https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent-x86_64.rpm</span>
-<span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|127.0.0.1|&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
+<span class="c-cmd">sudo sed</span> <span class="c-flag">-i</span> <span class="c-val">'s|^TENODERA_GATEWAY_URL=.*|TENODERA_GATEWAY_URL=https://&lt;panel-host&gt;|'</span> /etc/tenodera/agent.cnf
+<span class="c-cmd">echo</span> <span class="c-val">'TENODERA_AGENT_ACCEPT_INSECURE=1'</span> <span class="c-flag">|</span> <span class="c-cmd">sudo tee -a</span> /etc/tenodera/agent.cnf  <span class="c-comment"># self-signed cert only</span>
 <span class="c-cmd">sudo systemctl enable --now</span> tenodera-agent
 
 <span class="c-comment"># aarch64: swap x86_64 → aarch64.  Verify: minisign -Vm SHA256SUMS -P &lt;key from SECURITY.md&gt;</span></pre>
@@ -1183,7 +1187,7 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
     </details>
     <details class="faq-item">
       <summary data-en="Do I need a VPN to connect managed hosts?" data-pl="Czy potrzebuję VPN do podłączenia zarządzanych hostów?">Do I need a VPN to connect managed hosts?</summary>
-      <div class="faq-answer" data-en="No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel address on port 9090, it works across NAT, cloud, and private networks with no VPN or firewall rules required." data-pl="Nie. Agenci łączą się wychodzącym połączeniem do panelu przez WebSocket — panel nigdy nie inicjuje połączeń do zarządzanych hostów. Dopóki zarządzany host może dotrzeć do adresu panelu na porcie 9090, działa przez NAT, chmurę i sieci prywatne bez VPN ani reguł zapory.">No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel on port 9090, it works across NAT, cloud, and private networks with no VPN or firewall rules required.</div>
+      <div class="faq-answer" data-en="No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel address on port 443 (HTTPS, via its reverse proxy), it works across NAT, cloud, and private networks with no VPN or firewall rules required." data-pl="Nie. Agenci łączą się wychodzącym połączeniem do panelu przez WebSocket — panel nigdy nie inicjuje połączeń do zarządzanych hostów. Dopóki zarządzany host może dotrzeć do adresu panelu na porcie 443 (HTTPS, przez reverse proxy), działa przez NAT, chmurę i sieci prywatne bez VPN ani reguł zapory.">No. Agents connect outbound to the panel over WebSocket — the panel never initiates connections to managed hosts. As long as the managed host can reach the panel on port 443 (HTTPS, via its reverse proxy), it works across NAT, cloud, and private networks with no VPN or firewall rules required.</div>
     </details>
     <details class="faq-item">
       <summary data-en="Does it work with FreeIPA / LDAP / Active Directory?" data-pl="Czy działa z FreeIPA / LDAP / Active Directory?">Does it work with FreeIPA / LDAP / Active Directory?</summary>
@@ -1203,7 +1207,7 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</pre>
     </details>
     <details class="faq-item">
       <summary data-en="Can I use it in production?" data-pl="Czy mogę używać go na produkcji?">Can I use it in production?</summary>
-      <div class="faq-answer" data-en="It's built for it — privilege separation, PAM authentication, Ed25519 agent authentication, CSRF/CSP protections and rate limiting are all in place, and every privileged action is written to an audit log. It's also a young project that hasn't yet had an external security audit, so evaluate it for your environment. For any production deployment, enable TLS so the panel is served over HTTPS/WSS — this encrypts all traffic between the browser and the gateway. See the documentation for the recommended setup." data-pl="Jest z myślą o niej budowany — separacja uprawnień, uwierzytelnianie przez PAM, uwierzytelnianie agentów Ed25519, ochrona CSRF/CSP oraz rate limiting są na miejscu, a każda uprzywilejowana operacja trafia do logu audytu. To zarazem młody projekt, który nie przeszedł jeszcze zewnętrznego audytu bezpieczeństwa — oceń go pod kątem swojego środowiska. W każdym wdrożeniu produkcyjnym włącz TLS, aby panel był serwowany przez HTTPS/WSS — szyfruje to cały ruch między przeglądarką a bramką. Zajrzyj do dokumentacji po zalecaną konfigurację.">It's built for it — privilege separation, PAM authentication, Ed25519 agent authentication, CSRF/CSP protections and rate limiting are all in place, and every privileged action is written to an audit log. It's also a young project that hasn't yet had an external security audit, so evaluate it for your environment. For any production deployment, enable TLS so the panel is served over HTTPS/WSS — this encrypts all traffic between the browser and the gateway. See the <a href="docs/" style="color:var(--green)">documentation</a> for the recommended setup.</div>
+      <div class="faq-answer" data-en="It's built for it — privilege separation, PAM authentication, Ed25519 agent authentication, CSRF/CSP protections and rate limiting are all in place, and every privileged action is written to an audit log. It's also a young project that hasn't yet had an external security audit, so evaluate it for your environment. HTTPS is on by default — the installer fronts the loopback-only gateway with a Caddy reverse proxy; for production put a real domain + certificate in the Caddyfile. See the documentation for the recommended setup." data-pl="Jest z myślą o niej budowany — separacja uprawnień, uwierzytelnianie przez PAM, uwierzytelnianie agentów Ed25519, ochrona CSRF/CSP oraz rate limiting są na miejscu, a każda uprzywilejowana operacja trafia do logu audytu. To zarazem młody projekt, który nie przeszedł jeszcze zewnętrznego audytu bezpieczeństwa — oceń go pod kątem swojego środowiska. HTTPS jest domyślnie włączony — instalator stawia przed loopbackową bramką reverse proxy Caddy; w produkcji wstaw prawdziwą domenę + certyfikat do Caddyfile. Zajrzyj do dokumentacji po zalecaną konfigurację.">It's built for it — privilege separation, PAM authentication, Ed25519 agent authentication, CSRF/CSP protections and rate limiting are all in place, and every privileged action is written to an audit log. It's also a young project that hasn't yet had an external security audit, so evaluate it for your environment. HTTPS is on by default — the installer fronts the loopback-only gateway with a Caddy reverse proxy; for production put a real domain + certificate in the Caddyfile. See the <a href="docs/" style="color:var(--green)">documentation</a> for the recommended setup.</div>
     </details>
   </div>
 </section>

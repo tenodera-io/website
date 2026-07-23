@@ -451,11 +451,13 @@
     <div id="overview" class="section-anchor"></div>
     <h2><span class="n">1</span><span data-en="Overview" data-pl="Przegląd">Overview</span></h2>
     <p data-en="Tenodera is a self-hosted Linux server administration panel. It provides a real-time web interface for managing local and remote Linux servers — terminal access, service control, user management, package management, networking, storage, containers, logs, and more." data-pl="Tenodera to samodzielny panel administracyjny dla serwerów Linux. Zapewnia interfejs webowy w czasie rzeczywistym do zarządzania lokalnymi i zdalnymi serwerami — terminal, usługi, użytkownicy, pakiety, sieć, storage, kontenery, logi i więcej.">Tenodera is a self-hosted Linux server administration panel. It provides a real-time web interface for managing local and remote Linux servers — terminal access, service control, user management, package management, networking, storage, containers, logs, and more.</p>
-    <pre><code>Browser ──WSS──&gt; Gateway (:9090) &lt;──WS── tenodera-agent (remote host)
-                                 &lt;──WS── tenodera-agent (localhost)</code></pre>
+    <pre><code>Browser ─────────HTTPS──┐
+                        ▼
+Remote agents ──WSS──&gt; Caddy (:443) ──&gt; Gateway (127.0.0.1:9090) &lt;──WS── local agent</code></pre>
     <h3 data-en="Key design principles" data-pl="Główne zasady projektu">Key design principles</h3>
     <ul>
-      <li><strong data-en="No inbound ports on managed hosts" data-pl="Bez otwartych portów na zarządzanych hostach">No inbound ports on managed hosts</strong> <span data-en="— agents connect outbound to the gateway via WebSocket" data-pl="— agenci łączą się wychodzącym połączeniem do bramki">— agents connect outbound to the gateway via WebSocket</span></li>
+      <li><strong data-en="Private gateway, public proxy" data-pl="Prywatna bramka, publiczne proxy">Private gateway, public proxy</strong> <span data-en="— the gateway listens only on loopback; the installer sets up a Caddy reverse proxy serving the panel (and agent connections) over HTTPS" data-pl="— bramka słucha tylko na loopbacku; instalator stawia reverse proxy Caddy serwujące panel (i połączenia agentów) po HTTPS">— the gateway listens only on loopback; the installer sets up a Caddy reverse proxy serving the panel (and agent connections) over HTTPS</span></li>
+      <li><strong data-en="No inbound ports on managed hosts" data-pl="Bez otwartych portów na zarządzanych hostach">No inbound ports on managed hosts</strong> <span data-en="— agents connect outbound to the panel via WebSocket" data-pl="— agenci łączą się wychodzącym połączeniem do panelu">— agents connect outbound to the panel via WebSocket</span></li>
       <li><strong data-en="No extra daemon required" data-pl="Bez dodatkowych demonów">No extra daemon required</strong> <span data-en="— the agent is a single binary managed by systemd" data-pl="— agent to pojedynczy plik binarny zarządzany przez systemd">— the agent is a single binary managed by systemd</span></li>
       <li><strong data-en="PAM authentication" data-pl="Uwierzytelnianie PAM">PAM authentication</strong> <span data-en="— uses existing system accounts (local, LDAP, SSSD, FreeIPA)" data-pl="— używa istniejących kont systemowych (lokalne, LDAP, SSSD, FreeIPA)">— uses existing system accounts (local, LDAP, SSSD, FreeIPA)</span></li>
       <li><strong data-en="Role-based access" data-pl="Dostęp oparty na rolach">Role-based access</strong> <span data-en="— admin vs. read-only, based on sudo group membership" data-pl="— admin vs. tylko odczyt, na podstawie przynależności do grupy sudo">— admin vs. read-only, based on sudo group membership</span></li>
@@ -499,8 +501,8 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</code></pre>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo dnf install \
   https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-x86_64.rpm \
   https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent-x86_64.rpm</code></pre>
-    <p data-en="The panel package configures itself (config, service account, data dir), enables and starts the gateway on port 9090, and starts the local agent. Log in at http://<host>:9090 with any PAM system user that has sudo." data-pl="Paczka panelu konfiguruje się sama (config, konto serwisowe, katalog danych), włącza i startuje bramkę na porcie 9090 oraz startuje lokalnego agenta. Zaloguj się pod http://<host>:9090 dowolnym użytkownikiem systemowym PAM z uprawnieniami sudo.">The panel package configures itself (config, service account, data dir), enables and starts the gateway on port 9090, and starts the local agent. Log in at <code>http://&lt;host&gt;:9090</code> with any PAM system user that has <code>sudo</code>.</p>
-    <div class="note" data-en="Two different defaults. In code, TLS is mandatory: the gateway refuses to start without a certificate and binds to 127.0.0.1:9090. But the package installer ships tenodera.cnf with TENODERA_BIND_ADDR=0.0.0.0 and TENODERA_ALLOW_UNENCRYPTED=1, so after a package install the panel is plain HTTP on all interfaces (0.0.0.0:9090). Configure TLS (§4.2) or a reverse proxy bound to localhost (§4.3) and remove TENODERA_ALLOW_UNENCRYPTED=1 before exposing it to any untrusted network." data-pl="Dwa różne domyślne ustawienia. W kodzie TLS jest wymagany: bramka nie startuje bez certyfikatu i słucha na 127.0.0.1:9090. Ale instalator paczki dostarcza tenodera.cnf z TENODERA_BIND_ADDR=0.0.0.0 i TENODERA_ALLOW_UNENCRYPTED=1, więc po instalacji paczki panel to zwykły HTTP na wszystkich interfejsach (0.0.0.0:9090). Skonfiguruj TLS (§4.2) lub reverse proxy na localhost (§4.3) i usuń TENODERA_ALLOW_UNENCRYPTED=1 przed udostępnieniem w niezaufanej sieci.">⚡ <strong>Two different defaults.</strong> In <em>code</em>, TLS is mandatory — the gateway refuses to start without a certificate and binds to <code>127.0.0.1:9090</code>. But the <em>package installer</em> ships <code>tenodera.cnf</code> with <code>TENODERA_BIND_ADDR=0.0.0.0</code> and <code>TENODERA_ALLOW_UNENCRYPTED=1</code>, so <strong>after a package install the panel is plain HTTP on all interfaces (0.0.0.0:9090)</strong>. Configure TLS (§4.2) or a reverse proxy bound to localhost (§4.3), and remove <code>TENODERA_ALLOW_UNENCRYPTED=1</code>, before exposing it to any untrusted network.</div>
+    <p data-en="The package sets up everything: config, service account, the gateway (loopback 127.0.0.1:9090), the local agent, and — a few seconds after install, via the one-shot tenodera-caddy-setup service — the Caddy HTTPS reverse proxy. Open https://<panel-host>, accept the self-signed-certificate warning, and log in with any PAM system user that has sudo. Own domain / certificate: §4.3." data-pl="Paczka konfiguruje wszystko: config, konto serwisowe, bramkę (loopback 127.0.0.1:9090), lokalnego agenta oraz — kilka sekund po instalacji, przez jednorazową usługę tenodera-caddy-setup — reverse proxy HTTPS Caddy. Otwórz https://<panel-host>, zaakceptuj ostrzeżenie o certyfikacie self-signed i zaloguj się dowolnym użytkownikiem systemowym PAM z sudo. Własna domena / certyfikat: §4.3.">The package sets up everything: config, service account, the gateway (loopback <code>127.0.0.1:9090</code>), the local agent, and — a few seconds after install, via the one-shot <code>tenodera-caddy-setup</code> service — the <strong>Caddy HTTPS reverse proxy</strong>. Open <code>https://&lt;panel-host&gt;</code>, accept the self-signed-certificate warning, and log in with any PAM system user that has <code>sudo</code>. Own domain / certificate: §4.3.</p>
+    <div class="note" data-en="If Caddy couldn't be installed (no network, unsupported distro), the panel stays on loopback: reach it with ssh -L 9090:127.0.0.1:9090 <panel-host>, open http://localhost:9090, then retry with sudo systemctl start tenodera-caddy-setup. Only set TENODERA_BIND_ADDR=0.0.0.0 after enabling TLS in the gateway itself (§4.2), or you will serve plain HTTP on every interface." data-pl="Jeśli Caddy nie mógł się zainstalować (brak sieci, nieobsługiwana dystrybucja), panel zostaje na loopbacku: wejdź przez ssh -L 9090:127.0.0.1:9090 <panel-host>, otwórz http://localhost:9090, potem ponów przez sudo systemctl start tenodera-caddy-setup. TENODERA_BIND_ADDR=0.0.0.0 ustawiaj wyłącznie po włączeniu TLS w samej bramce (§4.2) — inaczej wystawisz goły HTTP na każdym interfejsie.">⚡ If Caddy couldn't be installed (no network, unsupported distro), the panel stays on loopback: reach it with <code>ssh -L 9090:127.0.0.1:9090 &lt;panel-host&gt;</code> → <code>http://localhost:9090</code>, then retry with <code>sudo systemctl start tenodera-caddy-setup</code>. Only set <code>TENODERA_BIND_ADDR=0.0.0.0</code> <strong>after</strong> enabling TLS in the gateway itself (§4.2), or you will serve plain HTTP on every interface.</div>
 
     <h3 data-en="3.2 Managed hosts (packages)" data-pl="3.2 Zarządzane hosty (paczki)">3.2 Managed hosts (packages)</h3>
     <p data-en="On each host you want to manage, install just the agent." data-pl="Na każdym hoście, którym chcesz zarządzać, zainstaluj sam agent.">On each host you want to manage, install just the agent.</p>
@@ -509,14 +511,15 @@ sudo apt install ./tenodera_amd64.deb ./tenodera-agent_amd64.deb</code></pre>
 sudo apt install ./tenodera-agent_amd64.deb</code></pre>
     <p><strong>Fedora / RHEL</strong></p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo dnf install https://github.com/tenodera-io/tenodera/releases/latest/download/tenodera-agent-x86_64.rpm</code></pre>
-    <p data-en="Then, on either distro, point the agent at your panel and start it:" data-pl="Następnie, niezależnie od dystrybucji, wskaż agentowi swój panel i uruchom go:">Then, on either distro, point the agent at your panel and start it:</p>
-    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo sed -i 's|127.0.0.1|&lt;panel-host&gt;|' /etc/tenodera/agent.cnf
+    <p data-en="Then, on either distro, point the agent at the panel's HTTPS address — the bare host, no :9090 (9090 is the panel's internal loopback-only port, not reachable by agents) — and start it:" data-pl="Następnie, niezależnie od dystrybucji, wskaż agentowi adres HTTPS panelu — sam host, bez :9090 (9090 to wewnętrzny, loopbackowy port panelu, nieosiągalny dla agentów) — i uruchom go:">Then, on either distro, point the agent at the panel's HTTPS address — the bare host, <strong>no <code>:9090</code></strong> (9090 is the panel's internal loopback-only port, not reachable by agents) — and start it:</p>
+    <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo sed -i 's|^TENODERA_GATEWAY_URL=.*|TENODERA_GATEWAY_URL=https://&lt;panel-host&gt;|' /etc/tenodera/agent.cnf
+echo 'TENODERA_AGENT_ACCEPT_INSECURE=1' | sudo tee -a /etc/tenodera/agent.cnf   <span class="c-c"># self-signed cert only</span>
 sudo systemctl enable --now tenodera-agent</code></pre>
-    <p data-en="The host enters pending state — approve it in Hosts → Pending. To skip approval, generate a bootstrap token in Hosts → Tokens and pass --token to the curl installer (§3.4)." data-pl="Host wchodzi w stan oczekiwania — zatwierdź go w Hosts → Pending. Aby pominąć zatwierdzanie, wygeneruj token bootstrap w Hosts → Tokens i przekaż --token do instalatora curl (§3.4).">The host enters <strong data-en="pending" data-pl="oczekiwania">pending</strong> state — approve it in <strong>Hosts → Pending</strong>. To skip approval, generate a bootstrap token in <strong>Hosts → Tokens</strong> and pass <code>--token</code> to the curl installer (§3.4).</p>
+    <p data-en="The host enters pending state — approve it in Management → Pending. To skip approval, generate a bootstrap token in Management → Tokens and set TENODERA_BOOTSTRAP_TOKEN in agent.cnf (or pass --token to the curl installer, §3.4) — the panel shows ready-to-copy commands with the token pre-filled." data-pl="Host wchodzi w stan oczekiwania — zatwierdź go w Management → Pending. Aby pominąć zatwierdzanie, wygeneruj token bootstrap w Management → Tokens i ustaw TENODERA_BOOTSTRAP_TOKEN w agent.cnf (albo przekaż --token do instalatora curl, §3.4) — panel pokazuje gotowe do skopiowania komendy z wpisanym tokenem.">The host enters <strong data-en="pending" data-pl="oczekiwania">pending</strong> state — approve it in <strong>Management → Pending</strong>. To skip approval, generate a bootstrap token in <strong>Management → Tokens</strong> and set <code>TENODERA_BOOTSTRAP_TOKEN</code> in <code>agent.cnf</code> (or pass <code>--token</code> to the curl installer, §3.4) — the panel shows ready-to-copy commands with the token pre-filled.</p>
     <div class="note" data-en="arm64 / aarch64: swap amd64 → arm64 (.deb) and x86_64 → aarch64 (.rpm). For a specific version, replace latest with the release tag, e.g. releases/download/v0.1.7/tenodera_amd64.deb." data-pl="arm64 / aarch64: zamień amd64 → arm64 (.deb) i x86_64 → aarch64 (.rpm). Dla konkretnej wersji zamień latest na tag wydania, np. releases/download/v0.1.7/tenodera_amd64.deb.">📦 arm64 / aarch64: swap <code>amd64</code> → <code>arm64</code> (.deb) and <code>x86_64</code> → <code>aarch64</code> (.rpm). For a specific version, replace <code>latest</code> with the release tag, e.g. <code>releases/download/v0.1.7/tenodera_amd64.deb</code>.</div>
 
     <h3 data-en="3.3 Verify the download" data-pl="3.3 Weryfikacja pobrania">3.3 Verify the download</h3>
-    <p data-en="Every release includes SHA256SUMS signed with minisign; the public key is in SECURITY.md:" data-pl="Każde wydanie zawiera SHA256SUMS podpisane przez minisign; klucz publiczny jest w SECURITY.md:">Every release includes <code>SHA256SUMS</code> signed with <a href="https://jedisct1.github.io/minisign/">minisign</a>; the public key is in <a href="https://github.com/tenodera-io/tenodera/blob/main/SECURITY.md">SECURITY.md</a>:</p>
+    <p data-en="Every release includes SHA256SUMS signed with minisign; the public key is in SECURITY.md:" data-pl="Każde wydanie zawiera SHA256SUMS podpisane przez minisign; klucz publiczny jest w SECURITY.md:">Every release includes <code>SHA256SUMS</code> signed with <a href="https://jedisct1.github.io/minisign/">minisign</a>; the public key is in <a href="https://github.com/tenodera-io/tenodera/blob/main/.github/SECURITY.md">SECURITY.md</a>:</p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>wget https://github.com/tenodera-io/tenodera/releases/latest/download/SHA256SUMS
 wget https://github.com/tenodera-io/tenodera/releases/latest/download/SHA256SUMS.minisig
 minisign -Vm SHA256SUMS -P &lt;public-key&gt;
@@ -525,16 +528,16 @@ sha256sum --ignore-missing -c SHA256SUMS</code></pre>
     <h3 data-en="3.4 Install from source (curl / build)" data-pl="3.4 Instalacja ze źródeł (curl / kompilacja)">3.4 Install from source (curl / build)</h3>
     <p data-en="Prefer to build from source instead of a package? The curl installer pulls dependencies, compiles (~3–4 min), and wires up the systemd services. On the panel host it installs and enrolls the local agent automatically:" data-pl="Wolisz zbudować ze źródeł zamiast paczki? Instalator curl pobiera zależności, kompiluje (~3–4 min) i konfiguruje serwisy systemd. Na hoście panelu instaluje i rejestruje lokalnego agenta automatycznie:">Prefer to build from source instead of a package? The curl installer pulls dependencies, compiles (~3–4 min), and wires up the systemd services. On the panel host it installs and enrolls the local agent automatically:</p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera.sh | sudo bash</code></pre>
-    <p data-en="Managed hosts:" data-pl="Zarządzane hosty:">Managed hosts:</p>
+    <p data-en="Managed hosts — --insecure accepts the installer's default self-signed certificate (drop it once the panel uses a real cert):" data-pl="Zarządzane hosty — --insecure akceptuje domyślny self-signed certyfikat instalatora (usuń, gdy panel ma prawdziwy cert):">Managed hosts — <code>--insecure</code> accepts the installer's default self-signed certificate (drop it once the panel uses a real cert):</p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
-  | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090</code></pre>
-    <p data-en="Unattended (skip approval) — pass a bootstrap token from Hosts → Tokens:" data-pl="Bez nadzoru (pomiń zatwierdzanie) — przekaż token bootstrap z Hosts → Tokens:">Unattended (skip approval) — pass a bootstrap token from <strong>Hosts → Tokens</strong>:</p>
+  | sudo bash -s -- --gateway https://&lt;panel-host&gt; --insecure</code></pre>
+    <p data-en="Unattended (skip approval) — pass a bootstrap token from Management → Tokens:" data-pl="Bez nadzoru (pomiń zatwierdzanie) — przekaż token bootstrap z Management → Tokens:">Unattended (skip approval) — pass a bootstrap token from <strong>Management → Tokens</strong>:</p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>curl -sSfL https://raw.githubusercontent.com/tenodera-io/tenodera/main/tenodera-agent.sh \
-  | sudo bash -s -- --gateway http://&lt;panel-host&gt;:9090 --token &lt;bootstrap-token&gt;</code></pre>
-    <div class="note" data-en="The token is a bearer secret and is written to /etc/tenodera/agent.cnf — it is NOT removed after enrollment. The agent only needs it once (its Ed25519 key is pinned on first connect), so prefer single-use, short-TTL, hostname-bound tokens (then a leftover value is already spent), and delete the TENODERA_BOOTSTRAP_TOKEN line once the host shows as online. Don't reuse one long-lived multi-use token across many hosts." data-pl="Token to bearer secret zapisywany w /etc/tenodera/agent.cnf — NIE jest usuwany po rejestracji. Agent potrzebuje go tylko raz (klucz Ed25519 jest przypinany przy pierwszym połączeniu), więc używaj tokenów jednorazowych, krótko ważnych, przypiętych do hostname (wtedy pozostały jest już zużyty), i usuń linię TENODERA_BOOTSTRAP_TOKEN gdy host będzie online. Nie używaj jednego długowiecznego wielorazowego tokenu na wielu hostach.">⚡ The token is a <strong>bearer secret</strong> written to <code>/etc/tenodera/agent.cnf</code> and is <strong>not</strong> removed after enrollment. The agent only needs it once (its key is pinned on first connect), so prefer <strong>single-use, short-TTL, hostname-bound</strong> tokens and delete the <code>TENODERA_BOOTSTRAP_TOKEN</code> line once the host shows online. Don't reuse one long-lived multi-use token across many hosts.</div>
+  | sudo bash -s -- --gateway https://&lt;panel-host&gt; --insecure --token &lt;bootstrap-token&gt;</code></pre>
+    <div class="note" data-en="The token is a bearer secret written to /etc/tenodera/agent.cnf. The agent only needs it once (its Ed25519 key is pinned on first connect) and scrubs the TENODERA_BOOTSTRAP_TOKEN line automatically on its first successful enrollment. It is still exposed before that first connect — in the installer command and the config — so prefer single-use, short-TTL, hostname-bound tokens and revoke them after use; don't reuse one long-lived multi-use token across many hosts." data-pl="Token to bearer secret zapisywany w /etc/tenodera/agent.cnf. Agent potrzebuje go tylko raz (klucz Ed25519 jest przypinany przy pierwszym połączeniu) i sam usuwa linię TENODERA_BOOTSTRAP_TOKEN po pierwszej udanej rejestracji. Przed tym pierwszym połączeniem token wciąż jest eksponowany — w komendzie instalatora i w configu — więc używaj tokenów jednorazowych, krótko ważnych, przypiętych do hostname i unieważniaj je po użyciu; nie używaj jednego długowiecznego wielorazowego tokenu na wielu hostach.">⚡ The token is a <strong>bearer secret</strong> written to <code>/etc/tenodera/agent.cnf</code>. The agent only needs it once (its key is pinned on first connect) and <strong>scrubs the <code>TENODERA_BOOTSTRAP_TOKEN</code> line automatically</strong> on its first successful enrollment. It is still exposed before that first connect — in the installer command and the config — so prefer <strong>single-use, short-TTL, hostname-bound</strong> tokens and revoke them after use.</div>
     <p data-en="Or build manually with make:" data-pl="Albo zbuduj ręcznie przez make:">Or build manually with <code>make</code>:</p>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>git clone https://github.com/tenodera-io/tenodera
-cd Tenodera
+cd tenodera
 
 cd panel &amp;&amp; sudo make all   <span class="c-c"># panel host</span>
 
@@ -578,41 +581,47 @@ TENODERA_TLS_KEY=/etc/letsencrypt/live/panel.example.com/privkey.pem
 echo 'systemctl restart tenodera' | sudo tee /etc/letsencrypt/renewal-hooks/deploy/tenodera.sh
 sudo chmod +x /etc/letsencrypt/renewal-hooks/deploy/tenodera.sh</code></pre>
 
-    <h3 data-en="4.3 Reverse proxy" data-pl="4.3 Reverse proxy">4.3 Reverse proxy</h3>
-    <p data-en="Set TENODERA_EXTERNAL_URL in tenodera.cnf so the gateway generates correct agent install commands. nginx example:" data-pl="Ustaw TENODERA_EXTERNAL_URL w tenodera.cnf. Przykład nginx:">Set <code>TENODERA_EXTERNAL_URL</code> in <code>tenodera.cnf</code>. nginx example:</p>
-    <pre><code>location / {
-    proxy_pass http://127.0.0.1:9090;
-    proxy_http_version 1.1;
-    proxy_set_header Upgrade $http_upgrade;
-    proxy_set_header Connection "upgrade";
-    proxy_set_header Host $host;
-    proxy_set_header X-Real-IP $remote_addr;
-    proxy_read_timeout 3600s;
+    <h3 data-en="4.3 Reverse proxy (Caddy)" data-pl="4.3 Reverse proxy (Caddy)">4.3 Reverse proxy (Caddy)</h3>
+    <p data-en="Every installer (packages and source) installs the latest Caddy and writes /etc/caddy/Caddyfile — the panel is served over HTTPS on the network while the gateway stays on loopback. The default uses Caddy's internal CA on the host's IPs (self-signed — browsers warn; expected on a LAN). The generated file:" data-pl="Każdy instalator (paczki i źródła) instaluje najnowsze Caddy i zapisuje /etc/caddy/Caddyfile — panel jest serwowany po HTTPS w sieci, a bramka zostaje na loopbacku. Domyślnie Caddy używa wewnętrznego CA na adresach IP hosta (self-signed — przeglądarka ostrzega; na LAN to oczekiwane). Wygenerowany plik:">Every installer (packages and source) installs the latest <a href="https://caddyserver.com">Caddy</a> and writes <code>/etc/caddy/Caddyfile</code> — the panel is served over HTTPS on the network while the gateway stays on loopback. The default uses Caddy's internal CA on the host's IPs (self-signed — browsers warn; expected on a LAN). The generated file:</p>
+    <pre><code>10.0.2.15, 192.168.56.10 {          <span class="c-c"># every non-loopback IPv4 of the host</span>
+    tls internal
+    reverse_proxy 127.0.0.1:9090
 }</code></pre>
+    <p data-en="Own domain + certificate: edit the Caddyfile and reload (sudo systemctl reload caddy). With a domain that resolves to the host, Caddy fetches and renews a Let's Encrypt certificate automatically; or point a tls line at your own cert and key:" data-pl="Własna domena + certyfikat: edytuj Caddyfile i przeładuj (sudo systemctl reload caddy). Przy domenie wskazującej hosta Caddy sam pobiera i odnawia certyfikat Let's Encrypt; albo wskaż własny cert i klucz linią tls:">Own domain + certificate: edit the Caddyfile and reload (<code>sudo systemctl reload caddy</code>). With a domain that resolves to the host, Caddy fetches and renews a <strong>Let's Encrypt</strong> certificate automatically; or point a <code>tls</code> line at your own cert and key:</p>
+    <pre><code>panel.example.com {
+    reverse_proxy 127.0.0.1:9090
+    <span class="c-c"># tls /etc/caddy/certs/panel.crt /etc/caddy/certs/panel.key   # own cert</span>
+}</code></pre>
+    <p data-en="Then set TENODERA_EXTERNAL_URL=https://panel.example.com in tenodera.cnf so the panel shows correct agent install commands, and drop the agents' --insecure / TENODERA_AGENT_ACCEPT_INSECURE." data-pl="Następnie ustaw TENODERA_EXTERNAL_URL=https://panel.example.com w tenodera.cnf, aby panel pokazywał poprawne komendy instalacji agentów, i usuń u agentów --insecure / TENODERA_AGENT_ACCEPT_INSECURE.">Then set <code>TENODERA_EXTERNAL_URL=https://panel.example.com</code> in <code>tenodera.cnf</code> so the panel shows correct agent install commands, and drop the agents' <code>--insecure</code> / <code>TENODERA_AGENT_ACCEPT_INSECURE</code>.</p>
 
     <!-- 5. Agent Config -->
     <div id="agent-config" class="section-anchor"></div>
     <h2><span class="n">5</span><span data-en="Agent Configuration" data-pl="Konfiguracja agenta">Agent Configuration</span></h2>
     <p data-en="Edit /etc/tenodera/agent.cnf on each managed host, then restart the agent:" data-pl="Edytuj /etc/tenodera/agent.cnf na każdym zarządzanym hoście, następnie zrestartuj agenta:">Edit <code>/etc/tenodera/agent.cnf</code> on each managed host, then restart the agent:</p>
-    <pre><code><span class="c-c"># Gateway WebSocket endpoint</span>
-<span class="c-c"># http://  → plain WebSocket</span>
-<span class="c-c"># https:// → encrypted WebSocket</span>
-TENODERA_GATEWAY_URL=http://&lt;panel-host&gt;:9090
+    <pre><code><span class="c-c"># Panel address. Default deployment: the panel sits behind its Caddy reverse</span>
+<span class="c-c"># proxy on :443, so use the bare host — https://&lt;panel-host&gt;, NO :9090</span>
+<span class="c-c"># (9090 is the panel's internal loopback-only port).</span>
+<span class="c-c"># http:// → plain WebSocket ; https:// → encrypted (wss)</span>
+TENODERA_GATEWAY_URL=https://&lt;panel-host&gt;
+
+<span class="c-c"># Skip TLS cert verification — installer's self-signed default only</span>
+TENODERA_AGENT_ACCEPT_INSECURE=1
 
 <span class="c-c"># Bootstrap token — skip pending approval on first connect</span>
+<span class="c-c"># (the agent scrubs this line automatically after enrollment)</span>
 <span class="c-c"># TENODERA_BOOTSTRAP_TOKEN=&lt;token&gt;</span>
 
-<span class="c-c"># Skip TLS cert verification (self-signed certs only)</span>
-<span class="c-c"># TENODERA_AGENT_ACCEPT_INSECURE=1</span>
+<span class="c-c"># Pin the gateway id to close the TOFU window (optional)</span>
+<span class="c-c"># TENODERA_GATEWAY_ID=&lt;from /var/lib/tenodera-gw/gateway-id&gt;</span>
 
 <span class="c-c"># Host roles (grouping label)</span>
 <span class="c-c"># role=web</span></code></pre>
     <div class="tw"><table>
       <thead><tr><th data-en="Scenario" data-pl="Scenariusz">Scenario</th><th>Config</th></tr></thead>
       <tbody>
-        <tr><td data-en="Plain HTTP" data-pl="Zwykłe HTTP">Plain HTTP</td><td><code>TENODERA_GATEWAY_URL=http://...</code></td></tr>
-        <tr><td data-en="HTTPS with CA-signed cert" data-pl="HTTPS z certyfikatem CA">HTTPS with CA-signed cert</td><td><code>TENODERA_GATEWAY_URL=https://...</code></td></tr>
-        <tr><td data-en="HTTPS with self-signed cert" data-pl="HTTPS z self-signed">HTTPS with self-signed cert</td><td><code>https://...</code> + <code>TENODERA_AGENT_ACCEPT_INSECURE=1</code></td></tr>
+        <tr><td data-en="Default — behind the Caddy proxy, self-signed cert" data-pl="Domyślnie — za proxy Caddy, cert self-signed">Default — behind the Caddy proxy, self-signed cert</td><td><code>TENODERA_GATEWAY_URL=https://&lt;panel-host&gt;</code> + <code>TENODERA_AGENT_ACCEPT_INSECURE=1</code></td></tr>
+        <tr><td data-en="Behind the proxy, CA-signed cert (domain)" data-pl="Za proxy, cert CA (domena)">Behind the proxy, CA-signed cert (domain)</td><td><code>TENODERA_GATEWAY_URL=https://panel.example.com</code></td></tr>
+        <tr><td data-en="Gateway exposed directly with its own TLS (no proxy)" data-pl="Bramka wystawiona bezpośrednio z własnym TLS (bez proxy)">Gateway exposed directly with its own TLS (no proxy)</td><td><code>TENODERA_GATEWAY_URL=https://&lt;host&gt;:9090</code></td></tr>
       </tbody>
     </table></div>
 
@@ -661,8 +670,8 @@ TENODERA_GATEWAY_URL=http://&lt;panel-host&gt;:9090
     <h2><span class="n">7</span><span data-en="Multi-Host Management" data-pl="Zarządzanie wieloma hostami">Multi-Host Management</span></h2>
     <p data-en="Each managed host runs tenodera-agent which connects outbound to the gateway. The host selector (top-left) switches context — all pages instantly show data from the selected host." data-pl="Każdy zarządzany host uruchamia tenodera-agent łączący się wychodzącym połączeniem. Selektor hosta (góra-lewo) przełącza kontekst — wszystkie strony natychmiast pokazują dane wybranego hosta.">Each managed host runs <code>tenodera-agent</code> which connects outbound to the gateway. The host selector (top-left) switches context — all pages instantly show data from the selected host.</p>
     <ul>
-      <li data-en="Hosts enter pending state on first connect — approve in Hosts → Pending" data-pl="Hosty wchodzą w stan oczekiwania przy pierwszym połączeniu — zatwierdź w Hosts → Pending">Hosts enter <strong>pending</strong> state on first connect — approve in <strong>Hosts → Pending</strong></li>
-      <li data-en="Use bootstrap tokens for unattended enrollment — generate in Hosts → Tokens" data-pl="Tokeny bootstrap dla instalacji bez nadzoru — generuj w Hosts → Tokens">Use bootstrap tokens for unattended enrollment — <strong>Hosts → Tokens</strong></li>
+      <li data-en="Hosts enter pending state on first connect — approve in Management → Pending" data-pl="Hosty wchodzą w stan oczekiwania przy pierwszym połączeniu — zatwierdź w Management → Pending">Hosts enter <strong>pending</strong> state on first connect — approve in <strong>Management → Pending</strong></li>
+      <li data-en="Use bootstrap tokens for unattended enrollment — generate in Management → Tokens" data-pl="Tokeny bootstrap dla instalacji bez nadzoru — generuj w Management → Tokens">Use bootstrap tokens for unattended enrollment — <strong>Management → Tokens</strong></li>
       <li data-en="Agents reconnect automatically with exponential backoff on disconnect" data-pl="Agenci łączą się ponownie automatycznie z wykładniczym backoff">Agents reconnect automatically with exponential backoff on disconnect</li>
       <li data-en="Host roles: set in agent.cnf or via the Management UI (no restart required)" data-pl="Role hosta: ustaw w agent.cnf lub przez UI Management (bez restartu)">Host roles: set in <code>agent.cnf</code> or via the Management UI (no restart required)</li>
     </ul>
@@ -1066,7 +1075,7 @@ packaging/               <span class="c-c">RPM spec files (tenodera.spec, tenode
     <!-- 12. Security -->
     <div id="security" class="section-anchor"></div>
     <h2><span class="n">12</span><span data-en="Security" data-pl="Bezpieczeństwo">Security</span></h2>
-    <p data-en="See SECURITY.md on GitHub for the full security model." data-pl="Pełny model bezpieczeństwa: SECURITY.md na GitHub.">See <a href="https://github.com/tenodera-io/tenodera/blob/main/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a> on GitHub for the full security model.</p>
+    <p data-en="See SECURITY.md on GitHub for the full security model." data-pl="Pełny model bezpieczeństwa: SECURITY.md na GitHub.">See <a href="https://github.com/tenodera-io/tenodera/blob/main/.github/SECURITY.md" target="_blank" rel="noopener">SECURITY.md</a> on GitHub for the full security model.</p>
     <ul>
       <li data-en="PAM auth via isolated tenodera-pam-helper subprocess — gateway never handles PAM directly" data-pl="Uwierzytelnianie PAM przez izolowany podproces — bramka nigdy nie obsługuje PAM bezpośrednio">PAM auth via isolated <code>tenodera-pam-helper</code> subprocess — gateway never handles PAM directly</li>
       <li data-en="Ed25519 TOFU agent authentication — 32-byte challenge-response; SECURITY ALERT on key mismatch" data-pl="Uwierzytelnianie agentów Ed25519 TOFU — challenge-response 32 bajtów; SECURITY ALERT przy niezgodności klucza">Ed25519 TOFU agent authentication — 32-byte challenge-response; SECURITY ALERT on key mismatch</li>
@@ -1133,12 +1142,12 @@ RUN cd panel &amp;&amp; cargo build --release
 # docker cp &lt;container&gt;:/build/panel/target/release/tenodera-gateway ./</code></pre>
 
     <h3 data-en="Recommended production setup" data-pl="Zalecany setup produkcyjny">Recommended production setup</h3>
-    <p data-en="Install directly on the host using the one-line installer. For TLS, either configure the gateway directly (§4.2) or place nginx/Caddy in front of it (§4.3)." data-pl="Zainstaluj bezpośrednio na hoście używając instalatora. Dla TLS skonfiguruj bramkę bezpośrednio (§4.2) lub umieść nginx/Caddy przed nią (§4.3).">Install directly on the host using the one-line installer. For TLS, either configure the gateway directly (<a href="#panel-config">§4.2</a>) or place nginx/Caddy in front of it (<a href="#panel-config">§4.3</a>).</p>
+    <p data-en="Install directly on the host using the installer — HTTPS is handled by the bundled Caddy reverse proxy (§4.3); alternatively the gateway can terminate TLS itself (§4.2)." data-pl="Zainstaluj bezpośrednio na hoście przez instalator — HTTPS obsługuje dołączone reverse proxy Caddy (§4.3); alternatywnie bramka może sama terminować TLS (§4.2).">Install directly on the host using the installer — HTTPS is handled by the bundled Caddy reverse proxy (<a href="#panel-config">§4.3</a>); alternatively the gateway can terminate TLS itself (<a href="#panel-config">§4.2</a>).</p>
     <pre><code>Host OS (bare metal or VM)
 ├── tenodera-gateway    (systemd, drops to tenodera-gw after bind)
 ├── tenodera-pam-helper (setuid root, spawned by gateway for auth)
 ├── tenodera-agent      (systemd, connects outbound to gateway)
-└── nginx / Caddy       (optional reverse proxy for TLS termination)</code></pre>
+└── Caddy               (reverse proxy for TLS termination — installed automatically)</code></pre>
 
     <!-- 14. Uninstall -->
     <div id="uninstall" class="section-anchor"></div>
@@ -1175,10 +1184,10 @@ sudo dnf remove tenodera tenodera-agent</code></pre>
       <li><strong data-en="TLS cert verification failing" data-pl="Błąd weryfikacji certyfikatu TLS">TLS cert failing</strong> — <span data-en="set TENODERA_AGENT_ACCEPT_INSECURE=1 for self-signed certs" data-pl="ustaw TENODERA_AGENT_ACCEPT_INSECURE=1 dla self-signed">set <code>TENODERA_AGENT_ACCEPT_INSECURE=1</code> for self-signed certs</span></li>
     </ul>
 
-    <h3 data-en="Agent not appearing in Hosts → Pending" data-pl="Agent nie pojawia się w Hosts → Pending">Agent not in Hosts → Pending</h3>
+    <h3 data-en="Agent not appearing in Management → Pending" data-pl="Agent nie pojawia się w Management → Pending">Agent not in Management → Pending</h3>
     <ul>
       <li data-en="Verify TENODERA_GATEWAY_URL in agent.cnf" data-pl="Sprawdź TENODERA_GATEWAY_URL w agent.cnf"><span data-en="Verify" data-pl="Sprawdź">Verify</span> <code>TENODERA_GATEWAY_URL</code></li>
-      <li data-en="Bootstrap token invalid or expired — check Hosts → Tokens in the panel" data-pl="Token bootstrap nieważny lub wygasł — sprawdź Hosts → Tokens w panelu"><span data-en="Bootstrap token invalid or expired — check" data-pl="Token nieważny lub wygasł — sprawdź">Bootstrap token invalid or expired — check</span> <strong>Hosts → Tokens</strong></li>
+      <li data-en="Bootstrap token invalid or expired — check Management → Tokens in the panel" data-pl="Token bootstrap nieważny lub wygasł — sprawdź Management → Tokens w panelu"><span data-en="Bootstrap token invalid or expired — check" data-pl="Token nieważny lub wygasł — sprawdź">Bootstrap token invalid or expired — check</span> <strong>Management → Tokens</strong></li>
       <li data-en="Pending limit reached (max 100) — check gateway logs: journalctl -u tenodera -e" data-pl="Limit oczekujących osiągnięty (maks. 100) — sprawdź logi: journalctl -u tenodera -e"><span data-en="Pending limit reached (max 100)" data-pl="Limit oczekujących osiągnięty (maks. 100)">Pending limit reached (max 100)</span></li>
     </ul>
 
@@ -1188,7 +1197,7 @@ sudo dnf remove tenodera tenodera-agent</code></pre>
     <pre><button class="pre-copy" onclick="cpre(this)" data-en="Copy" data-pl="Kopiuj">Copy</button><code>sudo systemctl stop tenodera-agent
 sudo rm -rf /var/lib/tenodera/
 sudo systemctl start tenodera-agent</code></pre>
-    <p data-en="Then approve the host again in Hosts → Pending. If the host was previously enrolled, remove it first via Hosts → Enrolled → Remove so the new key is accepted." data-pl="Następnie zatwierdź hosta ponownie w Hosts → Pending. Jeśli host był wcześniej zarejestrowany, najpierw go usuń przez Hosts → Enrolled → Remove.">Then approve the host again in <strong>Hosts → Pending</strong>. If previously enrolled, remove it first via <strong>Hosts → Enrolled → Remove</strong> so the new key is accepted.</p>
+    <p data-en="Then approve the host again in Management → Pending. If the host was previously enrolled, remove it first via Management → Hosts → Remove so the new key is accepted." data-pl="Następnie zatwierdź hosta ponownie w Management → Pending. Jeśli host był wcześniej zarejestrowany, najpierw go usuń przez Management → Hosts → Remove.">Then approve the host again in <strong>Management → Pending</strong>. If previously enrolled, remove it first via <strong>Management → Hosts → Remove</strong> so the new key is accepted.</p>
 
     <h3 data-en="Host not appearing in UI" data-pl="Host nie pojawia się w UI">Host not appearing in UI</h3>
     <ul>
